@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="267.0" prefWidth="267.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+   <children>
+      <BarChart barGap="0.0" categoryGap="0.0" legendSide="RIGHT" legendVisible="false" prefHeight="263.0" prefWidth="263.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <xAxis>
+          <CategoryAxis label="Case Length (# events)" prefHeight="37.0" prefWidth="177.0" side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis label="# Cases" side="LEFT" />
+        </yAxis>
+      </BarChart>
+   </children>
+   <padding>
+      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+   </padding>
+</AnchorPane>
