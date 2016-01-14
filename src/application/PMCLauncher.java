@@ -18,7 +18,8 @@ public class PMCLauncher extends Application {
 			stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/cube_black.png")));
 			stage.setTitle("(PMC) Process Mining Cube");
 			stage.setScene(new Scene(root));
-			stage.show();			
+			stage.show();	
+			
 	}
 	
 	public static void main(String[] args) {
