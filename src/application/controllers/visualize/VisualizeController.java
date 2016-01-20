@@ -1,12 +1,13 @@
 package application.controllers.visualize;
 
 import application.controllers.AbstractTabController;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class VisualizeController extends AbstractTabController{
+public class VisualizeController extends AbstractTabController {
 
 	@FXML
 	private Tab tabVisualize;
@@ -17,8 +18,8 @@ public class VisualizeController extends AbstractTabController{
 	@FXML
 	protected void initialize() {
 		name = "visualizeController";
-	}	
-	
+	}
+
 	@Override
 	public void initializeTab(Tab input) {
 		tabVisualize = input;
@@ -39,6 +40,14 @@ public class VisualizeController extends AbstractTabController{
 			image.setImage(new Image("images/eye_green.png"));
 		else
 			image.setImage(new Image("images/eye_black.png"));
+	}
+
+	@FXML
+	protected void handleVisualizeButton(ActionEvent event) {
+
+		// do stuff
+
+		setCompleted(true);
 	}
 
 }

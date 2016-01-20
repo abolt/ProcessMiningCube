@@ -1,12 +1,13 @@
 package application.controllers.materialize;
 
 import application.controllers.AbstractTabController;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class MaterializeController  extends AbstractTabController {
+public class MaterializeController extends AbstractTabController {
 
 	@FXML
 	private Tab tabMaterialize;
@@ -17,8 +18,8 @@ public class MaterializeController  extends AbstractTabController {
 	@FXML
 	protected void initialize() {
 		name = "materializeController";
-	}	
-	
+	}
+
 	@Override
 	public void initializeTab(Tab input) {
 		tabMaterialize = input;
@@ -39,6 +40,13 @@ public class MaterializeController  extends AbstractTabController {
 			image.setImage(new Image("images/gear_green.png"));
 		else
 			image.setImage(new Image("images/gear_black.png"));
+	}
+
+	@FXML
+	protected void handleVisualizeCellsButton(ActionEvent event) {
+
+		//do stuff
+		setCompleted(true);
 	}
 
 }

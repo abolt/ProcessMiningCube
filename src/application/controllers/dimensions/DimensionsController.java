@@ -7,7 +7,9 @@ import application.controllers.AbstractTabController;
 import application.controllers.mapping.Attribute;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
@@ -20,6 +22,8 @@ public class DimensionsController extends AbstractTabController {
 
 	@FXML
 	private ImageView image;
+	
+	@FXML Button createDimensionsButton;
 	
 	@FXML private ListView<Attribute> unusedAttributes;
 	
@@ -71,6 +75,12 @@ public class DimensionsController extends AbstractTabController {
 		else
 			image.setImage(new Image("images/dimension_black.png"));
 
+	}
+	
+	@FXML
+	protected void handleCreateDimensionsButton(ActionEvent event) {
+		//do stuff here: create dimensions, pass list of dimensions to the mainController
+		setCompleted(true);
 	}
 
 }

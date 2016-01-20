@@ -1,6 +1,7 @@
 package application.controllers.cube;
 
 import application.controllers.AbstractTabController;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
@@ -42,6 +43,11 @@ public class CubeController extends AbstractTabController {
 			image.setImage(new Image("images/cube_green.png"));
 		else
 			image.setImage(new Image("images/cube_black.png"));
-
+	}
+	
+	@FXML protected void handleCreateCubeButton(ActionEvent event) {
+		
+		//do stuff
+		setCompleted(true);
 	}
 }
