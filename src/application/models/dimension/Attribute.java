@@ -1,33 +1,23 @@
 package application.models.dimension;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+@SuppressWarnings("rawtypes")
 public class Attribute {
 
 	private String attributeName;
-	private Set<?> valueSetSample;
-	private Map<?, Boolean> valueSet;
+	private Class type;
+	private Map<Object, Boolean> valueSet;
 
-	private String useAs;
-	private boolean createDimension;
+	public Attribute(String name, Class typeClass) {
+		attributeName = name;
+		type = typeClass;
+		valueSet = new HashMap<Object, Boolean>();
 
-	public Attribute(String name, Set<?> values, String use, boolean createDim) {
-		this.attributeName = name;
-		this.valueSetSample = values;
-		this.useAs = use;
-		this.createDimension = createDim;
-	}
-
-	public void setValueSet(Map<?, Boolean> valueSet) {
-		this.valueSet = valueSet;
-	}
-
-	public Set<?> getSelectedValues() {
-		return valueSetSample; // for now
-
-		// here I should have a pre-built list of the selected values, this can
-		// save shitloads of time
 	}
 
 	public String getAttributeName() {
@@ -38,28 +28,36 @@ public class Attribute {
 		this.attributeName = attributeName;
 	}
 
+	public Class getType() {
+		return type;
+	}
+
+	public void addValue(Object value) {
+		if (type.isInstance(value)) {
+			valueSet.put(value, true);
+		} else {
+			System.out.println("value " + value.toString() + "does not match the attribute type " + type.getName());
+		}
+	}
+
 	public Set<?> getValueSet() {
-		return valueSetSample;
+		return valueSet.keySet();
 	}
 
-	public void setValueSet(Set<?> valueSet) {
-		this.valueSetSample = valueSet;
+	public Set<?> getSelectedValues() {
+		return null; // for now
+
+		// here I should have a pre-built list of the selected values, this can
+		// save shitloads of time
 	}
 
-	public String getUseAs() {
-		return useAs;
-	}
-
-	public void setUseAs(String useAs) {
-		this.useAs = useAs;
-	}
-
-	public boolean isCreateDimension() {
-		return createDimension;
-	}
-
-	public void setCreateDimension(boolean createDimension) {
-		this.createDimension = createDimension;
+	public Set<?> getValueSetSample() { // returns the first 5 values
+		Set<String> result = new HashSet<String>();
+		Iterator<?> it = valueSet.entrySet().iterator();
+		for (int i = 0; i < 5 && it.hasNext(); i++) {
+			result.add(it.next().toString());
+		}
+		return result;
 	}
 
 	@Override

@@ -1,13 +1,12 @@
 package application.controllers.importdata;
 
 import java.io.File;
-import java.util.Collection;
-
-import org.deckfour.xes.in.XUniversalParser;
-import org.deckfour.xes.model.XLog;
 
 import application.controllers.AbstractTabController;
 import application.models.eventlog.EventLog;
+import application.operations.io.Importer;
+import application.operations.io.log.CSVImporter;
+import application.operations.io.log.XESImporter;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -57,25 +56,23 @@ public class ImportDataController extends AbstractTabController {
 
 	@FXML
 	protected void handleImportDataButton(ActionEvent event) {
-		if (checkSeparators()) {
-			// here i do the importing.
-			try {
-				XLog log = null;
-				XUniversalParser parser = new XUniversalParser();
-				File file = new File(fileName.getText());
-				if (parser.canParse(file)) {
-					Collection<XLog> collection = parser.parse(file);
-					log = !collection.isEmpty() ? collection.iterator().next() : null;
 
-					mainController.setLog(new EventLog(log));
-					setCompleted(true);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				logErrorMessage();
+		Importer<?> importer = null;
+		boolean correct = false;
+		if (fileName.getText().endsWith(".csv")) {
+			if (checkSeparators()) {
+				importer = new CSVImporter(new File(fileName.getText()));
 			}
+		} else {
+			importer = new XESImporter(new File(fileName.getText()));
 		}
 
+		if (importer != null && importer.canParse()) {
+			mainController.setLog(new EventLog<>(importer.importFromFile()));
+			correct = true;
+		}
+		// here i do the importing.
+		setCompleted(correct);
 	}
 
 	protected boolean checkSeparators() {
@@ -99,15 +96,6 @@ public class ImportDataController extends AbstractTabController {
 		alert.setHeaderText("Invalid Separator(s)");
 		alert.setContentText("Please check that the field and value separators are valid: "
 				+ "they cannot not be equal (the field separator is mandatory)");
-		alert.showAndWait();
-	}
-
-	protected void logErrorMessage() {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Error");
-		alert.setHeaderText("Invalid Event Log");
-		alert.setContentText(
-				"The event log that you are trying to impor is not valid. Please check that you are using the right one!");
 		alert.showAndWait();
 	}
 

@@ -4,10 +4,11 @@ import application.controllers.cube.CubeController;
 import application.controllers.dimensions.DimensionsController;
 import application.controllers.importdata.ImportDataController;
 import application.controllers.mapping.MappingController;
+import application.controllers.mapping.MappingRow;
 import application.controllers.materialize.MaterializeController;
 import application.controllers.menu.MenuBarController;
 import application.controllers.visualize.VisualizeController;
-import application.models.dimension.Attribute;
+import application.models.eventlog.CSVFile;
 import application.models.eventlog.EventLog;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,7 +20,8 @@ public class MainController {
 
 	// bus
 	private EventLog log;
-	private ObservableList<Attribute> attributeObjects;
+	private CSVFile csv;
+	private ObservableList<MappingRow> attributeObjects;
 
 	// menubar
 	@FXML
@@ -78,11 +80,11 @@ public class MainController {
 		this.log = log;
 	}
 
-	public ObservableList<Attribute> getAttributeObjects() {
+	public ObservableList<MappingRow> getAttributeObjects() {
 		return attributeObjects;
 	}
 
-	public void setAttributeObjects(ObservableList<Attribute> attributeObjects) {
+	public void setAttributeObjects(ObservableList<MappingRow> attributeObjects) {
 		this.attributeObjects = attributeObjects;
 	}
 

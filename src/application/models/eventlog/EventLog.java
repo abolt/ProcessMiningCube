@@ -2,17 +2,24 @@ package application.models.eventlog;
 
 import org.deckfour.xes.model.XLog;
 
-public class EventLog {
-	
-	private final XLog eventlog;
-	
-	public EventLog(XLog log){
-		this.eventlog = log;
+public class EventLog<T> {
+
+	private XLog xesLog = null;
+	private CSVFile csvLog = null;
+
+	public EventLog(T log) {
+		if (log instanceof XLog)
+			this.xesLog = (XLog) log;
+		if(log instanceof CSVFile)
+			this.csvLog = (CSVFile) log;
 	}
-	
-	public XLog getXLog () {		
-		return eventlog;
+
+	@SuppressWarnings("unchecked")
+	public T getEventLog() {
+		if(xesLog!= null)
+			return (T) xesLog;
+		else
+			return (T) csvLog;
 	}
-	
-	
+
 }
