@@ -9,6 +9,7 @@ import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XTrace;
 
 import application.controllers.AbstractTabController;
+import application.models.dimension.Attribute;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

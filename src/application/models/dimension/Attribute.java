@@ -1,4 +1,4 @@
-package application.controllers.mapping;
+package application.models.dimension;
 
 import java.util.Map;
 import java.util.Set;

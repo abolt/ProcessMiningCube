@@ -1,6 +1,5 @@
 package application.models.dimension;
 
-import application.controllers.mapping.Attribute;
 import javafx.collections.ObservableList;
 
 public class Dimension {

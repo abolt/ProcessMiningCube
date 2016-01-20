@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import application.controllers.AbstractTabController;
-import application.controllers.mapping.Attribute;
+import application.models.dimension.Attribute;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
