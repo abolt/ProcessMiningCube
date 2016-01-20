@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<Tab xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="application.controllers.importdata.ImportDataController"
+	closable="false" disable="true">
+	<graphic>
+		<BorderPane>
+			<center>
+				<ImageView fx:id = "image" pickOnBounds="true" preserveRatio="true"
+					BorderPane.alignment="CENTER">
+					<image>
+						<Image url="images/import_black.png" />
+					</image>
+				</ImageView>
+			</center>
+			<bottom>
+				<Label text="Import Data" BorderPane.alignment="CENTER" />
+			</bottom>
+		</BorderPane>
+	</graphic>
+	<content>
+		<ScrollPane prefHeight="645.0" prefWidth="765.0">
+			<content>
+				<AnchorPane prefHeight="640.0" prefWidth="760.0">
+					<children>
+						<Label layoutX="121.0" layoutY="62.0"
+							text="Please select your event data (.xes and .csv files are supported):"
+							AnchorPane.leftAnchor="121.0" AnchorPane.topAnchor="62.0" />
+						<Button layoutX="121.0" layoutY="99.0" mnemonicParsing="false"
+							onAction="#openFileSelectorButton" text="Select file..."
+							AnchorPane.leftAnchor="121.0" />
+						<TextField fx:id="fileName" editable="false" layoutX="225.0"
+							layoutY="99.0" prefHeight="31.0" prefWidth="363.0" />
+						<TextField fx:id="fieldSeparator" layoutX="542.0"
+							layoutY="150.0" prefHeight="31.0" prefWidth="46.0" />
+						<Label layoutX="344.0" layoutY="155.0"
+							text="Field separator (only for .csv):" />
+						<Label layoutX="141.0" layoutY="189.0"
+							text="Value separator for fields with multiple values (only for .csv):" />
+						<TextField fx:id="valueSeparator" layoutX="542.0"
+							layoutY="184.0" prefHeight="31.0" prefWidth="46.0" />
+						<Button layoutX="294.0" layoutY="250.0" mnemonicParsing="false"
+							onAction="#handleImportDataButton" prefHeight="55.0" prefWidth="177.0"
+							text="Import Data!">
+							<font>
+								<Font name="System Bold" size="21.0" />
+							</font>
+						</Button>
+					</children>
+				</AnchorPane>
+			</content>
+		</ScrollPane>
+	</content>
+</Tab>

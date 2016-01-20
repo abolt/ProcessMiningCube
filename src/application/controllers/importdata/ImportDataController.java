@@ -1,42 +1,43 @@
 package application.controllers.importdata;
 
 import java.io.File;
-import java.net.URL;
 import java.util.Collection;
-import java.util.ResourceBundle;
 
 import org.deckfour.xes.in.XUniversalParser;
 import org.deckfour.xes.model.XLog;
 
-import application.controllers.AbstractController;
-import application.controllers.synchronization.Synchronizer;
+import application.controllers.AbstractTabController;
 import application.models.eventlog.EventLog;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
-public class ImportDataController extends AbstractController implements Initializable {
+public class ImportDataController extends AbstractTabController {
 
-	
-	@FXML
-	private ScrollPane importDataPanel;
+	private Tab tabImportData;
 
 	@FXML
 	private TextField fileName, fieldSeparator, valueSeparator;
 
+	@FXML
+	private ImageView image;
+
 	/*
 	 * Listeners for checking if the separators are valid (only CSV files)
 	 */
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+
+	@FXML
+	public void initialize() {
+		name = "importDataController";
 		fieldSeparator.textProperty().addListener(new TextListener());
 		valueSeparator.textProperty().addListener(new TextListener());
 
@@ -66,8 +67,8 @@ public class ImportDataController extends AbstractController implements Initiali
 					Collection<XLog> collection = parser.parse(file);
 					log = !collection.isEmpty() ? collection.iterator().next() : null;
 
-					EventLog.setXLog(log);
-					setStable();
+					mainController.setLog(new EventLog(log));
+					setCompleted(true);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -90,8 +91,6 @@ public class ImportDataController extends AbstractController implements Initiali
 				return false;
 			}
 		return true;
-		// System.out.println("field: " + fieldSeparator.getText() + " value: "
-		// + valueSeparator.getText());
 	}
 
 	protected void separatorAlertMessage() {
@@ -119,4 +118,23 @@ public class ImportDataController extends AbstractController implements Initiali
 		}
 	}
 
+	@Override
+	protected void enableTab(boolean value) {
+		tabImportData.setDisable(!value);
+	}
+
+	@Override
+	public void initializeTab(Tab input) {
+		tabImportData = input;
+	}
+
+	@Override
+	public void updateImage() {
+		if (isEnabled() && !isCompleted())
+			image.setImage(new Image("images/import_black.png"));
+		else if (isEnabled() && isCompleted())
+			image.setImage(new Image("images/import_green.png"));
+		else
+			image.setImage(new Image("images/import_black.png"));
+	}
 }

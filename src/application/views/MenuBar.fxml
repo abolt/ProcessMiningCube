@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<MenuBar BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="application.controllers.menu.MenuBarController">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#newProcessCube" text="New Process Cube" />
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Import/Export">
+              <items>
+                  <Menu mnemonicParsing="false" text="Process Cube">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Import" />
+                      <MenuItem mnemonicParsing="false" text="Export" />
+                    </items>
+                  </Menu>
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About PMC" />
+                  <MenuItem mnemonicParsing="false" text="Help / TroubleShooting" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>

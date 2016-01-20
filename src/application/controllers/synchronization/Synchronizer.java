@@ -1,10 +1,10 @@
 package application.controllers.synchronization;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import application.controllers.AbstractController;
+import application.controllers.AbstractTabController;
+import application.controllers.menu.MenuBarController;
 
 /**
  * Synchronizes the different steps
@@ -22,18 +22,24 @@ public class Synchronizer {
 	 *
 	 */
 
-	private static List<AbstractController> controllerList = new Vector<AbstractController>();
+	private MenuBarController mainController;
+	private List<AbstractTabController> controllerList;
 
-	public static void addController(AbstractController newController) {
+	public Synchronizer(MenuBarController controller) {
+		mainController = controller;
+		controllerList= new Vector<AbstractTabController>();
+	}
+
+	public void addController(AbstractTabController newController) {
 
 		if (controllerList.isEmpty())
 			controllerList.add(newController);
 
 		else {
 			boolean added = false;
-			for (AbstractController controller : controllerList) {
+			for (AbstractTabController controller : controllerList) {
 				if (added)
-					controller.setUnstable();
+					controller.setCompleted(false);
 				if (newController.getClass().isInstance(controller)) {
 					added = true;
 					controller = newController;
@@ -42,10 +48,10 @@ public class Synchronizer {
 			if (!added)
 				controllerList.add(newController);
 		}
+		//update tabs
 	}
 
-	public static void synchronize(AbstractController trigger) {
-
+	public List<AbstractTabController> getControllers() {
+		return controllerList;
 	}
-
 }

@@ -12,9 +12,7 @@ import javafx.scene.image.Image;
 public class PMCLauncher extends Application {
 	@Override
 	public void start(Stage stage) throws IOException {
-			//Parent root = FXMLLoader.load(getClass().getResource("views/MainView.fxml"));
-			Parent root = FXMLLoader.load(getClass().getResource("views/steps/ImportDataStep.fxml"));
-			
+			Parent root = FXMLLoader.load(getClass().getResource("views/MainView.fxml"));			
 			stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/cube_black.png")));
 			stage.setTitle("(PMC) Process Mining Cube");
 			stage.setScene(new Scene(root));
