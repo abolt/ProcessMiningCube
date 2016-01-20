@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<Tab closable="false" disable="true" xmlns="http://javafx.com/javafx/8"
+	xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.materialize.MaterializeController">
+	<graphic>
+		<BorderPane>
+			<center>
+				<ImageView fx:id="image" pickOnBounds="true"
+					preserveRatio="true" BorderPane.alignment="CENTER">
+					<image>
+						<Image url="images/gear_black.png" />
+					</image>
+				</ImageView>
+			</center>
+			<bottom>
+				<Label text="Materialize" BorderPane.alignment="CENTER" />
+			</bottom>
+		</BorderPane>
+	</graphic>
+	<content>
+		<ScrollPane>
+			<content>
+				<BorderPane prefHeight="645.0" prefWidth="763.0">
+					<left>
+						<AnchorPane prefHeight="645.0" prefWidth="196.0"
+							BorderPane.alignment="CENTER">
+							<children>
+								<Button layoutX="10.0" layoutY="524.0" mnemonicParsing="false"
+									text="Export Selected Cells" textAlignment="CENTER"
+									AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+								<Button layoutX="10.0" layoutY="70.0" mnemonicParsing="false"
+									prefHeight="31.0" prefWidth="170.0" text="Select All Cells"
+									textAlignment="CENTER" AnchorPane.leftAnchor="10.0"
+									AnchorPane.rightAnchor="10.0" />
+								<Button layoutX="10.0" layoutY="108.0" mnemonicParsing="false"
+									text="Clear Selection" textAlignment="CENTER"
+									AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+								<Button layoutX="10.0" layoutY="146.0" mnemonicParsing="false"
+									text="Invert Selection" textAlignment="CENTER"
+									AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+								<Button layoutX="10.0" layoutY="184.0" mnemonicParsing="false"
+									text="Remove Selected Cells" textAlignment="CENTER"
+									AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+								<Separator layoutX="193.0" layoutY="-5.0" orientation="VERTICAL"
+									prefHeight="650.0" prefWidth="0.0" />
+								<Label layoutX="10.0" layoutY="243.0" text="(Primary) Sort cells by:"
+									AnchorPane.leftAnchor="10.0" />
+								<ComboBox layoutX="10.0" layoutY="264.0" prefHeight="31.0"
+									prefWidth="173.0" AnchorPane.leftAnchor="10.0"
+									AnchorPane.rightAnchor="10.0" />
+								<RadioButton layoutX="54.0" layoutY="302.0"
+									mnemonicParsing="false" text="Ascending" AnchorPane.leftAnchor="54.0" />
+								<RadioButton layoutX="53.0" layoutY="327.0"
+									mnemonicParsing="false" text="Descending" />
+								<Button layoutX="10.0" layoutY="567.0" mnemonicParsing="false"
+									text="Visualize Selected Cells" AnchorPane.leftAnchor="10.0"
+									AnchorPane.rightAnchor="10.0" />
+								<RadioButton layoutX="54.0" layoutY="440.0"
+									mnemonicParsing="false" text="Descending"
+									AnchorPane.leftAnchor="54.0" />
+								<RadioButton layoutX="54.0" layoutY="415.0"
+									mnemonicParsing="false" text="Ascending" AnchorPane.leftAnchor="54.0" />
+								<ComboBox layoutX="10.0" layoutY="377.0" prefHeight="31.0"
+									prefWidth="173.0" AnchorPane.leftAnchor="10.0"
+									AnchorPane.rightAnchor="10.0" />
+								<Label layoutX="10.0" layoutY="356.0" prefHeight="21.0"
+									prefWidth="176.0" text="(Secondary) Sort cells by:"
+									AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+								<Label layoutX="10.0" layoutY="488.0" text="# Selected Cells:" />
+								<TextField layoutX="121.0" layoutY="483.0" prefHeight="31.0"
+									prefWidth="65.0" AnchorPane.rightAnchor="10.0" />
+								<ComboBox layoutX="10.0" layoutY="27.0" prefHeight="31.0"
+									prefWidth="173.0" AnchorPane.leftAnchor="10.0"
+									AnchorPane.rightAnchor="10.0" />
+								<Label layoutX="10.0" layoutY="6.0" text="Show in Mini View:"
+									AnchorPane.leftAnchor="10.0" />
+							</children>
+						</AnchorPane>
+					</left>
+					<center>
+						<ScrollPane prefHeight="200.0" prefWidth="200.0"
+							BorderPane.alignment="CENTER">
+							<content>
+								<TilePane hgap="10.0" prefColumns="2" prefWidth="565.0"
+									vgap="10.0">
+									<padding>
+										<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+									</padding>
+								</TilePane>
+							</content>
+						</ScrollPane>
+					</center>
+				</BorderPane>
+			</content>
+		</ScrollPane>
+	</content>
+</Tab>
+

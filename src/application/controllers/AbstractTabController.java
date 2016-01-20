@@ -21,7 +21,7 @@ public abstract class AbstractTabController {
 
 	public void setCompleted(boolean completed) {
 		this.completed = completed;
-		if(completed)
+		if (completed)
 			mainController.completeTriggered(name);
 	}
 

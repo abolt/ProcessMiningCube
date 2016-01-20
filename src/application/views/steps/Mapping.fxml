@@ -22,7 +22,7 @@
 				</ImageView>
 			</center>
 			<bottom>
-				<Label text="Import Data" BorderPane.alignment="CENTER" />
+				<Label text="Mapping" BorderPane.alignment="CENTER" />
 			</bottom>
 		</BorderPane>
 	</graphic>

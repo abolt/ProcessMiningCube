@@ -1,15 +1,19 @@
 package application.controllers;
 
+import application.controllers.cube.CubeController;
 import application.controllers.dimensions.DimensionsController;
 import application.controllers.importdata.ImportDataController;
-import application.controllers.mapping.MappingController;
 import application.controllers.mapping.Attribute;
+import application.controllers.mapping.MappingController;
+import application.controllers.materialize.MaterializeController;
 import application.controllers.menu.MenuBarController;
+import application.controllers.visualize.VisualizeController;
 import application.models.eventlog.EventLog;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 
 public class MainController {
 
@@ -23,19 +27,24 @@ public class MainController {
 	@FXML
 	MenuBarController menuBarController;
 
+	// tabbed pane (used for selection)
+	@FXML
+	TabPane tabbedPane;
 	// steps
 	@FXML
-	Tab tabImportData;
+	Tab tabImportData, tabMapping, tabDimensions, tabCube, tabMaterialize, tabVisualize;
 	@FXML
 	ImportDataController tabImportDataController;
 	@FXML
-	Tab tabMapping;
-	@FXML
 	MappingController tabMappingController;
 	@FXML
-	Tab tabDimensions;
-	@FXML
 	DimensionsController tabDimensionsController;
+	@FXML
+	CubeController tabCubeController;
+	@FXML
+	MaterializeController tabMaterializeController;
+	@FXML
+	VisualizeController tabVisualizeController;
 
 	@FXML
 	public void initialize() {
@@ -49,6 +58,15 @@ public class MainController {
 
 		tabDimensionsController.init(this);
 		tabDimensionsController.initializeTab(tabDimensions);
+
+		tabCubeController.init(this);
+		tabCubeController.initializeTab(tabCube);
+
+		tabMaterializeController.init(this);
+		tabMaterializeController.initializeTab(tabMaterialize);
+
+		tabVisualizeController.init(this);
+		tabVisualizeController.initializeTab(tabVisualize);
 
 	}
 
@@ -80,21 +98,65 @@ public class MainController {
 		tabImportDataController.updateImage();
 		tabMappingController.updateImage();
 		tabDimensionsController.updateImage();
+		tabCubeController.updateImage();
+		tabMaterializeController.updateImage();
+		tabVisualizeController.updateImage();
 	}
 
 	public void completeTriggered(String name) {
 		switch (name) {
 		case "importDataController":
+			selectTab(tabMapping);
 			tabMappingController.setEnabled(true);
 			tabMappingController.setCompleted(false);
 			tabDimensionsController.setEnabled(false);
 			tabDimensionsController.setCompleted(false);
+			tabCubeController.setEnabled(false);
+			tabCubeController.setCompleted(false);
+			tabMaterializeController.setEnabled(false);
+			tabMaterializeController.setCompleted(false);
+			tabVisualizeController.setEnabled(false);
+			tabVisualizeController.setCompleted(false);
 			break;
 		case "mappingController":
+			selectTab(tabDimensions);
 			tabDimensionsController.setEnabled(true);
 			tabDimensionsController.setCompleted(false);
+			tabCubeController.setEnabled(false);
+			tabCubeController.setCompleted(false);
+			tabMaterializeController.setEnabled(false);
+			tabMaterializeController.setCompleted(false);
+			tabVisualizeController.setEnabled(false);
+			tabVisualizeController.setCompleted(false);
+			break;
+		case "dimensionsController":
+			selectTab(tabCube);
+			tabCubeController.setEnabled(true);
+			tabCubeController.setCompleted(false);
+			tabMaterializeController.setEnabled(false);
+			tabMaterializeController.setCompleted(false);
+			tabVisualizeController.setEnabled(false);
+			tabVisualizeController.setCompleted(false);
+			break;
+		case "cubeController":
+			selectTab(tabMaterialize);
+			tabMaterializeController.setEnabled(true);
+			tabMaterializeController.setCompleted(false);
+			tabVisualizeController.setEnabled(false);
+			tabVisualizeController.setCompleted(false);
+			break;
+		case "materializeController":
+			selectTab(tabVisualize);
+			tabVisualizeController.setEnabled(true);
+			tabVisualizeController.setCompleted(false);
+		case "visualizeController":
+			// do nothing, all tabs are enabled
 			break;
 		}
 		updateTabs();
+	}
+
+	private void selectTab(Tab input) {
+		tabbedPane.getSelectionModel().select(input);
 	}
 }
