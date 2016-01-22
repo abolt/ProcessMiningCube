@@ -59,5 +59,15 @@
 			<attribute name="javadoc_location" value="file:/C:/Users/abolt/workspace/Cube_MySQL/doc/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="stdlib/Log.jar"/>
+	<classpathentry kind="lib" path="stdlib/univocity-parsers-1.5.5.jar"/>
+	<classpathentry kind="lib" path="stdlib/LogEnhancement.jar"/>
+	<classpathentry kind="lib" path="stdlib/juniversalchardet-1.0.3.jar"/>
+	<classpathentry kind="lib" path="stdlib/commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="stdlib/compress-lzf-0.9.8.jar"/>
+	<classpathentry kind="lib" path="stdlib/OpenXES-20150807.jar"/>
+	<classpathentry kind="lib" path="stdlib/OpenXES-XStream-20150807.jar"/>
+	<classpathentry kind="lib" path="stdlib/OpenXES-XStream.jar"/>
+	<classpathentry kind="lib" path="stdlib/OpenXES.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
