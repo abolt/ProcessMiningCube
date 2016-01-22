@@ -41,7 +41,7 @@ public class DimensionsController extends AbstractTabController {
 
 		// populate unused attributes
 		usedAttMap = new HashMap<Attribute, Boolean>();
-		for (MappingRow attribute : mainController.getAttributeObjects())
+		for (MappingRow attribute : mainController.getMappingRows())
 			// usedAttMap.put(attribute.getAttribute(), false);
 			;
 		ObservableList<Attribute> unused = FXCollections.observableArrayList();

@@ -2,7 +2,12 @@ package application.operations.io;
 
 import java.io.File;
 
-public abstract class Importer<T> {
+import org.deckfour.xes.model.XLog;
+
+import application.controllers.mapping.MappingRow;
+import javafx.collections.ObservableList;
+
+public abstract class Importer {
 
 	protected File file;
 	
@@ -10,5 +15,6 @@ public abstract class Importer<T> {
 		file = in;
 	}
 	public abstract boolean canParse();
-	public abstract T importFromFile();
+	public abstract XLog importFromFile();
+	public abstract ObservableList<MappingRow> getSampleList();
 }

@@ -1,5 +1,9 @@
 package application.controllers;
 
+import java.util.Map;
+
+import org.deckfour.xes.model.XLog;
+
 import application.controllers.cube.CubeController;
 import application.controllers.dimensions.DimensionsController;
 import application.controllers.importdata.ImportDataController;
@@ -8,8 +12,8 @@ import application.controllers.mapping.MappingRow;
 import application.controllers.materialize.MaterializeController;
 import application.controllers.menu.MenuBarController;
 import application.controllers.visualize.VisualizeController;
-import application.models.eventlog.CSVFile;
-import application.models.eventlog.EventLog;
+import application.models.dimension.Attribute;
+import application.operations.io.Importer;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
@@ -19,9 +23,10 @@ import javafx.scene.control.TabPane;
 public class MainController {
 
 	// bus
-	private EventLog log;
-	private CSVFile csv;
-	private ObservableList<MappingRow> attributeObjects;
+	private Importer importer;
+	private XLog log;
+	private ObservableList<MappingRow> mappingRows;
+	private Map<Attribute, Boolean> attributes;
 
 	// menubar
 	@FXML
@@ -72,20 +77,28 @@ public class MainController {
 
 	}
 
-	public EventLog getLog() {
+	public Importer getImporter() {
+		return importer;
+	}
+
+	public void setImporter(Importer importer) {
+		this.importer = importer;
+	}
+
+	public XLog getLog() {
 		return log;
 	}
 
-	public void setLog(EventLog log) {
+	public void setLog(XLog log) {
 		this.log = log;
 	}
 
-	public ObservableList<MappingRow> getAttributeObjects() {
-		return attributeObjects;
+	public ObservableList<MappingRow> getMappingRows() {
+		return mappingRows;
 	}
 
-	public void setAttributeObjects(ObservableList<MappingRow> attributeObjects) {
-		this.attributeObjects = attributeObjects;
+	public void setMappingRows(ObservableList<MappingRow> attributeObjects) {
+		this.mappingRows = attributeObjects;
 	}
 
 	public void newCube() {

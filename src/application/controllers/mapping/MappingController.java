@@ -4,20 +4,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
-import org.deckfour.xes.model.XEvent;
-import org.deckfour.xes.model.XLog;
-import org.deckfour.xes.model.XTrace;
-
 import application.controllers.AbstractTabController;
-import application.models.eventlog.CSVFile;
-import application.models.eventlog.EventLog;
-import javafx.collections.FXCollections;
+import application.operations.io.Importer;
+import application.operations.io.log.CSVImporter;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -43,7 +35,7 @@ public class MappingController extends AbstractTabController {
 	public static final String[] categories = { IGNORE, CASE_ID, ACTIVITY_ID, TIMESTAMP, TEXT, DISCRETE, CONTINUOUS,
 			DATE_TIME };
 
-	private ObservableList<MappingRow> attributeObjects = FXCollections.observableArrayList();
+	private ObservableList<MappingRow> attributeObjects;
 
 	@FXML
 	private TableView<MappingRow> mappingTable;
@@ -69,29 +61,49 @@ public class MappingController extends AbstractTabController {
 		// we need at least a case id, an activity id and a timestamp.
 		boolean case_id = false, activity_id = false, timestamp = false;
 		boolean canProceed = true;
+		String caseId = null, activityId = null, timeStamp = null, timestampSample = null;
 		for (MappingRow row : attributeObjects) {
 			if (row.getUseAs().contentEquals(CASE_ID))
 				if (case_id)
 					canProceed = false; // two case ids are not allowed
-				else
+				else {
 					case_id = true;
+					caseId = row.getAttributeName();
+				}
 			if (row.getUseAs().contentEquals(ACTIVITY_ID))
 				if (activity_id)
 					canProceed = false; // two case ids are not allowed
-				else
+				else {
 					activity_id = true;
+					activityId = row.getAttributeName();
+				}
+
 			if (row.getUseAs().contentEquals(TIMESTAMP))
 				if (timestamp)
 					canProceed = false; // two case ids are not allowed
-				else
+				else {
 					timestamp = true;
+					@SuppressWarnings("unchecked")
+					Iterator<String> iter = (Iterator<String>) row.getValueSet().iterator();
+					timestampSample = iter.next();
+					timeStamp = row.getAttributeName();
+				}
+
 		}
 		if (!(case_id && activity_id && timestamp)) // if any is missing, cannot
 													// proceed to next step
 			canProceed = false;
 
 		if (canProceed) {
-			mainController.setAttributeObjects(attributeObjects);
+			Importer importer = mainController.getImporter();
+			
+			if (importer instanceof CSVImporter) {
+				((CSVImporter) importer).setCase_id(caseId);
+				((CSVImporter) importer).setActivity_id(activityId);
+				((CSVImporter) importer).setTimestamp(timeStamp);
+				((CSVImporter) importer).setTimestampFormat((SimpleDateFormat) detectTimestampParser(timestampSample));
+			}
+			mainController.setLog(importer.importFromFile());
 			setCompleted(true);
 		} else {
 			if (case_id)
@@ -106,60 +118,9 @@ public class MappingController extends AbstractTabController {
 
 	}
 
-	private void updateTable() {
-
-		// create a set of attribute names
-		Set<String> attributeNamesSet = new HashSet<String>();
-		Map<String, Set<String>> attributes = new HashMap<String, Set<String>>();
-
-		@SuppressWarnings("rawtypes")
-		EventLog eventLog = mainController.getLog();
-
-		// if XES
-		if (eventLog.getEventLog() instanceof XLog) {
-			XLog log = (XLog) eventLog.getEventLog();
-			// defines the set of attributes
-			for (XTrace trace : log) {
-				for (XEvent event : trace) {
-					attributeNamesSet.addAll(event.getAttributes().keySet());
-				}
-			}
-			// create sample value sets and the corresponding MappingRows
-			int counter = 0;
-			for (String att : attributeNamesSet) {
-				Set<String> values = new HashSet<String>();
-				counter = 5;
-				for (XTrace trace : log) {
-					if (counter == 0)
-						break;
-					for (XEvent event : trace) {
-						if (counter == 0)
-							break;
-						if (event.getAttributes().containsKey(att)
-								&& !event.getAttributes().get(att).toString().isEmpty())
-							if (!values.contains(event.getAttributes().get(att).toString())) {
-								values.add(event.getAttributes().get(att).toString());
-								counter--;
-							}
-					}
-				}
-				attributes.put(att, values);
-			}
-		}
-		// if CSV
-		else if (eventLog.getEventLog() instanceof CSVFile) {
-			
-			//do here!!!!
-
-		}
-		// finally, create the MappingRows
-		for (String att : attributes.keySet()) {
-			attributeObjects.add(new MappingRow(att, attributes.get(att), "ignore", false));
-		}
-		setTable();
-	}
-
 	private void setTable() {
+
+		attributeObjects = mainController.getMappingRows();
 		// setting up the columns
 		attributeColumn.setCellValueFactory(new PropertyValueFactory<MappingRow, String>("attributeName"));
 		attributeColumn.setEditable(false);
@@ -202,7 +163,7 @@ public class MappingController extends AbstractTabController {
 	protected void enableTab(boolean value) {
 		tabMapping.setDisable(!value);
 		if (value)
-			updateTable();
+			setTable();
 	}
 
 	@Override
