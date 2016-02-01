@@ -1,6 +1,6 @@
 package application.controllers;
 
-import java.util.Map;
+import java.util.Set;
 
 import org.deckfour.xes.model.XLog;
 
@@ -12,7 +12,7 @@ import application.controllers.mapping.MappingRow;
 import application.controllers.materialize.MaterializeController;
 import application.controllers.menu.MenuBarController;
 import application.controllers.visualize.VisualizeController;
-import application.models.dimension.Attribute;
+import application.models.dimension.Dimension;
 import application.operations.io.Importer;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,7 +26,7 @@ public class MainController {
 	private Importer importer;
 	private XLog log;
 	private ObservableList<MappingRow> mappingRows;
-	private Map<Attribute, Boolean> attributes;
+	private Set<Dimension> dimensions;
 
 	// menubar
 	@FXML
@@ -106,6 +106,11 @@ public class MainController {
 
 		// enable the import tab and disable the rest
 		tabImportDataController.setEnabled(true);
+		tabMappingController.setEnabled(false);
+		tabDimensionsController.setEnabled(false);
+		tabCubeController.setEnabled(false);
+		tabMaterializeController.setEnabled(false);
+		tabVisualizeController.setEnabled(false);
 		updateTabs();
 	}
 

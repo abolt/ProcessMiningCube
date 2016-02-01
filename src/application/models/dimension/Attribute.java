@@ -35,8 +35,8 @@ public class Attribute {
 	public void addValue(Object value) {
 		if (type.isInstance(value)) {
 			valueSet.put(value, true);
-		} else {
-			System.out.println("value " + value.toString() + "does not match the attribute type " + type.getName());
+		} else if (value != null) {
+			System.out.println("value " + value.toString() + " (class " + value.getClass() + ") does not match the attribute type " + type.getName());
 		}
 	}
 

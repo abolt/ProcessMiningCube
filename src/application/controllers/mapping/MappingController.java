@@ -96,14 +96,16 @@ public class MappingController extends AbstractTabController {
 
 		if (canProceed) {
 			Importer importer = mainController.getImporter();
-			
+
 			if (importer instanceof CSVImporter) {
 				((CSVImporter) importer).setCase_id(caseId);
 				((CSVImporter) importer).setActivity_id(activityId);
 				((CSVImporter) importer).setTimestamp(timeStamp);
 				((CSVImporter) importer).setTimestampFormat((SimpleDateFormat) detectTimestampParser(timestampSample));
 			}
+			mainController.setMappingRows(attributeObjects);
 			mainController.setLog(importer.importFromFile());
+
 			setCompleted(true);
 		} else {
 			if (case_id)
