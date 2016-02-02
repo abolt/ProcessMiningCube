@@ -1,7 +1,5 @@
 package application.controllers;
 
-import java.util.Set;
-
 import org.deckfour.xes.model.XLog;
 
 import application.controllers.cube.CubeController;
@@ -26,7 +24,7 @@ public class MainController {
 	private Importer importer;
 	private XLog log;
 	private ObservableList<MappingRow> mappingRows;
-	private Set<Dimension> dimensions;
+	private ObservableList<Dimension> dimensions;
 
 	// menubar
 	@FXML
@@ -99,6 +97,14 @@ public class MainController {
 
 	public void setMappingRows(ObservableList<MappingRow> attributeObjects) {
 		this.mappingRows = attributeObjects;
+	}
+
+	public void setDimensions(ObservableList<Dimension> dim) { 
+		this.dimensions = dim;
+	}
+
+	public ObservableList<Dimension> getDimensions() {
+		return this.dimensions;
 	}
 
 	public void newCube() {

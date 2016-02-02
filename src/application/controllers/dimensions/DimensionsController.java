@@ -17,15 +17,24 @@ import application.controllers.AbstractTabController;
 import application.controllers.mapping.MappingController;
 import application.controllers.mapping.MappingRow;
 import application.models.dimension.Attribute;
+import application.models.dimension.Dimension;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 
 public class DimensionsController extends AbstractTabController {
 
@@ -39,36 +48,78 @@ public class DimensionsController extends AbstractTabController {
 	Button createDimensionsButton;
 
 	@FXML
-	private ListView<Attribute> unusedAttributes;
+	private ListView<Attribute> unusedAttributes, dimensionAttributes;
 
-	private Map<Attribute, Boolean> attributes;
+	@FXML
+	private ListView<Dimension> dimensionList;
+
+	private Map<String, Attribute> attributes;
 
 	@FXML
 	protected void initialize() {
 		name = "dimensionsController";
 	}
 
-	public void poplateLists() {
+	public void populateLists() {
 
-		// create attributes from the log
+		// create attributes and dimensions from the log and the mapping step
 		createAttributesFromLog();
-
-		// populate used (boolean) attributes list
-		ObservableList<Attribute> unused = FXCollections.observableArrayList();
-		for (Attribute attribute : attributes.keySet())
-			if (attributes.get(attribute) == false)
-				unused.add(attribute);
-
-		// check the existing dimensions
-		unusedAttributes.setItems(unused);
-
-		// if dimensions had to be created, create them with their corresponding
-		// attributes!
+		createDimensions();
+		updateUnusedList();
+		enableDragDrop();
+		// unused attributes go to this list
 
 	}
 
 	public void updateLists() {
 
+	}
+
+	public void enableDragDrop() {
+
+		unusedAttributes.setOnDragDetected(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (unusedAttributes.getSelectionModel().getSelectedItem() == null) {
+					return;
+				}
+
+				Dragboard dragBoard = unusedAttributes.startDragAndDrop(TransferMode.MOVE);
+				ClipboardContent content = new ClipboardContent();
+				content.putString(unusedAttributes.getSelectionModel().getSelectedItem().getAttributeName());
+				dragBoard.setContent(content);
+			}
+		});
+
+		dimensionAttributes.setOnDragOver(new EventHandler<DragEvent>() {
+			@Override
+			public void handle(DragEvent dragEvent) {
+				dragEvent.acceptTransferModes(TransferMode.MOVE);
+			}
+		});
+
+		dimensionAttributes.setOnDragDropped(new EventHandler<DragEvent>() {
+			@Override
+			public void handle(DragEvent dragEvent) {
+				dimensionAttributes.getItems().add(unusedAttributes.getSelectionModel().getSelectedItem());
+				unusedAttributes.getItems().remove(unusedAttributes.getSelectionModel().getSelectedItem());
+				dimensionAttributes.refresh();
+				unusedAttributes.refresh();
+			}
+		});
+	}
+
+	private void updateUnusedList() {
+		ObservableList<Attribute> used = FXCollections.observableArrayList();
+		for (Attribute a : attributes.values())
+			for (Dimension d : mainController.getDimensions())
+				if (d.getAttributes().contains(a))
+					used.add(a);
+		ObservableList<Attribute> unused = FXCollections.observableArrayList();
+		for (Attribute a : attributes.values())
+			if (!used.contains(a))
+				unused.add(a);
+		unusedAttributes.setItems(unused);
 	}
 
 	@Override
@@ -80,7 +131,7 @@ public class DimensionsController extends AbstractTabController {
 	protected void enableTab(boolean value) {
 		tabDimensions.setDisable(!value);
 		if (value)
-			poplateLists();
+			populateLists();
 	}
 
 	@Override
@@ -102,7 +153,7 @@ public class DimensionsController extends AbstractTabController {
 	}
 
 	private void createAttributesFromLog() {
-		attributes = new HashMap<Attribute, Boolean>();
+		attributes = new HashMap<String, Attribute>();
 		XLog log = mainController.getLog();
 
 		Set<String> classes = new HashSet<String>();
@@ -116,7 +167,7 @@ public class DimensionsController extends AbstractTabController {
 						if (e.getAttributes().get(m.getAttributeName()) != null)
 							classes.add(e.getAttributes().get(m.getAttributeName()).getClass().getSimpleName());
 					}
-				attributes.put(attribute, false);
+				attributes.put(attribute.getAttributeName(), attribute);
 			}
 		}
 		System.out.println(classes);
@@ -144,5 +195,29 @@ public class DimensionsController extends AbstractTabController {
 			return XAttributeTimestampImpl.class;
 		}
 		return null;
+	}
+
+	private void createDimensions() {
+
+		ObservableList<Dimension> dimensions = FXCollections.observableArrayList();
+
+		for (MappingRow m : mainController.getMappingRows()) {
+			if (m.createDimensionProperty().getValue() && !m.getUseAs().equals(MappingController.IGNORE)) {
+				Dimension newDimension = new Dimension(m.getAttributeName());
+				newDimension.addAttribute(attributes.get(m.getAttributeName()));
+				dimensions.add(newDimension);
+			}
+		}
+		mainController.setDimensions(dimensions);
+
+		dimensionList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Dimension>() {
+			@Override
+			public void changed(ObservableValue<? extends Dimension> observable, Dimension oldValue,
+					Dimension newValue) {
+				dimensionAttributes.setItems(newValue.getAttributes());
+			}
+		});
+		dimensionList.setItems(mainController.getDimensions());
+
 	}
 }

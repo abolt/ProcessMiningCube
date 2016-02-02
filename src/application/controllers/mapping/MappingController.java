@@ -148,10 +148,11 @@ public class MappingController extends AbstractTabController {
 			}
 		});
 
-		dimensionColumn.setCellValueFactory(new PropertyValueFactory<MappingRow, Boolean>("createDimension"));
-		dimensionColumn.setEditable(true);
 		dimensionColumn.setCellFactory(CheckBoxTableCell.forTableColumn(dimensionColumn));
-
+		dimensionColumn.setEditable(true);
+		dimensionColumn.setCellValueFactory(new PropertyValueFactory<MappingRow, Boolean>("createDimension"));
+		
+		
 		// set the table
 		mappingTable.setEditable(true);
 		mappingTable.setItems(attributeObjects);

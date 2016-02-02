@@ -2,19 +2,22 @@ package application.controllers.mapping;
 
 import java.util.Set;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
+
 public class MappingRow {
 
 	private String attributeName;
 
 	private Set<?> valueSet;
 	private String useAs;
-	private boolean createDimension;
+	private ObservableValue<Boolean> createDimension;
 
 	public MappingRow(String name, Set<?> values, String use, boolean create) {
 		attributeName = name;
 		valueSet = values;
 		useAs = use;
-		createDimension = create;
+		createDimension = new SimpleBooleanProperty(create);
 	}
 
 	public String getAttributeName() {
@@ -25,7 +28,7 @@ public class MappingRow {
 		return valueSet;
 	}
 
-	public boolean getCreateDimension() {
+	public ObservableValue<Boolean> createDimensionProperty() {
 		return createDimension;
 	}
 

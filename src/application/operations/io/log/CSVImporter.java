@@ -70,8 +70,8 @@ public class CSVImporter extends Importer {
 			config = new CSVConfig(csvFile);
 			CSVConversion conversion = new CSVConversion();
 			CSVConversionConfig conversionConfig = new CSVConversionConfig(csvFile, config);
-			
-			//conversionConfig.autoDetect();
+
+			// conversionConfig.autoDetect();
 
 			conversionConfig.setCaseColumns(ImmutableList.of(case_id));
 			conversionConfig.setEventNameColumns(ImmutableList.of(activity_id));
@@ -86,7 +86,8 @@ public class CSVImporter extends Importer {
 			mapping.setDataType(Datatype.TIME);
 			mapping.setPattern(timestampFormat.toPattern());
 
-			ConversionResult<XLog> result = conversion.doConvertCSVToXES(new NoOpProgressListenerImpl(), csvFile, config, conversionConfig);
+			ConversionResult<XLog> result = conversion.doConvertCSVToXES(new NoOpProgressListenerImpl(), csvFile,
+					config, conversionConfig);
 
 			return result.getResult();
 
