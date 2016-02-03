@@ -11,13 +11,25 @@ public class Dimension {
 	// it does show in the list of
 	// selected dimensions, and its filters do apply
 	private ObservableValue<String> dimensionName;
-	private boolean visible, sliced;
+	private boolean visible, sliced, diced;
+
 	private Attribute granularity;
 	private ObservableList<Attribute> attributes;
 
 	public Dimension(String name) {
 		dimensionName = new SimpleStringProperty(name);
 		attributes = FXCollections.observableArrayList();
+		visible = false;
+		sliced = false;
+		diced = false;
+	}
+
+	public boolean isDiced() {
+		return diced;
+	}
+
+	public void setDiced(boolean diced) {
+		this.diced = diced;
 	}
 
 	public void addAttribute(Attribute a) {
@@ -56,13 +68,13 @@ public class Dimension {
 	public ObservableList<Attribute> getAttributes() {
 		return attributes;
 	}
-	
+
 	@Override
 	public String toString() {
 		return dimensionName.getValue();
 	}
-	
-	public ObservableValue<String> getNameProperty(){
+
+	public ObservableValue<String> getNameProperty() {
 		return dimensionName;
 	}
 

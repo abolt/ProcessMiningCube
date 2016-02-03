@@ -214,7 +214,10 @@ public class DimensionsController extends AbstractTabController {
 			@Override
 			public void changed(ObservableValue<? extends Dimension> observable, Dimension oldValue,
 					Dimension newValue) {
-				dimensionAttributes.setItems(newValue.getAttributes());
+				if(newValue != null)
+					dimensionAttributes.setItems(newValue.getAttributes());
+				else
+					dimensionAttributes.setItems(null);
 			}
 		});
 		dimensionList.setItems(mainController.getDimensions());

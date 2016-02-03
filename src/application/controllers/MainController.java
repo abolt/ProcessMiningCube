@@ -1,5 +1,8 @@
 package application.controllers;
 
+import java.util.Map;
+
+import org.deckfour.xes.model.XAttribute;
 import org.deckfour.xes.model.XLog;
 
 import application.controllers.cube.CubeController;
@@ -10,10 +13,12 @@ import application.controllers.mapping.MappingRow;
 import application.controllers.materialize.MaterializeController;
 import application.controllers.menu.MenuBarController;
 import application.controllers.visualize.VisualizeController;
+import application.models.dimension.Attribute;
 import application.models.dimension.Dimension;
 import application.operations.io.Importer;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -25,6 +30,7 @@ public class MainController {
 	private XLog log;
 	private ObservableList<MappingRow> mappingRows;
 	private ObservableList<Dimension> dimensions;
+	private Map<Attribute, ObservableList<CheckBoxTreeItem<XAttribute>>> selectedValues;
 
 	// menubar
 	@FXML
@@ -105,6 +111,14 @@ public class MainController {
 
 	public ObservableList<Dimension> getDimensions() {
 		return this.dimensions;
+	}
+	
+	public Map<Attribute, ObservableList<CheckBoxTreeItem<XAttribute>>> getSelectedValues() {
+		return selectedValues;
+	}
+
+	public void setSelectedValues(Map<Attribute, ObservableList<CheckBoxTreeItem<XAttribute>>> selectedValues) {
+		this.selectedValues = selectedValues;
 	}
 
 	public void newCube() {

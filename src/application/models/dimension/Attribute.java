@@ -6,17 +6,19 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.deckfour.xes.model.XAttribute;
+
 @SuppressWarnings("rawtypes")
 public class Attribute {
 
 	private String attributeName;
 	private Class type;
-	private Map<Object, Boolean> valueSet;
+	private Map<XAttribute, Boolean> valueSet;
 
 	public Attribute(String name, Class typeClass) {
 		attributeName = name;
 		type = typeClass;
-		valueSet = new HashMap<Object, Boolean>();
+		valueSet = new HashMap<>();
 
 	}
 
@@ -32,7 +34,7 @@ public class Attribute {
 		return type;
 	}
 
-	public void addValue(Object value) {
+	public void addValue(XAttribute value) {
 		if (type.isInstance(value)) {
 			valueSet.put(value, true);
 		} else if (value != null) {
@@ -40,7 +42,7 @@ public class Attribute {
 		}
 	}
 
-	public Set<?> getValueSet() {
+	public Set<? extends XAttribute> getValueSet() {
 		return valueSet.keySet();
 	}
 

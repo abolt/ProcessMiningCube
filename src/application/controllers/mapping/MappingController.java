@@ -155,6 +155,7 @@ public class MappingController extends AbstractTabController {
 		
 		// set the table
 		mappingTable.setEditable(true);
+		mappingTable.getSelectionModel().cellSelectionEnabledProperty().set(true);
 		mappingTable.setItems(attributeObjects);
 	}
 
