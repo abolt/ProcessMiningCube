@@ -1,17 +1,26 @@
 package application.controllers.visualize;
 
 import application.controllers.AbstractTabController;
+import application.models.cube.Cell;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class VisualizeController extends AbstractTabController {
 
+	public static final String ALPHA = "Alpha Miner", HEURISTIC = "Heuristics Miner", DOTTED = "Dotted Chart",
+			INDUCTIVE = "Inductive Miner", DIRECTLY_FOLLOWS = "Directly Follows Graph (FAST)";
+
+	private ObservableList<String> algorithmSelectionList;
 	@FXML
 	private Tab tabVisualize;
-
+	@FXML
+	private ComboBox<String> algorithmSelection;
 	@FXML
 	private ImageView image;
 
@@ -28,8 +37,16 @@ public class VisualizeController extends AbstractTabController {
 	@Override
 	protected void enableTab(boolean value) {
 		tabVisualize.setDisable(!value);
-		if (value)
-			;
+		if (value) {
+			algorithmSelectionList = FXCollections.observableArrayList();
+			algorithmSelectionList.add(ALPHA);
+			algorithmSelectionList.add(HEURISTIC);
+			algorithmSelectionList.add(INDUCTIVE);
+			algorithmSelectionList.add(DOTTED);
+			algorithmSelectionList.add(DIRECTLY_FOLLOWS);
+			algorithmSelection.setItems(algorithmSelectionList);
+		}
+
 	}
 
 	@Override
@@ -45,7 +62,10 @@ public class VisualizeController extends AbstractTabController {
 	@FXML
 	protected void handleVisualizeButton(ActionEvent event) {
 
-		// do stuff
+		// for each cell build a new window popup with the JComponent as result
+		for(Cell cell : mainController.getCube().getCells()){
+			
+		}
 
 		setCompleted(true);
 	}
