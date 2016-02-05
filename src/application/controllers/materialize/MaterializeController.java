@@ -1,6 +1,5 @@
 package application.controllers.materialize;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.deckfour.xes.factory.XFactory;
@@ -11,11 +10,11 @@ import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 
-import application.PMCLauncher;
 import application.controllers.AbstractTabController;
 import application.controllers.cube.CubeController;
 import application.controllers.mapping.MappingController;
 import application.controllers.mapping.MappingRow;
+import application.controllers.materialize.miniviews.DimensionValuesController;
 import application.models.cube.Cell;
 import application.models.cube.Cube;
 import application.models.dimension.Attribute;
@@ -24,9 +23,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBoxTreeItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -98,15 +95,11 @@ public class MaterializeController extends AbstractTabController {
 	}
 
 	private void setCellVisualizers() {
-		for (Cell cell : cube.getCells())
-			try {
-				
-				tilePane.getChildren().add(FXMLLoader.load(PMCLauncher.class.getResource("views/MiniView_DimensionValues.fxml")));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
+		for (Cell cell : cube.getCells()) {
+			DimensionValuesController element = new DimensionValuesController();
+			element.initializeValues(cell);
+			tilePane.getChildren().add(element);
+		}
 
 	}
 
@@ -140,7 +133,7 @@ public class MaterializeController extends AbstractTabController {
 						.get(dimensions.get(0).getGranularity())) {
 					if (a.isSelected()) {
 						Cell cell = new Cell(null, mainController.getLog());
-						cell.addValue(a.getValue());
+						cell.addValue(a.getValue(), dimensions.get(0).toString());
 						output.add(cell);
 					}
 				}
@@ -152,11 +145,11 @@ public class MaterializeController extends AbstractTabController {
 							if (cell.hasAttribute(a.getValue().getKey())) {
 								Cell c = new Cell(null, mainController.getLog());
 								for (XAttribute att : cell.getDimensionalValues().values())
-									c.addValue(att);
-								c.addValue(a.getValue());
+									c.addValue(att, cell.getDimension(att.getKey()));
+								c.addValue(a.getValue(), dimensions.get(0).toString());
 								output.add(c);
 							} else {
-								cell.addValue(a.getValue());
+								cell.addValue(a.getValue(), dimensions.get(0).toString());
 								output.add(cell);
 							}
 						}

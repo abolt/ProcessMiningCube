@@ -18,17 +18,21 @@ public class Cell {
 	private XLog log;
 	private boolean hasTraces = false;
 	private Map<String, XAttribute> dimensionalValues;
+	private Map<String, String> dimensions;
 
 	private ObservableList<XEvent> events;
 
 	public Cell(Map<String, XAttribute> dim, XLog log) {
 		if (dim != null)
 			dimensionalValues = dim;
-		else
+		else {
 			dimensionalValues = new HashMap<String, XAttribute>();
+			dimensions = new HashMap<String, String>();
+		}
 		XFactory factory = new XFactoryBufferedImpl();
 		this.log = factory.createLog(log.getAttributes());
 		events = FXCollections.observableArrayList();
+
 	}
 
 	public XLog getLog() {
@@ -43,8 +47,9 @@ public class Cell {
 		this.log = log;
 	}
 
-	public void addValue(XAttribute att) {
+	public void addValue(XAttribute att, String dimensionName) {
 		dimensionalValues.put(att.getKey(), att);
+		dimensions.put(att.getKey(), dimensionName);
 	}
 
 	public boolean hasAttribute(String name) {
@@ -95,5 +100,8 @@ public class Cell {
 				return false;
 			}
 		return true;
+	}
+	public String getDimension(String attributeName){
+		return dimensions.get(attributeName);
 	}
 }
