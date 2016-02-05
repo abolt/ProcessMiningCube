@@ -13,6 +13,7 @@ import application.controllers.mapping.MappingRow;
 import application.controllers.materialize.MaterializeController;
 import application.controllers.menu.MenuBarController;
 import application.controllers.visualize.VisualizeController;
+import application.models.cube.Cube;
 import application.models.dimension.Attribute;
 import application.models.dimension.Dimension;
 import application.operations.io.Importer;
@@ -31,6 +32,8 @@ public class MainController {
 	private ObservableList<MappingRow> mappingRows;
 	private ObservableList<Dimension> dimensions;
 	private Map<Attribute, ObservableList<CheckBoxTreeItem<XAttribute>>> selectedValues;
+	private String distributionModel;
+	private Cube cube;
 
 	// menubar
 	@FXML
@@ -81,6 +84,22 @@ public class MainController {
 
 	}
 
+	public Cube getCube() {
+		return cube;
+	}
+
+	public void setCube(Cube cube) {
+		this.cube = cube;
+	}
+
+	public String getDistributionModel() {
+		return distributionModel;
+	}
+
+	public void setDistributionModel(String distributionModel) {
+		this.distributionModel = distributionModel;
+	}
+
 	public Importer getImporter() {
 		return importer;
 	}
@@ -105,14 +124,14 @@ public class MainController {
 		this.mappingRows = attributeObjects;
 	}
 
-	public void setDimensions(ObservableList<Dimension> dim) { 
+	public void setDimensions(ObservableList<Dimension> dim) {
 		this.dimensions = dim;
 	}
 
 	public ObservableList<Dimension> getDimensions() {
 		return this.dimensions;
 	}
-	
+
 	public Map<Attribute, ObservableList<CheckBoxTreeItem<XAttribute>>> getSelectedValues() {
 		return selectedValues;
 	}

@@ -1,5 +1,8 @@
 package application.models.dimension;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -15,10 +18,12 @@ public class Dimension {
 
 	private Attribute granularity;
 	private ObservableList<Attribute> attributes;
+	private Map<String, Attribute> attributeMap;
 
 	public Dimension(String name) {
 		dimensionName = new SimpleStringProperty(name);
 		attributes = FXCollections.observableArrayList();
+		attributeMap = new HashMap<String, Attribute>();
 		visible = false;
 		sliced = false;
 		diced = false;
@@ -34,11 +39,14 @@ public class Dimension {
 
 	public void addAttribute(Attribute a) {
 		attributes.add(a);
+		attributeMap.put(a.getAttributeName(), a);
 	}
 
 	public void removeAttribute(Attribute a) {
-		if (attributes.contains(a))
+		if (attributes.contains(a)) {
 			attributes.remove(a);
+			attributeMap.put(a.getAttributeName(), null);
+		}
 	}
 
 	public void setGranularity(Attribute a) {
@@ -76,6 +84,17 @@ public class Dimension {
 
 	public ObservableValue<String> getNameProperty() {
 		return dimensionName;
+	}
+
+	public boolean hasAttribute(String name) {
+		if (attributeMap.containsKey(name))
+			return true;
+		else
+			return false;
+	}
+
+	public Attribute getAttribute(String name) {
+		return attributeMap.get(name);
 	}
 
 }

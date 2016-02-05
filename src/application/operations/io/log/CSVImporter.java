@@ -23,6 +23,7 @@ import org.processmining.log.csvimport.config.CSVConversionConfig.Datatype;
 
 import com.google.common.collect.ImmutableList;
 
+import application.controllers.mapping.MappingController;
 import application.controllers.mapping.MappingRow;
 import application.operations.io.Importer;
 import javafx.collections.FXCollections;
@@ -124,7 +125,7 @@ public class CSVImporter extends Importer {
 
 			ObservableList<MappingRow> attributeObjects = FXCollections.observableArrayList();
 			for (String att : attributes.keySet()) {
-				attributeObjects.add(new MappingRow(att, attributes.get(att), "ignore", false));
+				attributeObjects.add(new MappingRow(att, attributes.get(att), MappingController.IGNORE, false));
 			}
 			return attributeObjects;
 

@@ -28,8 +28,8 @@ import javafx.scene.image.ImageView;
 
 public class MappingController extends AbstractTabController {
 
-	public static final String IGNORE = "ignore", CASE_ID = "(event) case_id", ACTIVITY_ID = "(event) activity id",
-			TIMESTAMP = "(event) timestamp", TEXT = "(other) text", DISCRETE = "(other) discrete number",
+	public static final String IGNORE = "Ignore", CASE_ID = "Case Id", ACTIVITY_ID = "Activity Id",
+			TIMESTAMP = "Timestamp", TEXT = "(other) text", DISCRETE = "(other) discrete number",
 			CONTINUOUS = "(other) continuous number", DATE_TIME = "(other) date/time";
 
 	public static final String[] categories = { IGNORE, CASE_ID, ACTIVITY_ID, TIMESTAMP, TEXT, DISCRETE, CONTINUOUS,
@@ -108,14 +108,7 @@ public class MappingController extends AbstractTabController {
 
 			setCompleted(true);
 		} else {
-			if (case_id)
-				selectionErrorMessage("You cannot select two case ids!");
-			else if (activity_id)
-				selectionErrorMessage("You cannot select two activity ids!");
-			else if (timestamp)
-				selectionErrorMessage("You cannot select two timestamps!");
-			else
-				selectionErrorMessage("You need to select one:\n- case_id\n- activity_id\n- timestamp");
+			selectionErrorMessage("You need to select one:\n- case_id\n- activity_id\n- timestamp");
 		}
 
 	}
@@ -151,8 +144,7 @@ public class MappingController extends AbstractTabController {
 		dimensionColumn.setCellFactory(CheckBoxTableCell.forTableColumn(dimensionColumn));
 		dimensionColumn.setEditable(true);
 		dimensionColumn.setCellValueFactory(new PropertyValueFactory<MappingRow, Boolean>("createDimension"));
-		
-		
+
 		// set the table
 		mappingTable.setEditable(true);
 		mappingTable.getSelectionModel().cellSelectionEnabledProperty().set(true);

@@ -1,5 +1,6 @@
 package application.models.dimension;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,13 +14,14 @@ public class Attribute {
 
 	private String attributeName;
 	private Class type;
-	private Map<XAttribute, Boolean> valueSet;
+	private Map<String, XAttribute> valueSet;
+	private Map<String, Boolean> selections;
 
 	public Attribute(String name, Class typeClass) {
 		attributeName = name;
 		type = typeClass;
 		valueSet = new HashMap<>();
-
+		selections = new HashMap<String, Boolean>();
 	}
 
 	public String getAttributeName() {
@@ -36,21 +38,21 @@ public class Attribute {
 
 	public void addValue(XAttribute value) {
 		if (type.isInstance(value)) {
-			valueSet.put(value, true);
+			valueSet.put(value.toString(), value);
+			selections.put(value.toString(), true);
 		} else if (value != null) {
-			System.out.println("value " + value.toString() + " (class " + value.getClass() + ") does not match the attribute type " + type.getName());
+			System.out.println("value " + value.toString() + " (class " + value.getClass()
+					+ ") does not match the attribute type " + type.getName());
 		}
 	}
 
-	public Set<? extends XAttribute> getValueSet() {
-		return valueSet.keySet();
+	public boolean hasValue(XAttribute value) { // string value comparison for
+												// now
+		return valueSet.containsKey(value.toString());
 	}
 
-	public Set<?> getSelectedValues() {
-		return null; // for now
-
-		// here I should have a pre-built list of the selected values, this can
-		// save shitloads of time
+	public Collection<? extends XAttribute> getValueSet() {
+		return valueSet.values();
 	}
 
 	public Set<?> getValueSetSample() { // returns the first 5 values
@@ -65,6 +67,15 @@ public class Attribute {
 	@Override
 	public String toString() {
 		return attributeName;
+	}
+
+	public void setSelected(String value, boolean input) {
+		if (valueSet.containsKey(value))
+			selections.put(value, input);
+	}
+
+	public boolean isSelected(String value) {
+		return selections.get(value);
 	}
 
 }

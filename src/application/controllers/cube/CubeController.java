@@ -32,6 +32,8 @@ import javafx.scene.input.TransferMode;
 
 public class CubeController extends AbstractTabController {
 
+	public static final String EVENTS = "events", TRACES_FIRST = "traces (first event)",
+			TRACES_ANY = "traces (any event)";
 	@FXML
 	private Tab tabCube;
 
@@ -49,7 +51,7 @@ public class CubeController extends AbstractTabController {
 	@FXML
 	private ComboBox<Attribute> selectedAttribute, granularity;
 	@FXML
-	private ComboBox<OPTIONS> distributionSelection;
+	private ComboBox<String> distributionSelection;
 
 	@FXML
 	private ListView<Dimension> availableDimensions, cubeDimensions;
@@ -84,14 +86,16 @@ public class CubeController extends AbstractTabController {
 				for (Attribute att : dimension.getAttributes()) {
 					ObservableList<CheckBoxTreeItem<XAttribute>> values = FXCollections.observableArrayList();
 					for (XAttribute a : att.getValueSet()) {
-						values.add(new CheckBoxTreeItem<XAttribute>(a));
+						CheckBoxTreeItem<XAttribute> aux = new CheckBoxTreeItem<XAttribute>(a);
+						aux.selectedProperty().set(att.isSelected(a.toString()));
+						values.add(aux);
 					}
 					selectedValues.put(att, values);
 				}
-			ObservableList<OPTIONS> options = FXCollections.observableArrayList();
-			options.addAll(OPTIONS.events, OPTIONS.traces);
+			ObservableList<String> options = FXCollections.observableArrayList();
+			options.addAll(EVENTS, TRACES_FIRST, TRACES_ANY);
 			distributionSelection.setItems(options);
-			distributionSelection.getSelectionModel().select(OPTIONS.events);
+			distributionSelection.getSelectionModel().select(EVENTS);
 
 			initializeListeners();
 		}
@@ -177,6 +181,11 @@ public class CubeController extends AbstractTabController {
 	@FXML
 	protected void handleCreateCubeButton(ActionEvent event) {
 
+		for (Dimension d : cubeDimensionList)
+			for (Attribute a : d.getAttributes())
+				for (CheckBoxTreeItem<XAttribute> item : selectedValues.get(a))
+					a.setSelected(item.getValue().toString(), item.selectedProperty().get());
+
 		ObservableList<Dimension> allDimensions = mainController.getDimensions();
 		for (Dimension dimension : allDimensions)
 			if (cubeDimensionList.contains(dimension))
@@ -184,6 +193,7 @@ public class CubeController extends AbstractTabController {
 			else
 				dimension.setVisible(false);
 		mainController.setSelectedValues(selectedValues);
+		mainController.setDistributionModel(distributionSelection.getSelectionModel().getSelectedItem());
 		setCompleted(true);
 	}
 
@@ -259,9 +269,5 @@ public class CubeController extends AbstractTabController {
 				dragEvent.consume();
 			}
 		});
-	}
-
-	public enum OPTIONS {
-		events, traces
 	}
 }
