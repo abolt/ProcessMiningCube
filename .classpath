@@ -65,5 +65,8 @@
 	<classpathentry kind="lib" path="stdlib/OpenXES.jar"/>
 	<classpathentry kind="lib" path="stdlib/compress-lzf-1.0.3.jar"/>
 	<classpathentry kind="lib" path="stdlib/java-merge-sort-1.0.0.jar"/>
+	<classpathentry kind="lib" path="stdlib/jgrapht-core-0.9.0.jar"/>
+	<classpathentry kind="lib" path="stdlib/jgraphx-2.0.0.1.jar"/>
+	<classpathentry kind="lib" path="stdlib/jgrapht-ext-0.9.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

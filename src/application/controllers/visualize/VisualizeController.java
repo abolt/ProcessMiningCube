@@ -2,14 +2,18 @@ package application.controllers.visualize;
 
 import application.controllers.AbstractTabController;
 import application.models.cube.Cell;
+import application.operations.miner.FastMiner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Modality;
 
 public class VisualizeController extends AbstractTabController {
 
@@ -45,6 +49,19 @@ public class VisualizeController extends AbstractTabController {
 			algorithmSelectionList.add(DOTTED);
 			algorithmSelectionList.add(DIRECTLY_FOLLOWS);
 			algorithmSelection.setItems(algorithmSelectionList);
+
+			for (Cell cell : mainController.getCube().getCells()) {
+
+				final SwingNode node = new SwingNode();
+				node.setContent(FastMiner.get_visual_results(FastMiner.execute(cell.getLog(), 0.2, 5)));
+				@SuppressWarnings("rawtypes")
+				Dialog dialog = new Dialog<>();
+				dialog.getDialogPane().setPrefSize(600, 600);
+				dialog.getDialogPane().setContent(node);
+				dialog.initModality(Modality.NONE);
+				dialog.setResizable(true);
+				dialog.show();
+			}
 		}
 
 	}
@@ -63,8 +80,8 @@ public class VisualizeController extends AbstractTabController {
 	protected void handleVisualizeButton(ActionEvent event) {
 
 		// for each cell build a new window popup with the JComponent as result
-		for(Cell cell : mainController.getCube().getCells()){
-			
+		for (Cell cell : mainController.getCube().getCells()) {
+
 		}
 
 		setCompleted(true);
