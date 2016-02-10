@@ -5,6 +5,7 @@ import java.util.Map;
 import org.deckfour.xes.model.XAttribute;
 
 import application.PMCLauncher;
+import application.controllers.materialize.MaterializeController;
 import application.models.cube.Cell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,9 +14,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 
-public class DimensionValuesController extends AnchorPane {
+public class DimensionValuesController extends AnchorPane implements MiniViewControllerInterface {
 
 	@FXML
 	TableView<Triplet> table;
@@ -23,7 +26,10 @@ public class DimensionValuesController extends AnchorPane {
 	@FXML
 	TableColumn<Triplet, String> dimension, attribute, value;
 
-	public DimensionValuesController() {
+	private Cell cell;
+	private MaterializeController materializeController;
+
+	public DimensionValuesController(Cell cell, MaterializeController materializeController) {
 
 		FXMLLoader fxmlLoader = new FXMLLoader(PMCLauncher.class.getResource("views/miniview/DimensionValues.fxml"));
 		fxmlLoader.setRoot(this);
@@ -33,9 +39,32 @@ public class DimensionValuesController extends AnchorPane {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		this.cell = cell;
+		this.materializeController = materializeController;
+	}
+	
+	public Cell getCell(){
+		return cell;
 	}
 
-	public void initializeValues(Cell cell){
+	public void setSelected(boolean state) {
+		if (state) {
+			DropShadow shadowEffect = new DropShadow();
+			shadowEffect.setSpread(0.78);
+			shadowEffect.setColor(Color.valueOf("#0c7dee"));
+			this.setEffect(shadowEffect);
+		}
+		else
+			this.setEffect(null);
+		cell.setSelected(state); // change the selection boolean
+	}
+
+	public void changeState() {
+		setSelected(!cell.isSelected());
+		materializeController.updateSelectionCount();
+	}
+
+	public void initializeValues() {
 		dimension.setCellValueFactory(new PropertyValueFactory<Triplet, String>("dimension"));
 		attribute.setCellValueFactory(new PropertyValueFactory<Triplet, String>("attribute"));
 		value.setCellValueFactory(new PropertyValueFactory<Triplet, String>("value"));
@@ -48,6 +77,7 @@ public class DimensionValuesController extends AnchorPane {
 		table.setItems(objectList);
 		table.refresh();
 	}
+
 	public class Triplet {
 		String dimension, attribute, value;
 

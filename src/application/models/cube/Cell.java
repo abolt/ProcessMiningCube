@@ -16,6 +16,7 @@ import javafx.collections.ObservableList;
 public class Cell {
 
 	private XLog log;
+	private boolean isSelected = false;
 	private boolean hasTraces = false;
 	private Map<String, XAttribute> dimensionalValues;
 	private Map<String, String> dimensions;
@@ -32,7 +33,14 @@ public class Cell {
 		XFactory factory = new XFactoryBufferedImpl();
 		this.log = factory.createLog(log.getAttributes());
 		events = FXCollections.observableArrayList();
+	}
+	
+	public boolean isSelected() {
+		return isSelected;
+	}
 
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
 	}
 
 	public XLog getLog() {

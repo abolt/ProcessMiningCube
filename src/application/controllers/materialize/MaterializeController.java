@@ -14,23 +14,34 @@ import application.controllers.AbstractTabController;
 import application.controllers.cube.CubeController;
 import application.controllers.mapping.MappingController;
 import application.controllers.mapping.MappingRow;
+import application.controllers.materialize.miniviews.CaseDistributionController;
 import application.controllers.materialize.miniviews.DimensionValuesController;
+import application.controllers.materialize.miniviews.MiniViewControllerInterface;
 import application.models.cube.Cell;
 import application.models.cube.Cube;
 import application.models.dimension.Attribute;
 import application.models.dimension.Dimension;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 
 public class MaterializeController extends AbstractTabController {
 
+	public static final String DIMENSIONAL_VALUES = "Dimensional Values", CASE_DISTRIBUTION = "Case Distribution",
+			LOG_METRICS = "Log Metrics";
 	@FXML
 	private Tab tabMaterialize;
 
@@ -43,6 +54,12 @@ public class MaterializeController extends AbstractTabController {
 	private TilePane tilePane;
 
 	@FXML
+	private ComboBox<String> miniViewSelection, primarySort, secondarySort;
+
+	@FXML
+	private TextField selectionCount;
+
+	@FXML
 	protected void initialize() {
 		name = "materializeController";
 	}
@@ -50,6 +67,7 @@ public class MaterializeController extends AbstractTabController {
 	@Override
 	public void initializeTab(Tab input) {
 		tabMaterialize = input;
+
 	}
 
 	@Override
@@ -57,10 +75,28 @@ public class MaterializeController extends AbstractTabController {
 		tabMaterialize.setDisable(!value);
 		if (value) {
 			materializeCells();
-			setCellVisualizers();
+
+			ObservableList<String> elements = FXCollections.observableArrayList();
+			elements.addAll(DIMENSIONAL_VALUES, CASE_DISTRIBUTION, LOG_METRICS);
+			miniViewSelection.setItems(elements);
+			miniViewSelection.getSelectionModel().select(DIMENSIONAL_VALUES);
+
+			initializeListeners();
+
+			setCellVisualizers(DIMENSIONAL_VALUES);
 
 		}
 
+	}
+
+	public void initializeListeners() {
+
+		miniViewSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				setCellVisualizers(newValue);
+			}
+		});
 	}
 
 	@Override
@@ -76,8 +112,10 @@ public class MaterializeController extends AbstractTabController {
 	@FXML
 	protected void handleVisualizeCellsButton(ActionEvent event) {
 
-		// do stuff
-		setCompleted(true);
+		if (selectionCount.getText() != null && !selectionCount.getText().equals("0"))
+			setCompleted(true);
+		else
+			selectionMessage();
 	}
 
 	private void materializeCells() {
@@ -94,13 +132,24 @@ public class MaterializeController extends AbstractTabController {
 
 	}
 
-	private void setCellVisualizers() {
-		for (Cell cell : cube.getCells()) {
-			DimensionValuesController element = new DimensionValuesController();
-			element.initializeValues(cell);
-			tilePane.getChildren().add(element);
-		}
+	private void setCellVisualizers(String rendererName) {
+		tilePane.getChildren().clear();
 
+		for (Cell cell : cube.getCells()) {
+			switch (rendererName) {
+			case DIMENSIONAL_VALUES:
+				DimensionValuesController dimElement = new DimensionValuesController(cell, this);
+				dimElement.initializeValues();
+				tilePane.getChildren().add(dimElement);
+				break;
+			case CASE_DISTRIBUTION:
+				CaseDistributionController caseElement = new CaseDistributionController(cell, this);
+				caseElement.initializeValues();
+				tilePane.getChildren().add(caseElement);
+				break;
+			case LOG_METRICS:
+			}
+		}
 	}
 
 	private void createCells() {
@@ -257,4 +306,52 @@ public class MaterializeController extends AbstractTabController {
 		log.addAll(traces.values());
 	}
 
+	/**
+	 * @author abolt Button handlers
+	 */
+	@FXML
+	public void exportSelected(ActionEvent event) {
+
+	}
+
+	@FXML
+	public void selectAll(ActionEvent event) {
+		for (Node node : tilePane.getChildren())
+			if (node instanceof MiniViewControllerInterface)
+				((MiniViewControllerInterface) node).setSelected(true);
+		updateSelectionCount();
+	}
+
+	@FXML
+	public void selectNone(ActionEvent event) {
+		for (Node node : tilePane.getChildren())
+			if (node instanceof MiniViewControllerInterface)
+				((MiniViewControllerInterface) node).setSelected(false);
+		updateSelectionCount();
+	}
+
+	@FXML
+	public void invertSelection(ActionEvent event) {
+		for (Node node : tilePane.getChildren())
+			if (node instanceof MiniViewControllerInterface)
+				((MiniViewControllerInterface) node)
+						.setSelected(!((MiniViewControllerInterface) node).getCell().isSelected());
+		updateSelectionCount();
+	}
+
+	public void updateSelectionCount() {
+		int counter = 0;
+		for (Cell cell : cube.getCells())
+			if (cell.isSelected())
+				counter++;
+		selectionCount.setText(Integer.toString(counter));
+	}
+
+	protected void selectionMessage() {
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setTitle("Error");
+		alert.setHeaderText("No cells selected!");
+		alert.setContentText("You have to select at least one cell in order to proceed to the next step.");
+		alert.showAndWait();
+	}
 }
