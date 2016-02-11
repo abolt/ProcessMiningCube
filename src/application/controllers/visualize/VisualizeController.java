@@ -58,12 +58,7 @@ public class VisualizeController extends AbstractTabController {
 
 	@Override
 	public void updateImage() {
-		if (isEnabled() && !isCompleted())
-			image.setImage(new Image("images/eye_red.png"));
-		else if (isEnabled() && isCompleted())
-			image.setImage(new Image("images/eye_green.png"));
-		else
-			image.setImage(new Image("images/eye_black.png"));
+		
 	}
 
 	@FXML

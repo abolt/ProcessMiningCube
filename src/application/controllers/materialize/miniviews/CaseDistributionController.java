@@ -64,6 +64,16 @@ public class CaseDistributionController extends AnchorPane implements MiniViewCo
 
 		Map<Integer, Integer> caseDistribution = new HashMap<Integer, Integer>(); // <length,
 																					// #>
+		// set initial values
+		int max = 0;
+		for (XTrace trace : cell.getLog()) {
+			if (trace.size() > max)
+				max = trace.size();
+		}
+		if (max > 0)
+			for (int i = 1; i <= max; i++)
+				caseDistribution.put(i, 0);
+
 		for (XTrace trace : cell.getLog()) {
 			if (caseDistribution.containsKey(trace.size()))
 				caseDistribution.put(trace.size(), caseDistribution.get(trace.size()) + 1);
@@ -77,7 +87,7 @@ public class CaseDistributionController extends AnchorPane implements MiniViewCo
 			if (caseDistribution.get(length) > upperBound)
 				upperBound = caseDistribution.get(length);
 		}
-		
+
 		chart.getData().add(values);
 		setSelected(cell.isSelected());
 	}

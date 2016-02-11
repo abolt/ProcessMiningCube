@@ -53,7 +53,7 @@
 									AnchorPane.rightAnchor="10.0" />
 								<Separator layoutX="193.0" layoutY="-5.0" orientation="VERTICAL"
 									prefHeight="650.0" prefWidth="0.0" />
-								<Label layoutX="11.0" layoutY="281.0" text="Sort cells by:"
+								<Label layoutX="11.0" layoutY="281.0" text="Sort cells by: (decreasing)"
 									AnchorPane.leftAnchor="11.0" />
 								<ComboBox fx:id="primarySort" layoutX="11.0" layoutY="302.0"
 									prefHeight="31.0" prefWidth="173.0" AnchorPane.leftAnchor="11.0"

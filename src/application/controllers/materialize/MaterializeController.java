@@ -19,6 +19,7 @@ import application.controllers.materialize.miniviews.CaseDistributionController;
 import application.controllers.materialize.miniviews.DimensionValuesController;
 import application.controllers.materialize.miniviews.MiniViewControllerInterface;
 import application.models.cube.Cell;
+import application.models.cube.Cell.Metrics;
 import application.models.cube.Cube;
 import application.models.dimension.Attribute;
 import application.models.dimension.Dimension;
@@ -44,6 +45,9 @@ public class MaterializeController extends AbstractTabController {
 
 	public static final String DIMENSIONAL_VALUES = "Dimensional Values", CASE_DISTRIBUTION = "Case Distribution",
 			LOG_METRICS = "Log Metrics";
+
+	public static final String NONE = "not sorted", CASES = "# of cases", EVENTS = "# of events",
+			CASE_SIZE = " case size (# ev)", CASE_DURATION = " case duration (sec)", ENTROPY = "log entropy";
 	@FXML
 	private Tab tabMaterialize;
 
@@ -83,14 +87,19 @@ public class MaterializeController extends AbstractTabController {
 			showEmpty.setSelected(true);
 			materializeCells();
 
-			ObservableList<String> elements = FXCollections.observableArrayList();
-			elements.addAll(DIMENSIONAL_VALUES, CASE_DISTRIBUTION, LOG_METRICS);
-			miniViewSelection.setItems(elements);
+			ObservableList<String> miniviewElements = FXCollections.observableArrayList();
+			miniviewElements.addAll(DIMENSIONAL_VALUES, CASE_DISTRIBUTION, LOG_METRICS);
+			miniViewSelection.setItems(miniviewElements);
 			miniViewSelection.getSelectionModel().select(DIMENSIONAL_VALUES);
+
+			ObservableList<String> sortElements = FXCollections.observableArrayList();
+			sortElements.addAll(NONE, CASES, EVENTS, CASE_SIZE, CASE_DURATION, ENTROPY);
+			primarySort.setItems(sortElements);
+			primarySort.getSelectionModel().select(NONE);
 
 			initializeListeners();
 
-			setCellVisualizers(DIMENSIONAL_VALUES);
+			setCellVisualizers();
 
 		}
 
@@ -101,37 +110,27 @@ public class MaterializeController extends AbstractTabController {
 		miniViewSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				setCellVisualizers(newValue);
+				setCellVisualizers();
+			}
+		});
+		primarySort.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				setCellVisualizers();
 			}
 		});
 		showOnlySelected.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				setCellVisualizers(miniViewSelection.getSelectionModel().getSelectedItem());
+				setCellVisualizers();
 			}
 		});
 		showEmpty.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				setCellVisualizers(miniViewSelection.getSelectionModel().getSelectedItem());
+				setCellVisualizers();
 			}
 		});
-	}
-
-	public void updateTileSorting() {
-
-		tilePane.getChildren().sort(new Comparator<Node>() {
-			@Override
-			public int compare(Node o1, Node o2) {
-				if (o1.isVisible() && !o2.isVisible())
-					return 1;
-				if (!o1.isVisible() && o2.isVisible())
-					return -1;
-				else
-					return 0;
-			}
-		});
-		tilePane.layout();
 	}
 
 	@Override
@@ -167,9 +166,11 @@ public class MaterializeController extends AbstractTabController {
 
 	}
 
-	private void setCellVisualizers(String rendererName) {
+	private void setCellVisualizers() {
 		tilePane.getChildren().clear();
 
+		// add content
+		String rendererName = miniViewSelection.getSelectionModel().getSelectedItem();
 		switch (rendererName) {
 		case DIMENSIONAL_VALUES:
 			for (Cell cell : cube.getCells()) {
@@ -200,6 +201,46 @@ public class MaterializeController extends AbstractTabController {
 			break;
 		case LOG_METRICS:
 		}
+		// set the sorting
+		String sort = primarySort.getSelectionModel().getSelectedItem();
+		ObservableList<Node> nodeElements = FXCollections.observableArrayList();
+		nodeElements.addAll(tilePane.getChildren());
+		switch (sort) {
+		case CASES:
+			nodeElements.sort(new Comparator<Node>() {
+				@Override
+				public int compare(Node o1, Node o2) {
+					return Double.compare(((MiniViewControllerInterface) o1).getCell().getMetric(Metrics.CASES),
+							((MiniViewControllerInterface) o2).getCell().getMetric(Metrics.CASES));
+				}
+			});
+			break;
+		case EVENTS:
+			nodeElements.sort(new Comparator<Node>() {
+				@Override
+				public int compare(Node o1, Node o2) {
+					return Double.compare(((MiniViewControllerInterface) o1).getCell().getMetric(Metrics.EVENTS),
+							((MiniViewControllerInterface) o2).getCell().getMetric(Metrics.EVENTS));
+				}
+			});
+			break;
+		case CASE_SIZE:
+			nodeElements.sort(new Comparator<Node>() {
+				@Override
+				public int compare(Node o1, Node o2) {
+					return Double.compare(
+							((MiniViewControllerInterface) o1).getCell().getMetric(Metrics.EVENTS_PER_CASE),
+							((MiniViewControllerInterface) o2).getCell().getMetric(Metrics.EVENTS_PER_CASE));
+				}
+			});
+			break;
+		case CASE_DURATION:
+		case ENTROPY:
+		}
+		// horrible workaround because of Java bug that does not let you sort
+		// the getChildren() list directly
+		tilePane.getChildren().setAll(nodeElements);
+		tilePane.layout();
 	}
 
 	private boolean isCellShowable(Cell cell) {
@@ -303,10 +344,8 @@ public class MaterializeController extends AbstractTabController {
 			for (XTrace trace : log)
 				for (XEvent event : trace)
 					if (!isFiltered(event))
-						for (Cell cell : cells) {
+						for (Cell cell : cells)
 							cell.addElement(event);
-							System.out.println("h");
-						}
 			// now for each cell, create traces if they werent there (only for
 			// event distribution
 			for (Cell cell : cells)
@@ -325,16 +364,21 @@ public class MaterializeController extends AbstractTabController {
 
 			break;
 		case CubeController.TRACES_ANY:
-			// by trace (considering any event)
-			for (XTrace trace : log)
+			// by trace (considering any event) can be slower
+			for (XTrace trace : log) {
 				for (XEvent event : trace)
 					if (!isFiltered(event))
 						for (Cell cell : cells) {
 							cell.addElement(trace);
-							break;
 						}
+			}
 			break;
 		}
+
+		// initialize metrics
+		for (Cell cell : cells)
+			if (!cell.getLog().isEmpty())
+				cell.calculateMetrics();
 
 	}
 

@@ -17,7 +17,7 @@
 			<center>
 				<ImageView fx:id="image" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
 					<image>
-						<Image url="images/eye_black.png" />
+						<Image url="images/helmet.png" />
 					</image>
 				</ImageView>
 			</center>
@@ -32,7 +32,7 @@
 				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="645.0" prefWidth="763.0">
 					<children>
 						<ComboBox fx:id = "algorithmSelection" layoutX="243.0" layoutY="32.0" prefHeight="31.0" prefWidth="278.0" />
-						<Label layoutX="73.0" layoutY="37.0" text="Visualization algorithm:" />
+						<Label layoutX="73.0" layoutY="37.0" text="Process Mining algorithm:" />
 						<RadioButton layoutX="243.0" layoutY="79.0" mnemonicParsing="false" text="Use default parameters" />
 						<RadioButton layoutX="243.0" layoutY="108.0" mnemonicParsing="false" text="Customize parameters (a prompt will pop-up)" />
 						<Button layoutX="325.0" layoutY="148.0" mnemonicParsing="false" onAction="#handleVisualizeButton" text="Visualize Cells" />

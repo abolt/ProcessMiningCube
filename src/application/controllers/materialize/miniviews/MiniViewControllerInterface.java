@@ -1,6 +1,7 @@
 package application.controllers.materialize.miniviews;
 
 import application.models.cube.Cell;
+import application.models.cube.Cell.Metrics;
 
 public interface MiniViewControllerInterface {
 	

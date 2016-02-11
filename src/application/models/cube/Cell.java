@@ -1,5 +1,6 @@
 package application.models.cube;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,11 +16,17 @@ import javafx.collections.ObservableList;
 
 public class Cell {
 
+	public enum Metrics {
+		CASES, EVENTS, EVENTS_PER_CASE, CASE_DURATION, ENTROPY
+	}
+
 	private XLog log;
 	private boolean isSelected = false;
 	private boolean hasTraces = false;
 	private Map<String, XAttribute> dimensionalValues;
 	private Map<String, String> dimensions;
+
+	private Map<Metrics, Double> metrics;
 
 	private ObservableList<XEvent> events;
 
@@ -34,7 +41,7 @@ public class Cell {
 		this.log = factory.createLog(log.getAttributes());
 		events = FXCollections.observableArrayList();
 	}
-	
+
 	public boolean isSelected() {
 		return isSelected;
 	}
@@ -74,12 +81,13 @@ public class Cell {
 	}
 
 	public void addElement(XTrace t) {
-		for (XEvent e : t)
-			if (isEventFitting(e)) {
-				log.add(t);
-				hasTraces = true;
-				break;
-			}
+		if (!log.contains(t))
+			for (XEvent e : t)
+				if (isEventFitting(e)) {
+					log.add(t);
+					hasTraces = true;
+					break;
+				}
 	}
 
 	public void addElement(XTrace t, XEvent firstEvent) {
@@ -109,7 +117,35 @@ public class Cell {
 			}
 		return true;
 	}
-	public String getDimension(String attributeName){
+
+	public String getDimension(String attributeName) {
 		return dimensions.get(attributeName);
+	}
+
+	public void calculateMetrics() { // assuming the log has something
+		/*
+		 * TO-DO: implement an entropy metric and the case duration :)
+		 */
+		metrics = new EnumMap<Metrics, Double>(Metrics.class);
+		metrics.put(Metrics.CASES, Double.valueOf(log.size()));
+		double numberOfEvents = 0;
+		// double totalCaseDuration = 0;
+		// double entropy = 0;
+
+		for (XTrace t : log) {
+			numberOfEvents = numberOfEvents + t.size();
+			// if(t.size() > 0){
+			// XEvent first = t.get(0);
+			// XEvent last = t.get(t.size()-1);
+			// }
+
+		}
+		metrics.put(Metrics.EVENTS, numberOfEvents);
+		metrics.put(Metrics.EVENTS_PER_CASE, numberOfEvents / metrics.get(Metrics.CASES));
+
+	}
+
+	public double getMetric(Metrics metric) {
+		return metrics.get(metric);
 	}
 }
