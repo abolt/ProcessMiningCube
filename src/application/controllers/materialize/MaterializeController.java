@@ -1,5 +1,6 @@
 package application.controllers.materialize;
 
+import java.util.Comparator;
 import java.util.HashMap;
 
 import org.deckfour.xes.factory.XFactory;
@@ -30,6 +31,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
@@ -54,7 +56,10 @@ public class MaterializeController extends AbstractTabController {
 	private TilePane tilePane;
 
 	@FXML
-	private ComboBox<String> miniViewSelection, primarySort, secondarySort;
+	private ComboBox<String> miniViewSelection, primarySort;
+
+	@FXML
+	private CheckBox showOnlySelected, showEmpty;
 
 	@FXML
 	private TextField selectionCount;
@@ -74,6 +79,8 @@ public class MaterializeController extends AbstractTabController {
 	protected void enableTab(boolean value) {
 		tabMaterialize.setDisable(!value);
 		if (value) {
+			showOnlySelected.setSelected(false);
+			showEmpty.setSelected(true);
 			materializeCells();
 
 			ObservableList<String> elements = FXCollections.observableArrayList();
@@ -97,6 +104,34 @@ public class MaterializeController extends AbstractTabController {
 				setCellVisualizers(newValue);
 			}
 		});
+		showOnlySelected.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				setCellVisualizers(miniViewSelection.getSelectionModel().getSelectedItem());
+			}
+		});
+		showEmpty.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				setCellVisualizers(miniViewSelection.getSelectionModel().getSelectedItem());
+			}
+		});
+	}
+
+	public void updateTileSorting() {
+
+		tilePane.getChildren().sort(new Comparator<Node>() {
+			@Override
+			public int compare(Node o1, Node o2) {
+				if (o1.isVisible() && !o2.isVisible())
+					return 1;
+				if (!o1.isVisible() && o2.isVisible())
+					return -1;
+				else
+					return 0;
+			}
+		});
+		tilePane.layout();
 	}
 
 	@Override
@@ -138,20 +173,24 @@ public class MaterializeController extends AbstractTabController {
 		switch (rendererName) {
 		case DIMENSIONAL_VALUES:
 			for (Cell cell : cube.getCells()) {
-				DimensionValuesController dimElement = new DimensionValuesController(cell, this);
-				dimElement.initializeValues();
-				tilePane.getChildren().add(dimElement);
+				if (isCellShowable(cell)) {
+					DimensionValuesController dimElement = new DimensionValuesController(cell, this);
+					dimElement.initializeValues();
+					tilePane.getChildren().add(dimElement);
+				}
 			}
 			break;
 		case CASE_DISTRIBUTION:
 			double upperBound = 0;
 			ObservableList<CaseDistributionController> caseElements = FXCollections.observableArrayList();
 			for (Cell cell : cube.getCells()) {
-				CaseDistributionController element = new CaseDistributionController(cell, this);
-				element.initializeValues();
-				if (element.getUpperBound() > upperBound)
-					upperBound = element.getUpperBound();
-				caseElements.add(element);
+				if (isCellShowable(cell)) {
+					CaseDistributionController element = new CaseDistributionController(cell, this);
+					element.initializeValues();
+					if (element.getUpperBound() > upperBound)
+						upperBound = element.getUpperBound();
+					caseElements.add(element);
+				}
 
 			}
 			for (CaseDistributionController element : caseElements) {
@@ -161,6 +200,28 @@ public class MaterializeController extends AbstractTabController {
 			break;
 		case LOG_METRICS:
 		}
+	}
+
+	private boolean isCellShowable(Cell cell) {
+		return (isShowableBySelection(cell.isSelected()) && isShowableByEmptyness(cell.getLog().isEmpty()));
+	}
+
+	private boolean isShowableBySelection(boolean isSelected) {
+		if (showOnlySelected.isSelected() && isSelected)
+			return true;
+		else if (!showOnlySelected.isSelected())
+			return true;
+		else
+			return false;
+	}
+
+	private boolean isShowableByEmptyness(boolean isEmpty) {
+		if (!showEmpty.isSelected() && isEmpty)
+			return false;
+		else if (showEmpty.isSelected())
+			return true;
+		else
+			return true;
 	}
 
 	private void createCells() {
@@ -350,6 +411,12 @@ public class MaterializeController extends AbstractTabController {
 		updateSelectionCount();
 	}
 
+	@FXML
+	public void updateCubeToMatchSelection() {
+		// does dicing to produce a cube that would only have the selected
+		// cells.
+	}
+
 	public void updateSelectionCount() {
 		int counter = 0;
 		for (Cell cell : cube.getCells())
@@ -362,7 +429,8 @@ public class MaterializeController extends AbstractTabController {
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setTitle("Error");
 		alert.setHeaderText("No cells selected!");
-		alert.setContentText("You have to select at least one cell in order to proceed to the next step.");
+		alert.setContentText(
+				"You have to select at least one cell in order to proceed to the next step. Otherwise there is nothing for me to do.");
 		alert.showAndWait();
 	}
 }
