@@ -13,14 +13,13 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Tab;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 
 public class VisualizeController extends AbstractTabController {
 
 	public static final String ALPHA = "Alpha Miner", HEURISTIC = "Heuristics Miner", DOTTED = "Dotted Chart",
-			INDUCTIVE = "Inductive Miner", DIRECTLY_FOLLOWS = "Directly Follows Graph (FAST)";
+			INDUCTIVE = "Inductive Miner", DIRECTLY_FOLLOWS = "Directly Follows Graph (FAST)", COMPARATOR = "Process Comparator", RAPIDMINER = "Execute a RapidMiner Process";
 
 	private ObservableList<String> algorithmSelectionList;
 	@FXML
@@ -50,6 +49,8 @@ public class VisualizeController extends AbstractTabController {
 			algorithmSelectionList.add(INDUCTIVE);
 			algorithmSelectionList.add(DOTTED);
 			algorithmSelectionList.add(DIRECTLY_FOLLOWS);
+			algorithmSelectionList.add(COMPARATOR);
+			algorithmSelectionList.add(RAPIDMINER);
 			algorithmSelection.setItems(algorithmSelectionList);
 			algorithmSelection.getSelectionModel().select(DIRECTLY_FOLLOWS);
 		}
