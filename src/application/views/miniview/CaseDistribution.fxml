@@ -7,17 +7,16 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <BarChart fx:id = "chart" barGap="0.0" categoryGap="0.0" legendSide="RIGHT" legendVisible="false" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+      <AreaChart fx:id="chart" animated="false" legendVisible="false" onMouseClicked="#changeState" style="-fx-background-color: white" title="Case Distribution" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
         <xAxis>
-          <CategoryAxis label="Case Length (# events)" prefHeight="37.0" prefWidth="177.0" side="BOTTOM" />
+          <NumberAxis label="Case Length (# events)" side="BOTTOM" />
         </xAxis>
         <yAxis>
-          <NumberAxis label="# Cases" side="LEFT" />
+          <NumberAxis autoRanging="false" label="# cases" side="LEFT" />
         </yAxis>
-      </BarChart>
+      </AreaChart>
    </children>
    <padding>
       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

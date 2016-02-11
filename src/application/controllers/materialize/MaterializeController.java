@@ -135,20 +135,31 @@ public class MaterializeController extends AbstractTabController {
 	private void setCellVisualizers(String rendererName) {
 		tilePane.getChildren().clear();
 
-		for (Cell cell : cube.getCells()) {
-			switch (rendererName) {
-			case DIMENSIONAL_VALUES:
+		switch (rendererName) {
+		case DIMENSIONAL_VALUES:
+			for (Cell cell : cube.getCells()) {
 				DimensionValuesController dimElement = new DimensionValuesController(cell, this);
 				dimElement.initializeValues();
 				tilePane.getChildren().add(dimElement);
-				break;
-			case CASE_DISTRIBUTION:
-				CaseDistributionController caseElement = new CaseDistributionController(cell, this);
-				caseElement.initializeValues();
-				tilePane.getChildren().add(caseElement);
-				break;
-			case LOG_METRICS:
 			}
+			break;
+		case CASE_DISTRIBUTION:
+			double upperBound = 0;
+			ObservableList<CaseDistributionController> caseElements = FXCollections.observableArrayList();
+			for (Cell cell : cube.getCells()) {
+				CaseDistributionController element = new CaseDistributionController(cell, this);
+				element.initializeValues();
+				if (element.getUpperBound() > upperBound)
+					upperBound = element.getUpperBound();
+				caseElements.add(element);
+
+			}
+			for (CaseDistributionController element : caseElements) {
+				element.setRange(upperBound);
+				tilePane.getChildren().add(element);
+			}
+			break;
+		case LOG_METRICS:
 		}
 	}
 

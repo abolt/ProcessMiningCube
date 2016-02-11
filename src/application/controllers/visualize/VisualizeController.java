@@ -8,6 +8,8 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Tab;
@@ -49,19 +51,7 @@ public class VisualizeController extends AbstractTabController {
 			algorithmSelectionList.add(DOTTED);
 			algorithmSelectionList.add(DIRECTLY_FOLLOWS);
 			algorithmSelection.setItems(algorithmSelectionList);
-
-			for (Cell cell : mainController.getCube().getCells()) {
-
-				final SwingNode node = new SwingNode();
-				node.setContent(FastMiner.get_visual_results(FastMiner.execute(cell.getLog(), 0.2, 5)));
-				@SuppressWarnings("rawtypes")
-				Dialog dialog = new Dialog<>();
-				dialog.getDialogPane().setPrefSize(600, 600);
-				dialog.getDialogPane().setContent(node);
-				dialog.initModality(Modality.NONE);
-				dialog.setResizable(true);
-				dialog.show();
-			}
+			algorithmSelection.getSelectionModel().select(DIRECTLY_FOLLOWS);
 		}
 
 	}
@@ -81,7 +71,31 @@ public class VisualizeController extends AbstractTabController {
 
 		// for each cell build a new window popup with the JComponent as result
 		for (Cell cell : mainController.getCube().getCells()) {
+			if (cell.isSelected()) {
+				final SwingNode node = new SwingNode();
+				node.setContent(FastMiner.get_visual_results(FastMiner.execute(cell.getLog(), 0.2, 5)));
+				@SuppressWarnings("rawtypes")
+				Dialog dialog = new Dialog<>();
 
+				// X button on the title bar
+				dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+				Node closeButton = dialog.getDialogPane().lookupButton(ButtonType.CLOSE);
+				closeButton.managedProperty().bind(closeButton.visibleProperty());
+				closeButton.setVisible(false);
+
+				// init the content
+				dialog.getDialogPane().setPrefSize(600, 600);
+
+				String title = "";
+				for (String s : cell.getDimensionalValues().keySet())
+					title = title + "(" + s + " = " + cell.getDimensionalValues().get(s).toString() + ")";
+				dialog.setTitle(title);
+
+				dialog.getDialogPane().setContent(node);
+				dialog.initModality(Modality.NONE);
+				dialog.setResizable(true);
+				dialog.show();
+			}
 		}
 
 		setCompleted(true);

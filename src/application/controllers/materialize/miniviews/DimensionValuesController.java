@@ -75,6 +75,7 @@ public class DimensionValuesController extends AnchorPane implements MiniViewCon
 			objectList.add(new Triplet(cell.getDimension(value), value, map.get(value).toString()));
 		}
 		table.setItems(objectList);
+		setSelected(cell.isSelected());
 		table.refresh();
 	}
 

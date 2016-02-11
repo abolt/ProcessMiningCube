@@ -118,7 +118,11 @@ public class CubeController extends AbstractTabController {
 					if (newValue.getAttributes() != null)
 						selectedAttribute.getSelectionModel().select(newValue.getAttributes().get(0));
 					granularity.setItems(newValue.getAttributes());
-					granularity.getSelectionModel().select(newValue.getGranularity());
+					if (newValue.getGranularity() != null)
+						granularity.getSelectionModel().select(newValue.getGranularity());
+					else
+						// if granularity is not set, select the first one
+						granularity.getSelectionModel().select(0);
 					if (operation.getSelectionModel().getSelectedItem() != null)
 						if (operation.getSelectionModel().getSelectedItem().equals("Dice")) {
 							oldValue.setDiced(true);
@@ -131,10 +135,10 @@ public class CubeController extends AbstractTabController {
 					ObservableList<String> operationOptions = FXCollections.observableArrayList();
 					operationOptions.addAll("Slice", "Dice");
 					operation.setItems(operationOptions);
-					if (newValue.isDiced())
-						operation.getSelectionModel().select("Dice");
-					else if (newValue.isSliced())
+					if (newValue.isSliced())
 						operation.getSelectionModel().select("Slice");
+					else
+						operation.getSelectionModel().select("Dice");
 				} else {
 					sliceName.setText("");
 					selectedAttribute.setItems(null);

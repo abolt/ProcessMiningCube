@@ -10,7 +10,8 @@ import application.controllers.materialize.MaterializeController;
 import application.models.cube.Cell;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.chart.BarChart;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
@@ -19,10 +20,12 @@ import javafx.scene.paint.Color;
 public class CaseDistributionController extends AnchorPane implements MiniViewControllerInterface {
 
 	@FXML
-	BarChart<String, Number> chart;
+	AreaChart<Number, Number> chart;
 
 	private Cell cell;
 	private MaterializeController materializeController;
+
+	double upperBound = 0;
 
 	public CaseDistributionController(Cell cell, MaterializeController materializeController) {
 
@@ -58,25 +61,39 @@ public class CaseDistributionController extends AnchorPane implements MiniViewCo
 
 	@Override
 	public void initializeValues() {
+
 		Map<Integer, Integer> caseDistribution = new HashMap<Integer, Integer>(); // <length,
 																					// #>
 		for (XTrace trace : cell.getLog()) {
 			if (caseDistribution.containsKey(trace.size()))
-				caseDistribution.put(trace.size(), caseDistribution.get(trace.size())+1);
+				caseDistribution.put(trace.size(), caseDistribution.get(trace.size()) + 1);
 			else
 				caseDistribution.put(trace.size(), 1); // the first case of this
 														// length
 		}
-		XYChart.Series<String, Number> values = new XYChart.Series<String, Number>();
-		for (int length : caseDistribution.keySet())
-			values.getData()
-					.add(new XYChart.Data<String, Number>(Integer.toString(length), caseDistribution.get(length)));
+		XYChart.Series<Number, Number> values = new XYChart.Series<Number, Number>();
+		for (int length : caseDistribution.keySet()) {
+			values.getData().add(new XYChart.Data<Number, Number>(length, caseDistribution.get(length)));
+			if (caseDistribution.get(length) > upperBound)
+				upperBound = caseDistribution.get(length);
+		}
+		
 		chart.getData().add(values);
+		setSelected(cell.isSelected());
 	}
 
 	@Override
 	public Cell getCell() {
 		return cell;
+	}
+
+	public double getUpperBound() {
+		return upperBound;
+	}
+
+	public void setRange(double range) {
+		((NumberAxis) chart.getYAxis()).setLowerBound(0);
+		((NumberAxis) chart.getYAxis()).setUpperBound(range);
 	}
 
 }
