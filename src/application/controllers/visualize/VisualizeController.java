@@ -18,7 +18,7 @@ import javafx.stage.Modality;
 
 public class VisualizeController extends AbstractTabController {
 
-	public static final String ALPHA = "Alpha Miner", HEURISTIC = "Heuristics Miner", DOTTED = "Dotted Chart",
+	public static final String LOG_EXPLORER = "Log Explorer", ALPHA = "Alpha Miner", HEURISTIC = "Heuristics Miner", DOTTED = "Dotted Chart",
 			INDUCTIVE = "Inductive Miner", DIRECTLY_FOLLOWS = "Directly Follows Graph (FAST)", COMPARATOR = "Process Comparator", RAPIDMINER = "Execute a RapidMiner Process";
 
 	private ObservableList<String> algorithmSelectionList;
@@ -44,6 +44,7 @@ public class VisualizeController extends AbstractTabController {
 		tabVisualize.setDisable(!value);
 		if (value) {
 			algorithmSelectionList = FXCollections.observableArrayList();
+			algorithmSelectionList.add(LOG_EXPLORER);
 			algorithmSelectionList.add(ALPHA);
 			algorithmSelectionList.add(HEURISTIC);
 			algorithmSelectionList.add(INDUCTIVE);

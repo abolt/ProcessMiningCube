@@ -7,12 +7,12 @@ import org.deckfour.xes.model.XLog;
 
 import application.controllers.cube.CubeController;
 import application.controllers.dimensions.DimensionsController;
-import application.controllers.importdata.ImportDataController;
 import application.controllers.mapping.MappingController;
 import application.controllers.mapping.MappingRow;
 import application.controllers.materialize.MaterializeController;
 import application.controllers.menu.MenuBarController;
 import application.controllers.visualize.VisualizeController;
+import application.controllers.wizard.steps.ImportDataController;
 import application.models.cube.Cube;
 import application.models.dimension.Attribute;
 import application.models.dimension.Dimension;
