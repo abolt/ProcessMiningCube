@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+   <bottom>
+		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+			<items>
+				<Button mnemonicParsing="false" text="&lt;-- Back" />
+				<Pane HBox.hgrow="ALWAYS" />
+				<Button mnemonicParsing="false" text="Next --&gt;" />
+			</items>
+		</ToolBar>
+	</bottom>
+	<center>
+      <ScrollPane fitToHeight="true" fitToWidth="true" BorderPane.alignment="CENTER">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <TableView prefHeight="200.0" prefWidth="200.0">
+                    <columns>
+                      <TableColumn maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" text="Attribute" />
+                      <TableColumn maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" text="Example Values" />
+                        <TableColumn maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" text="Attribute Type" />
+                        <TableColumn maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" text="Create a dimension with this attribute?" />
+                    </columns>
+                  </TableView>
+               </children>
+            </AnchorPane>
+        </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

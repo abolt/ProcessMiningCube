@@ -64,23 +64,23 @@ public class MainController {
 	public void initialize() {
 		menuBarController.init(this);
 
-		tabImportDataController.init(this);
-		tabImportDataController.initializeTab(tabImportData);
-
-		tabMappingController.init(this);
-		tabMappingController.initializeTab(tabMapping);
-
-		tabDimensionsController.init(this);
-		tabDimensionsController.initializeTab(tabDimensions);
-
-		tabCubeController.init(this);
-		tabCubeController.initializeTab(tabCube);
-
-		tabMaterializeController.init(this);
-		tabMaterializeController.initializeTab(tabMaterialize);
-
-		tabVisualizeController.init(this);
-		tabVisualizeController.initializeTab(tabVisualize);
+//		tabImportDataController.init(this);
+//		tabImportDataController.initializeTab(tabImportData);
+//
+//		tabMappingController.init(this);
+//		tabMappingController.initializeTab(tabMapping);
+//
+//		tabDimensionsController.init(this);
+//		tabDimensionsController.initializeTab(tabDimensions);
+//
+//		tabCubeController.init(this);
+//		tabCubeController.initializeTab(tabCube);
+//
+//		tabMaterializeController.init(this);
+//		tabMaterializeController.initializeTab(tabMaterialize);
+//
+//		tabVisualizeController.init(this);
+//		tabVisualizeController.initializeTab(tabVisualize);
 
 	}
 
@@ -144,13 +144,13 @@ public class MainController {
 		// reset or destroy all elements
 
 		// enable the import tab and disable the rest
-		tabImportDataController.setEnabled(true);
-		tabMappingController.setEnabled(false);
-		tabDimensionsController.setEnabled(false);
-		tabCubeController.setEnabled(false);
-		tabMaterializeController.setEnabled(false);
-		tabVisualizeController.setEnabled(false);
-		updateTabs();
+//		tabImportDataController.setEnabled(true);
+//		tabMappingController.setEnabled(false);
+//		tabDimensionsController.setEnabled(false);
+//		tabCubeController.setEnabled(false);
+//		tabMaterializeController.setEnabled(false);
+//		tabVisualizeController.setEnabled(false);
+//		updateTabs();
 	}
 
 	public void updateTabs() {
