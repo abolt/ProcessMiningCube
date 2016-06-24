@@ -1,45 +1,27 @@
 package application.controllers.wizard.steps;
 
 import java.io.File;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-import application.controllers.AbstractTabController;
-import application.controllers.wizard.NewCubeWizardController;
+import application.controllers.wizard.CubeWizardController;
 import application.controllers.wizard.abstr.AbstractWizardStepController;
-import application.operations.io.Importer;
-import application.operations.io.log.CSVImporter;
-import application.operations.io.log.XESImporter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public class ImportDataController extends AbstractWizardStepController {
 
-	
-
-	@FXML
-	private BorderPane importData;
+	private static final String viewLocation = "/application/views/wizard/ImportData.fxml";
+	private File input;
 
 	@FXML
 	private TextField fileName;
 
-	/*
-	 * Listeners for checking if the separators are valid (only CSV files)
-	 */
-
-	@FXML
-	public void initialize() {
-		//name = "importDataController";
-	}
-	
-	public ImportDataController(NewCubeWizardController controller) {
-		super(controller);
+	public ImportDataController(CubeWizardController controller) {
+		super(controller, viewLocation);
 	}
 
 	@FXML
@@ -57,20 +39,25 @@ public class ImportDataController extends AbstractWizardStepController {
 	@FXML
 	protected void handleImportDataButton(ActionEvent event) {
 
-		Importer importer = null;
-		boolean correct = false;
-		if (fileName.getText().endsWith(".csv")) {
-			importer = new CSVImporter(new File(fileName.getText()));
-		} else {
-			importer = new XESImporter(new File(fileName.getText()));
-		}
+		input = null;
+		if (fileName.getText().isEmpty())
+			selectionErrorMessage("No input data specified!", "Please specify a valid data file (.xes, .xes.gz, .csv)");
+		else if ((fileName.getText().endsWith(".csv") || fileName.getText().endsWith(".xes")
+				|| fileName.getText().endsWith(".xes.gz")))
+			input = new File(fileName.getText());
+		else
+			selectionErrorMessage("Wrong Format",
+					"The selected file does not comply with the supported data formats (i.e., .xes, .xes.gz, .csv)");
 
-//		if (importer != null && importer.canParse()) {
-//			mainController.setImporter(importer);
-//			mainController.setMappingRows(importer.getSampleList());
-//			correct = true;
-//		}
-		//setCompleted(correct);
+		if (input != null)
+			// the file is correct. next step will handle the
+			goNext();
+	}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

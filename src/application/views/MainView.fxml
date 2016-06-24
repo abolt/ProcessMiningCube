@@ -11,10 +11,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity"
+<fx:root type = "BorderPane" maxHeight="-Infinity" maxWidth="-Infinity"
 	minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
-	prefWidth="765.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="application.controllers.MainController">
+	prefWidth="765.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<top>
 		<fx:include fx:id="menuBar" source="MenuBar.fxml" />
 	</top>
@@ -34,4 +33,4 @@
 			</opaqueInsets>
 		</TabPane>
 	</center>
-</BorderPane>
+</fx:root>

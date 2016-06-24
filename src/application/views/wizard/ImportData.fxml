@@ -6,13 +6,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="application.controllers.wizard.steps.ImportDataController">
+<fx:root type="BorderPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
 	<bottom>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
 				<Button mnemonicParsing="false" text="&lt;-- Back" />
 				<Pane HBox.hgrow="ALWAYS" />
-				<Button mnemonicParsing="false" text="Next --&gt;" />
+				<Button mnemonicParsing="false" text="Next --&gt;" onAction="#handleImportDataButton"/>
 			</items>
 		</ToolBar>
 	</bottom>
@@ -38,4 +38,4 @@
 			</BorderPane.margin>
 		</HBox>
 	</center>
-</BorderPane>
+</fx:root>

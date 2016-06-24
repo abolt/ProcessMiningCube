@@ -20,7 +20,7 @@ public class MenuBarController {
 	}
 	
 	@FXML protected void newProcessCube(ActionEvent event) {
-		//mainController.newCube();
+		mainController.newCube();
 		
 	}
 
