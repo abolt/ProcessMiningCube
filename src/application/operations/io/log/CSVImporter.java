@@ -23,8 +23,8 @@ import org.processmining.log.csvimport.config.CSVConversionConfig.Datatype;
 
 import com.google.common.collect.ImmutableList;
 
-import application.controllers.mapping.MappingController;
-import application.controllers.mapping.MappingRow;
+import application.controllers.wizard.steps.MappingController;
+import application.models.wizard.MappingRow;
 import application.operations.io.Importer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

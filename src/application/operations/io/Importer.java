@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.deckfour.xes.model.XLog;
 
-import application.controllers.mapping.MappingRow;
+import application.models.wizard.MappingRow;
 import javafx.collections.ObservableList;
 
 public abstract class Importer {

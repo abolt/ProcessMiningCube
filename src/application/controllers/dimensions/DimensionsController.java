@@ -15,9 +15,9 @@ import org.deckfour.xes.model.impl.XAttributeTimestampImpl;
 
 import application.controllers.AbstractTabController;
 import application.controllers.mapping.MappingController;
-import application.controllers.mapping.MappingRow;
 import application.models.dimension.Attribute;
 import application.models.dimension.Dimension;
+import application.models.wizard.MappingRow;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;

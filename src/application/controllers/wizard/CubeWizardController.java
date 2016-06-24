@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import application.controllers.wizard.abstr.AbstractWizardStepController;
+import application.controllers.wizard.steps.DimensionsController;
 import application.controllers.wizard.steps.ImportDataController;
+import application.controllers.wizard.steps.MappingController;
 import application.models.cube.Cube;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -54,7 +56,7 @@ public class CubeWizardController extends BorderPane implements Initializable {
 		updateContent();
 	}
 
-	public BorderPane getNode(int number) {
+	public AbstractWizardStepController getNode(int number) {
 		if (number >= 0 && number <= 3 && number < steps.size())
 			if (steps.get(number) != null)
 				return steps.get(number);
@@ -102,7 +104,11 @@ public class CubeWizardController extends BorderPane implements Initializable {
 			steps.add(new ImportDataController(this));
 			break;
 		case 1: // mappings
+			steps.add(new MappingController(this));
+			break;
 		case 2: // dimensions
+			steps.add(new DimensionsController(this));
+			break;
 		case 3: // cube overview
 		}
 	}

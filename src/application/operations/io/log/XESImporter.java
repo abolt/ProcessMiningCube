@@ -12,8 +12,8 @@ import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 
-import application.controllers.mapping.MappingController;
-import application.controllers.mapping.MappingRow;
+import application.controllers.wizard.steps.MappingController;
+import application.models.wizard.MappingRow;
 import application.operations.io.Importer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

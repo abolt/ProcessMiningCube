@@ -8,18 +8,12 @@ import java.util.ResourceBundle;
 import org.deckfour.xes.model.XAttribute;
 import org.deckfour.xes.model.XLog;
 
-import application.controllers.cube.CubeController;
-import application.controllers.dimensions.DimensionsController;
-import application.controllers.mapping.MappingController;
-import application.controllers.mapping.MappingRow;
-import application.controllers.materialize.MaterializeController;
 import application.controllers.menu.MenuBarController;
-import application.controllers.visualize.VisualizeController;
 import application.controllers.wizard.CubeWizardController;
-import application.controllers.wizard.steps.ImportDataController;
 import application.models.cube.Cube;
 import application.models.dimension.Attribute;
 import application.models.dimension.Dimension;
+import application.models.wizard.MappingRow;
 import application.operations.io.Importer;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -28,8 +22,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
@@ -56,7 +48,7 @@ public class MainController extends BorderPane implements Initializable {
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
-		
+
 		initialize();
 	}
 
@@ -153,9 +145,10 @@ public class MainController extends BorderPane implements Initializable {
 	// return mappingRows;
 	// }
 	//
-	// public void setMappingRows(ObservableList<MappingRow> attributeObjects) {
-	// this.mappingRows = attributeObjects;
-	// }
+	public void setMappingRows(ObservableList<MappingRow> attributeObjects) {
+		this.mappingRows = attributeObjects;
+	}
+
 	//
 	// public void setDimensions(ObservableList<Dimension> dim) {
 	// this.dimensions = dim;

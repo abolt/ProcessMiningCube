@@ -11,7 +11,7 @@ import javafx.scene.layout.BorderPane;
 
 public abstract class AbstractWizardStepController extends BorderPane implements Initializable {
 
-	private CubeWizardController mainController;
+	protected CubeWizardController mainController;
 
 	public AbstractWizardStepController(CubeWizardController controller, String viewLocation) {
 		mainController = controller;

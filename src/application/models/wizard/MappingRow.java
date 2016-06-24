@@ -1,4 +1,4 @@
-package application.controllers.mapping;
+package application.models.wizard;
 
 import java.util.Set;
 

@@ -1,41 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-
-<fx:root type="BorderPane" xmlns:fx="http://javafx.com/fxml/1"
-	xmlns="http://javafx.com/javafx/8">
+<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<bottom>
-		<ToolBar prefHeight="40.0" prefWidth="200.0"
-			BorderPane.alignment="CENTER">
+		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
-				<Button mnemonicParsing="false" text="&lt;-- Back" />
+				<Button mnemonicParsing="false" text="&lt;-- Back" onAction="#handleBackButton"/>
 				<Pane HBox.hgrow="ALWAYS" />
-				<Button mnemonicParsing="false" text="Next --&gt;" />
+				<Button mnemonicParsing="false" text="Next --&gt;" onAction="#handleNextButton"/>
 			</items>
 		</ToolBar>
 	</bottom>
 	<center>
-		<ScrollPane fitToHeight="true" fitToWidth="true"
-			BorderPane.alignment="CENTER">
+		<ScrollPane fitToHeight="true" fitToWidth="true" BorderPane.alignment="CENTER">
 			<content>
-				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0"
-					prefWidth="200.0">
+				<AnchorPane>
 					<children>
-						<TableView fx:id="table" prefHeight="200.0" prefWidth="200.0">
+						<TableView fx:id="table" prefHeight="621.0" prefWidth="735.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" BorderPane.alignment="CENTER">
 							<columns>
-								<TableColumn fx:id="colAttribute" maxWidth="-1.0"
-									minWidth="-1.0" prefWidth="-1.0" text="Attribute" />
-								<TableColumn fx:id="colExampleValues" maxWidth="-1.0"
-									minWidth="-1.0" prefWidth="-1.0" text="Example Values" />
-								<TableColumn fx:id="colAttributeType" maxWidth="-1.0"
-									minWidth="-1.0" prefWidth="-1.0" text="Attribute Type" />
-								<TableColumn fx:id="colCreateDimension" maxWidth="-1.0"
-									minWidth="-1.0" prefWidth="-1.0"
-									text="Create a dimension with this attribute?" />
+								<TableColumn fx:id="colAttribute" editable="false" maxWidth="1000.0" minWidth="200.0" prefWidth="-1.0" text="Attribute" />
+								<TableColumn fx:id="colExampleValues" maxWidth="1000.0" minWidth="200.0" prefWidth="-1.0" text="Example Values" />
+								<TableColumn fx:id="colAttributeType" maxWidth="1000.0" minWidth="200.0" prefWidth="-1.0" text="Attribute Type" />
+								<TableColumn fx:id="colCreateDimension" maxWidth="1000.0" minWidth="300.0" prefWidth="-1.0" text="Create a dimension with this attribute?" />
 							</columns>
 						</TableView>
 					</children>

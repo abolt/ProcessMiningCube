@@ -16,6 +16,9 @@ public class ImportDataController extends AbstractWizardStepController {
 
 	private static final String viewLocation = "/application/views/wizard/ImportData.fxml";
 	private File input;
+	
+	public static final String CSV = "CSV", XES = "XES";
+	public String extension;
 
 	@FXML
 	private TextField fileName;
@@ -43,15 +46,25 @@ public class ImportDataController extends AbstractWizardStepController {
 		if (fileName.getText().isEmpty())
 			selectionErrorMessage("No input data specified!", "Please specify a valid data file (.xes, .xes.gz, .csv)");
 		else if ((fileName.getText().endsWith(".csv") || fileName.getText().endsWith(".xes")
-				|| fileName.getText().endsWith(".xes.gz")))
+				|| fileName.getText().endsWith(".xes.gz"))) {
+			
 			input = new File(fileName.getText());
-		else
+			if(fileName.getText().endsWith(".csv"))
+				extension = CSV;
+			else
+				extension = XES;
+		} else
+
 			selectionErrorMessage("Wrong Format",
 					"The selected file does not comply with the supported data formats (i.e., .xes, .xes.gz, .csv)");
 
 		if (input != null)
 			// the file is correct. next step will handle the
 			goNext();
+	}
+	
+	public File getFile(){
+		return input;
 	}
 
 	@Override
