@@ -246,12 +246,22 @@ public class DimensionsController extends AbstractWizardStepController {
 
 	@FXML
 	protected void backButton() {
-
+		mainController.backStep();
 	}
 
 	@FXML
 	protected void nextButton() {
-
+		boolean isOK = false;
+		if(!dimensions.isEmpty())
+			for(Dimension dim : dimensions)
+				if(!dim.getAttributes().isEmpty()){
+					isOK = true;
+					break;
+				}
+		if(isOK)
+			mainController.nextStep();
+		else
+			errorMessage("No dimensions/attributes used!", "Please create at least one dimension that contains at least one attribute.");
 	}
 
 	@Override
@@ -266,6 +276,10 @@ public class DimensionsController extends AbstractWizardStepController {
 		alert.setHeaderText(title);
 		alert.setContentText(message);
 		alert.showAndWait();
+	}
+	
+	public ObservableList<Dimension> getDimensions(){
+		return dimensions;
 	}
 
 }

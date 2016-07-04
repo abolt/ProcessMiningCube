@@ -11,6 +11,7 @@ import org.deckfour.xes.model.XLog;
 import application.controllers.menu.MenuBarController;
 import application.controllers.wizard.CubeWizardController;
 import application.models.cube.Cube;
+import application.models.cube.CubeStructure;
 import application.models.dimension.Attribute;
 import application.models.dimension.Dimension;
 import application.models.wizard.MappingRow;
@@ -171,14 +172,18 @@ public class MainController extends BorderPane implements Initializable {
 	public void newCube() {
 
 		final Stage wizard = new Stage();
-		wizard.initModality(Modality.APPLICATION_MODAL);
+		//wizard.initModality(Modality.APPLICATION_MODAL);
 		wizard.initOwner(mainStage);
 		CubeWizardController cubeController = new CubeWizardController();
 		Scene dialogScene = new Scene(cubeController, 800, 600);
 		wizard.setScene(dialogScene);
 		wizard.getIcons().add(new Image(getClass().getResourceAsStream("/images/cube_black.png")));
 		wizard.setTitle("New Cube Wizard");
-		wizard.show();
+		wizard.showAndWait();
+		
+		CubeStructure cube = cubeController.getCubeStructure();
+		for(Dimension dim : cube.getDimensions())
+			System.out.println("Dim: " + dim.getNameProperty().getValue());
 		// reset or destroy all elements
 
 		// enable the import tab and disable the rest
