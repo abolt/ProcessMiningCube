@@ -48,15 +48,6 @@ public class Attribute {
 		return valueSet;
 	}
 
-	public Set<String> getValueSetSample() { // returns the first 5 values
-		Set<String> result = new HashSet<String>();
-		Iterator<String> it = valueSet.iterator();
-		for (int i = 0; i < 5 && it.hasNext(); i++) {
-			result.add(it.next().toString());
-		}
-		return result;
-	}
-
 	@Override
 	public String toString() {
 		return attributeName;

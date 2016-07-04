@@ -13,6 +13,8 @@ import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 
 import application.controllers.wizard.steps.MappingController;
+import application.models.dimension.Attribute;
+import application.models.eventbase.AbstrEventBase;
 import application.models.wizard.MappingRow;
 import application.operations.io.Importer;
 import javafx.collections.FXCollections;
@@ -27,28 +29,11 @@ public class XESImporter extends Importer {
 	}
 
 	@Override
-	public boolean canParse() {
-		XUniversalParser parser = new XUniversalParser();
-		if (parser.canParse(file))
-			return true;
-		else
-			return false;
-	}
-
-	@Override
-	public XLog importFromFile() {
-		XLog log = null;
-		XUniversalParser parser = new XUniversalParser();
-		Collection<XLog> collection;
-		try {
-			collection = parser.parse(file);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logErrorMessage();
-			return null;
-		}
-		log = !collection.isEmpty() ? collection.iterator().next() : null;
-		return log;
+	public AbstrEventBase importFromFile() {
+		
+		
+		
+		return null;
 	}
 
 	protected void logErrorMessage() {
@@ -62,7 +47,19 @@ public class XESImporter extends Importer {
 
 	@Override
 	public ObservableList<MappingRow> getSampleList() {
-		XLog log = importFromFile();
+		
+		XLog log = null;
+		XUniversalParser parser = new XUniversalParser();
+		Collection<XLog> collection;
+		try {
+			collection = parser.parse(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logErrorMessage();
+			return null;
+		}
+		log = !collection.isEmpty() ? collection.iterator().next() : null;
+		
 		Set<String> attributeNamesSet = new HashSet<String>();
 		Map<String, Set<String>> attributes = new HashMap<String, Set<String>>();
 
@@ -95,7 +92,7 @@ public class XESImporter extends Importer {
 
 		ObservableList<MappingRow> attributeObjects = FXCollections.observableArrayList();
 		for (String att : attributes.keySet()) {
-			attributeObjects.add(new MappingRow(att, attributes.get(att), MappingController.IGNORE, false));
+			attributeObjects.add(new MappingRow(att, attributes.get(att), Attribute.IGNORE, false));
 		}
 		return attributeObjects;
 	}

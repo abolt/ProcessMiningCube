@@ -165,15 +165,15 @@ public class MappingController extends AbstractWizardStepController {
 		table.setItems(attributeObjects);
 	}
 
-	private boolean parseSample(String choice, Set<?> values) {
+	private boolean parseSample(String choice, Set<String> values) {
 
 		if (choice.contentEquals(Attribute.DATE_TIME)) {
-			Iterator<?> it = values.iterator();
+			Iterator<String> it = values.iterator();
 			if (it.hasNext()) {
-				DateFormat df = detectTimestampParser((String) it.next());
+				DateFormat df = detectTimestampParser(it.next());
 				while (it.hasNext()) {
 					try {
-						df.parse((String) it.next());
+						df.parse(it.next());
 					} catch (Exception e) {
 						return false;
 					}

@@ -1,5 +1,7 @@
 package application.models.wizard;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javafx.beans.property.SimpleBooleanProperty;
@@ -9,11 +11,11 @@ public class MappingRow {
 
 	private String attributeName;
 
-	private Set<?> valueSet;
+	private Set<String> valueSet;
 	private String useAs;
 	private ObservableValue<Boolean> createDimension;
 
-	public MappingRow(String name, Set<?> values, String use, boolean create) {
+	public MappingRow(String name, Set<String> values, String use, boolean create) {
 		attributeName = name;
 		valueSet = values;
 		useAs = use;
@@ -24,9 +26,20 @@ public class MappingRow {
 		return attributeName;
 	}
 
-	public Set<?> getValueSet() {
+	public Set<String> getValueSet() {
 		return valueSet;
 	}
+
+//	public Set<String> getSampleValueSet(int number) {
+//		
+//		Set<String> samples = new HashSet<String>();
+//		Iterator<String> iterator = valueSet.iterator();
+//		
+//		for (int i = 0; i < number; i++) {
+//			samples.add(iterator.next());
+//		}
+//		return samples;
+//	}
 
 	public ObservableValue<Boolean> createDimensionProperty() {
 		return createDimension;

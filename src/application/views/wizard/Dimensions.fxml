@@ -6,27 +6,26 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-
 <fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <left>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox BorderPane.alignment="CENTER">
          <children>
             <Label alignment="CENTER" text="Dimensions" VBox.vgrow="NEVER">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <ListView fx:id = "dimensionsList" editable="true" VBox.vgrow="ALWAYS">
+            <ListView fx:id="dimensionsList" editable="true" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" />
                </VBox.margin>
             </ListView>
-            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Add Dimension" textAlignment="CENTER" VBox.vgrow="NEVER" onAction="#addDimensionButton">
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#addDimensionButton" text="Add Dimension" textAlignment="CENTER" VBox.vgrow="NEVER">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" />
                </VBox.margin>
             </Button>
-            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Remove Dimension" textAlignment="CENTER" VBox.vgrow="NEVER" onAction="#removeDimensionButton">
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#removeDimensionButton" text="Remove Dimension" textAlignment="CENTER" VBox.vgrow="NEVER">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" />
                </VBox.margin>
@@ -35,24 +34,24 @@
       </VBox>
    </left>
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox BorderPane.alignment="CENTER">
          <children>
             <Label text="Attribute Hierarchy (of selected Dimension) Drapg and Drop to re-order">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <ListView fx:id = "attributeList" editable="true" VBox.vgrow="ALWAYS">
+            <ListView fx:id="attributeList" editable="true" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" />
                </VBox.margin>
             </ListView>
-            <Button mnemonicParsing="false" text="Add Attribute"  onAction="#addAttributeButton">
+            <Button mnemonicParsing="false" onAction="#addAttributeButton" text="Add Attribute">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" text="Remove Attribute" onAction="#removeAttributeButton">
+            <Button mnemonicParsing="false" onAction="#removeAttributeButton" text="Remove Attribute">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" />
                </VBox.margin>
@@ -61,14 +60,14 @@
       </VBox>
    </center>
    <right>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox BorderPane.alignment="CENTER">
          <children>
             <Label text="Unused Attributes">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <ListView fx:id = "unusedAttributes" editable="true" VBox.vgrow="ALWAYS">
+            <ListView fx:id="unusedAttributes" editable="true" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" />
                </VBox.margin>
@@ -79,9 +78,9 @@
    <bottom>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
-				<Button mnemonicParsing="false" text="&lt;-- Back" onAction="#backButton"/>
+				<Button mnemonicParsing="false" onAction="#backButton" text="&lt;-- Back" />
 				<Pane HBox.hgrow="ALWAYS" />
-				<Button mnemonicParsing="false" text="Next --&gt;" onAction="#nextButton"/>
+				<Button mnemonicParsing="false" onAction="#nextButton" text="Next --&gt;" />
 			</items>
 		</ToolBar>
 	</bottom>
