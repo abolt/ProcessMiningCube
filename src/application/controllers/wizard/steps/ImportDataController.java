@@ -66,6 +66,13 @@ public class ImportDataController extends AbstractWizardStepController {
 	public File getFile(){
 		return input;
 	}
+	public String getFileName(){
+		return fileName.getText();
+	}
+	public String getExtension(){
+		return extension;
+	}
+	
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {

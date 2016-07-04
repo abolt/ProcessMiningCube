@@ -18,7 +18,7 @@ public class AbstrEventBase {
 	public AbstrEventBase(String filePath, String dbPath) {
 		this.dbPath = dbPath;
 		this.filePath = filePath;
-		conn = initializeDB();
+		conn = initializeDB(dbPath);
 
 		if (filePath.endsWith(".csv"))
 			fillDbFromCSV();
@@ -26,11 +26,11 @@ public class AbstrEventBase {
 			fillDbFromXES();
 	}
 
-	private Connection initializeDB() {
+	private Connection initializeDB(String dbPath) {
 		Connection c = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:dbPath");
+			c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -46,7 +46,7 @@ public class AbstrEventBase {
 	}
 
 	private void fillDbFromXES() {
-
+		
 	}
 
 }

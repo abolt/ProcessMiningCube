@@ -16,10 +16,12 @@ import application.models.cube.Cube;
 import application.models.cube.CubeStructure;
 import application.models.dimension.Dimension;
 import application.models.eventbase.AbstrEventBase;
+import application.models.eventbase.FileBasedEventBase;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -125,17 +127,26 @@ public class CubeWizardController extends BorderPane implements Initializable {
 	}
 
 	public void createCube(){
-		createEventBase();
+		
+		TextInputDialog dialog = new TextInputDialog("Hooray!");
+		dialog.setTitle("Name your cube!");
+		dialog.setHeaderText("Please enter the name of your new Cube.");
+		dialog.showAndWait();
+
+		createEventBase(dialog.getResult());
 		createCubeStructure();
 		
 	}
-	private void createEventBase() {
-		eventBase = null;
+	private void createEventBase(String name) {
+	
+			eventBase = new FileBasedEventBase(((ImportDataController)steps.get(0)).getFileName(), name);
+		
 		
 	}
 
 	public void createCubeStructure() {
 		// create the cube object, and make it available for the visualizer.
+		
 		cube = new CubeStructure(((DimensionsController)steps.get(2)).getDimensions(),eventBase);
 		
 		this.getScene().getWindow().hide();
