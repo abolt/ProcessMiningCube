@@ -8,8 +8,8 @@ import java.util.Set;
 
 public class Attribute {
 
-	public static final String IGNORE = "Ignore", TEXT = "Text", DISCRETE = "Discrete Numbers (e.g., integers)",
-			CONTINUOUS = "Continuous Numbers (e.g., decimals)", DATE_TIME = "Date/Time";
+	public static final String IGNORE = "IGNORE", TEXT = "TEXT", DISCRETE = "INTEGER",
+			CONTINUOUS = "REAL", DATE_TIME = "DATETIME";
 
 	private String attributeName;
 	private String type;
