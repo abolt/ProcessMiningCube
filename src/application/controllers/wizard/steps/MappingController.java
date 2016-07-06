@@ -208,7 +208,7 @@ public class MappingController extends AbstractWizardStepController {
 		alert.showAndWait();
 	}
 
-	private DateFormat detectTimestampParser(String input) {
+	public static DateFormat detectTimestampParser(String input) {
 		DateFormat df;
 		Date aux = null;
 		try {

@@ -184,16 +184,7 @@ public class MainController extends BorderPane implements Initializable {
 		CubeStructure cube = cubeController.getCubeStructure();
 		for(Dimension dim : cube.getDimensions())
 			System.out.println("Dim: " + dim.getNameProperty().getValue());
-		// reset or destroy all elements
-
-		// enable the import tab and disable the rest
-		// tabImportDataController.setEnabled(true);
-		// tabMappingController.setEnabled(false);
-		// tabDimensionsController.setEnabled(false);
-		// tabCubeController.setEnabled(false);
-		// tabMaterializeController.setEnabled(false);
-		// tabVisualizeController.setEnabled(false);
-		// updateTabs();
+		
 	}
 	//
 	// public void updateTabs() {

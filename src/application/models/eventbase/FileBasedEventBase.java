@@ -1,12 +1,13 @@
 package application.models.eventbase;
 
 import java.io.File;
+import java.util.List;
 
-import application.models.cube.CubeStructure;
+import application.models.dimension.Attribute;
 
 public class FileBasedEventBase extends AbstrEventBase {
 
-	public FileBasedEventBase(String filePath, String dbName, CubeStructure cube) {
-		super(filePath, System.getProperty("user.home") + File.separator + dbName, cube);
+	public FileBasedEventBase(String filePath, String dbName, List<Attribute> allAttributes) {
+		super(filePath, System.getProperty("user.home") + File.separator + dbName + ".db", allAttributes);
 	}
 }

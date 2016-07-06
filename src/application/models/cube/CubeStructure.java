@@ -17,11 +17,11 @@ public class CubeStructure implements Serializable {
 	private ObservableList<Dimension> dimensions;
 	private static final long serialVersionUID = -1223520587771036396L;
 
-	public CubeStructure(ObservableList<Dimension> dimensions, AbstrEventBase eventBase) {
+	public CubeStructure(ObservableList<Dimension> dimensions) {
 		this.dimensions = dimensions;
 	}
 
-	public void populateValueSet() {
+	public void populateValueSet(AbstrEventBase eb) {
 
 	}
 	public List<Dimension> getDimensions(){

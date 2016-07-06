@@ -1,8 +1,12 @@
 package application.controllers.wizard.steps;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import org.deckfour.xes.model.XAttribute;
 
 import com.sun.javafx.scene.control.skin.LabeledText;
 
@@ -216,14 +220,15 @@ public class DimensionsController extends AbstractWizardStepController {
 	protected void addAttributeButton() {
 		Dimension selectedDim = dimensionsList.getSelectionModel().getSelectedItem();
 		if (selectedDim == null)
-			errorMessage("No Dimension Selected","Please select a dimension to add an attribute to.");
+			errorMessage("No Dimension Selected", "Please select a dimension to add an attribute to.");
 		else {
-			ChoiceDialog<Attribute> dialog = new ChoiceDialog<Attribute>(attributes.get(0),attributes);
+			ChoiceDialog<Attribute> dialog = new ChoiceDialog<Attribute>(attributes.get(0), attributes);
 			dialog.setTitle("Add Attribute to Dimension");
-			dialog.setHeaderText("Please select an attribute to be added to the Dimension\"" + selectedDim.getNameProperty().getValue() + "\"");
+			dialog.setHeaderText("Please select an attribute to be added to the Dimension\""
+					+ selectedDim.getNameProperty().getValue() + "\"");
 			dialog.showAndWait();
-			
-			if(dialog.getResult() != null)
+
+			if (dialog.getResult() != null)
 				selectedDim.addAttribute(dialog.getResult());
 			updateLists();
 		}
@@ -236,11 +241,12 @@ public class DimensionsController extends AbstractWizardStepController {
 			errorMessage("Remove Attribute from Dimension", "Please select a dimension to access its attribute list.");
 		else {
 			Attribute selectedAtt = attributeList.getSelectionModel().getSelectedItem();
-			if(selectedAtt == null)
-				errorMessage("Remove Attribute from Dimension", "Please select the attribute to be removed from this dimension.");
+			if (selectedAtt == null)
+				errorMessage("Remove Attribute from Dimension",
+						"Please select the attribute to be removed from this dimension.");
 			else
 				selectedDim.removeAttribute(selectedAtt);
-		updateLists();
+			updateLists();
 		}
 	}
 
@@ -252,16 +258,17 @@ public class DimensionsController extends AbstractWizardStepController {
 	@FXML
 	protected void nextButton() {
 		boolean isOK = false;
-		if(!dimensions.isEmpty())
-			for(Dimension dim : dimensions)
-				if(!dim.getAttributes().isEmpty()){
+		if (!dimensions.isEmpty())
+			for (Dimension dim : dimensions)
+				if (!dim.getAttributes().isEmpty()) {
 					isOK = true;
 					break;
 				}
-		if(isOK)
+		if (isOK)
 			mainController.nextStep();
 		else
-			errorMessage("No dimensions/attributes used!", "Please create at least one dimension that contains at least one attribute.");
+			errorMessage("No dimensions/attributes used!",
+					"Please create at least one dimension that contains at least one attribute.");
 	}
 
 	@Override
@@ -277,9 +284,16 @@ public class DimensionsController extends AbstractWizardStepController {
 		alert.setContentText(message);
 		alert.showAndWait();
 	}
-	
-	public ObservableList<Dimension> getDimensions(){
+
+	public ObservableList<Dimension> getDimensions() {
 		return dimensions;
+	}
+
+	public List<Attribute> getAllAttributes() {
+		List<Attribute> att = new ArrayList<Attribute>();
+		for (Attribute a : attributes)
+			att.add(a);
+		return att;
 	}
 
 }
