@@ -6,12 +6,34 @@ import org.deckfour.xes.model.XAttribute;
 
 import application.models.dimension.Attribute;
 import application.models.dimension.Dimension;
+import application.models.eventbase.AbstrEventBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBoxTreeItem;
 
 public class Cube {
 
+	private CubeStructure cubeStructure;
+	private AbstrEventBase eventBase;
+	private CubeInfo statistics;
+
+	public Cube(CubeStructure cubeStructure, AbstrEventBase eventBase) {
+		this.cubeStructure = cubeStructure;
+		this.eventBase = eventBase;
+		this.statistics = new CubeInfo(this.cubeStructure, this.eventBase);
+	}
+
+	public CubeInfo getCubeInfo() {
+		return statistics;
+	}
+	
+	
+	
+	
+	
+	
+
+	// old stuff
 	private ObservableList<Cell> cells;
 	private Map<Attribute, ObservableList<CheckBoxTreeItem<XAttribute>>> valueSelections;
 	private ObservableList<Dimension> dimensions;

@@ -170,6 +170,10 @@ public class CubeWizardController extends BorderPane implements Initializable {
 	public CubeStructure getCubeStructure() {
 		return cube;
 	}
+	
+	public AbstrEventBase getEventBase(){
+		return eventBase;
+	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {

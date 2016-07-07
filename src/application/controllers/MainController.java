@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import org.deckfour.xes.model.XAttribute;
 import org.deckfour.xes.model.XLog;
 
+import application.controllers.mainview.CubeRepositoryController;
 import application.controllers.menu.MenuBarController;
 import application.controllers.wizard.CubeWizardController;
 import application.models.cube.Cube;
@@ -31,6 +32,7 @@ import javafx.stage.Stage;
 public class MainController extends BorderPane implements Initializable {
 
 	private Stage mainStage;
+	private CubeRepositoryController cubeRepositoryController;
 
 	// menubar
 	@FXML
@@ -89,6 +91,8 @@ public class MainController extends BorderPane implements Initializable {
 	@FXML
 	public void initialize() {
 		menuBarController.init(this);
+		cubeRepositoryController = new CubeRepositoryController(this);
+		this.setCenter(cubeRepositoryController);
 
 		// tabImportDataController.init(this);
 		// tabImportDataController.initializeTab(tabImportData);
@@ -172,7 +176,7 @@ public class MainController extends BorderPane implements Initializable {
 	public void newCube() {
 
 		final Stage wizard = new Stage();
-		//wizard.initModality(Modality.APPLICATION_MODAL);
+		// wizard.initModality(Modality.APPLICATION_MODAL);
 		wizard.initOwner(mainStage);
 		CubeWizardController cubeController = new CubeWizardController();
 		Scene dialogScene = new Scene(cubeController, 800, 600);
@@ -180,11 +184,13 @@ public class MainController extends BorderPane implements Initializable {
 		wizard.getIcons().add(new Image(getClass().getResourceAsStream("/images/cube_black.png")));
 		wizard.setTitle("New Cube Wizard");
 		wizard.showAndWait();
-		
-		CubeStructure cube = cubeController.getCubeStructure();
-		for(Dimension dim : cube.getDimensions())
-			System.out.println("Dim: " + dim.getNameProperty().getValue());
-		
+		cubeRepositoryController.addCube(new Cube(cubeController.getCubeStructure(), cubeController.getEventBase()));
+
+		cubeRepositoryController.updateRepositoryList();
+		// CubeStructure cube = cubeController.getCubeStructure();
+		// for(Dimension dim : cube.getDimensions())
+		// System.out.println("Dim: " + dim.getNameProperty().getValue());
+		//
 	}
 	//
 	// public void updateTabs() {

@@ -35,12 +35,14 @@ public class AbstrEventBase {
 
 	private String dbPath;
 	private String filePath;
+	private int numAttributes;
 
 	private Map<Long, XEvent> eventMap; // to stores all the event objects
 
 	public AbstrEventBase(String filePath, String dbPath, List<Attribute> allAttributes) {
 		this.dbPath = dbPath;
 		this.filePath = filePath;
+		this.numAttributes = 0;
 		eventMap = new HashMap<Long, XEvent>();
 
 		if (filePath.endsWith(".csv")) // fill the eventMap
@@ -66,8 +68,10 @@ public class AbstrEventBase {
 			String sqlCreate = "CREATE TABLE EVENTS (ID INTEGER PRIMARY KEY NOT NULL";
 
 			for (Attribute att : attributes)
-				if (!att.getType().equals(Attribute.IGNORE))
+				if (!att.getType().equals(Attribute.IGNORE)){
 					sqlCreate = sqlCreate + ", \"" + att.getAttributeName() + "\" " + att.getType();
+					numAttributes++;
+				}
 
 			sqlCreate = sqlCreate + ")";
 			s.executeUpdate(sqlCreate);
@@ -201,6 +205,21 @@ public class AbstrEventBase {
 			eventMap.put(i, event);
 			i++;
 		}
+	}
+	
+	public long getNumberofEvents(){
+		return eventMap.size();
+	}
+	
+	/**
+	 * 
+	 * @return The number of attributes of the first existing event
+	 */
+	public int getNumberOfAttributes(){
+		return numAttributes;
+	}
+	public String getName(){
+		return dbPath.substring(dbPath.lastIndexOf(File.separator)+1).replace(".db", "");
 	}
 
 }
