@@ -69,6 +69,9 @@
 	<classpathentry kind="lib" path="stdlib/jgrapht-ext-0.9.1.jar"/>
 	<classpathentry kind="lib" path="stdlib/sqlite-jdbc-3.8.11.2.jar"/>
 	<classpathentry kind="lib" path="stdlib/commons-csv-1.4.jar"/>
+	<classpathentry kind="lib" path="stdlib/controlsfx-8.40.11.jar" sourcepath="stdlib/controlsfx-8.40.11-sources.jar"/>
+	<classpathentry kind="lib" path="stdlib/fxsampler-1.0.9.jar"/>
+	<classpathentry kind="lib" path="stdlib/controlsfx-8.40.11-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

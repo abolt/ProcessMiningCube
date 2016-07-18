@@ -5,14 +5,18 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import org.deckfour.xes.model.XAttribute;
@@ -30,6 +34,7 @@ import application.models.cube.CubeStructure;
 import application.models.dimension.Attribute;
 import application.operations.io.log.CSVImporter;
 import application.operations.io.log.XESImporter;
+import javafx.util.Pair;
 
 public class AbstrEventBase {
 
@@ -68,7 +73,7 @@ public class AbstrEventBase {
 			String sqlCreate = "CREATE TABLE EVENTS (ID INTEGER PRIMARY KEY NOT NULL";
 
 			for (Attribute att : attributes)
-				if (!att.getType().equals(Attribute.IGNORE)){
+				if (!att.getType().equals(Attribute.IGNORE)) {
 					sqlCreate = sqlCreate + ", \"" + att.getAttributeName() + "\" " + att.getType();
 					numAttributes++;
 				}
@@ -130,9 +135,67 @@ public class AbstrEventBase {
 		return f.exists();
 	}
 
-	public Collection<XEvent> getEvents(String query) {
-		//returns the events (pointers) that are the result of this query
-		return null;
+	public Collection<XEvent> getEvents(ConditionSet conditions) {
+
+		List<XEvent> result = new ArrayList<XEvent>();
+		List<Pair<Attribute, String>> conditionList = conditions.getConditions();
+
+		String sql = "SELECT ID FROM EVENTS WHERE ";
+		Iterator<Pair<Attribute, String>> iterator = conditionList.iterator();
+
+		while (iterator.hasNext()) {
+			Pair<Attribute, String> item = iterator.next();
+			sql = sql + "\"" + item.getKey().getAttributeName() + "\" = '" + item.getValue() + "'";
+			if (iterator.hasNext())
+				sql = sql + " AND ";
+		}
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+			Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+			Statement s = c.createStatement();
+			// drop existing table if existed
+			ResultSet rs = s.executeQuery(sql);
+			while (rs.next()) {
+				result.add(eventMap.get(rs.getString(1)));
+			}
+			s.close();
+			c.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// returns the events (pointers) that are the result of this query
+
+		return result;
+	}
+
+	public Set<String> getValueSet(String attributeName) {
+		Set<String> valueSet = new TreeSet<String>();
+
+		try {
+			Class.forName("org.sqlite.JDBC");
+			Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+			Statement s = c.createStatement();
+			// drop existing table if existed
+			ResultSet rs = s.executeQuery("SELECT DISTINCT \"" + attributeName + "\" FROM EVENTS");
+			while (rs.next()) {
+				valueSet.add(rs.getString(1));
+			}
+			s.close();
+			c.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return valueSet;
 	}
 
 	public void buildEvents() {
@@ -149,7 +212,7 @@ public class AbstrEventBase {
 
 			ResultSetMetaData rsmd = rs.getMetaData();
 
-			for (int i = 0; i < rsmd.getColumnCount(); i++) {
+			for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 				columns.put(rsmd.getColumnName(i), rsmd.getColumnTypeName(i));
 				orderedAttributes.add(rsmd.getColumnName(i));
 			}
@@ -157,7 +220,7 @@ public class AbstrEventBase {
 			while (rs.next()) {
 				XAttributeMap attMap = new XAttributeMapImpl();
 				for (int i = 1; i < orderedAttributes.size(); i++)
-					//first column is always the index
+					// first column is always the index
 					switch (columns.get(orderedAttributes.get(i))) {
 					case Attribute.DISCRETE:
 						attMap.put(orderedAttributes.get(i),
@@ -206,20 +269,21 @@ public class AbstrEventBase {
 			i++;
 		}
 	}
-	
-	public long getNumberofEvents(){
+
+	public long getNumberofEvents() {
 		return eventMap.size();
 	}
-	
+
 	/**
 	 * 
 	 * @return The number of attributes of the first existing event
 	 */
-	public int getNumberOfAttributes(){
+	public int getNumberOfAttributes() {
 		return numAttributes;
 	}
-	public String getName(){
-		return dbPath.substring(dbPath.lastIndexOf(File.separator)+1).replace(".db", "");
+
+	public String getName() {
+		return dbPath.substring(dbPath.lastIndexOf(File.separator) + 1).replace(".db", "");
 	}
 
 }

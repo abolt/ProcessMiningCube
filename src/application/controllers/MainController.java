@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import org.deckfour.xes.model.XAttribute;
 import org.deckfour.xes.model.XLog;
 
+import application.controllers.explorer.CubeExplorerController;
 import application.controllers.mainview.CubeRepositoryController;
 import application.controllers.menu.MenuBarController;
 import application.controllers.wizard.CubeWizardController;
@@ -43,7 +44,7 @@ public class MainController extends BorderPane implements Initializable {
 	public MainController(Stage stage) {
 		mainStage = stage;
 
-		FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/application/views/MainView.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/application/views/main/MainView.fxml"));
 		fxmlLoader.setController(this);
 		fxmlLoader.setRoot(this);
 		try {
@@ -187,10 +188,18 @@ public class MainController extends BorderPane implements Initializable {
 		cubeRepositoryController.addCube(new Cube(cubeController.getCubeStructure(), cubeController.getEventBase()));
 
 		cubeRepositoryController.updateRepositoryList();
-		// CubeStructure cube = cubeController.getCubeStructure();
-		// for(Dimension dim : cube.getDimensions())
-		// System.out.println("Dim: " + dim.getNameProperty().getValue());
-		//
+	}
+	
+	public void exploreCube(Cube cube){
+		final Stage wizard = new Stage();
+		// wizard.initModality(Modality.APPLICATION_MODAL);
+		wizard.initOwner(mainStage);
+		CubeExplorerController cubeController = new CubeExplorerController(cube);
+		Scene dialogScene = new Scene(cubeController, 800, 800);
+		wizard.setScene(dialogScene);
+		wizard.getIcons().add(new Image(getClass().getResourceAsStream("/images/cube_black.png")));
+		wizard.setTitle("Process Cube Explorer");
+		wizard.showAndWait();
 	}
 	//
 	// public void updateTabs() {

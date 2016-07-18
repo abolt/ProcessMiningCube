@@ -3,7 +3,9 @@ package application.models.cube;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import application.models.dimension.Attribute;
 import application.models.dimension.Dimension;
 import application.models.eventbase.AbstrEventBase;
 import javafx.collections.ObservableList;
@@ -22,7 +24,13 @@ public class CubeStructure implements Serializable {
 	}
 
 	public void populateValueSet(AbstrEventBase eb) {
-
+		for(Dimension d :  dimensions)
+			for(Attribute a : d.getAttributes()){
+				Set<String> valueSet = eb.getValueSet(a.getAttributeName());
+				a.getValueSet().clear();
+				for(String s : valueSet)
+					a.addValue(s);
+			}
 	}
 	public List<Dimension> getDimensions(){
 		List<Dimension> result = new ArrayList<Dimension>();

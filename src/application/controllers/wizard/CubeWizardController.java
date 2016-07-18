@@ -164,6 +164,8 @@ public class CubeWizardController extends BorderPane implements Initializable {
 	public void createCubeStructure() {
 		// create the cube object, and make it available for the visualizer.
 		cube = new CubeStructure(((DimensionsController) steps.get(2)).getDimensions());
+		cube.populateValueSet(eventBase);
+		
 		this.getScene().getWindow().hide();
 	}
 

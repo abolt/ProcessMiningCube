@@ -27,6 +27,14 @@ public class Cube {
 		return statistics;
 	}
 	
+	public CubeStructure getStructure(){
+		return cubeStructure;
+	}
+	
+	public AbstrEventBase getEventBase(){
+		return eventBase;
+	}
+	
 	
 	
 	

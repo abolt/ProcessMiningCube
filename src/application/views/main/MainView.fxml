@@ -11,12 +11,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<ScrollPane prefHeight="901.0" prefWidth="976.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-	<content>
-		<AnchorPane prefHeight="1044.0" prefWidth="981.0">
-			<children>
-            
-			</children>
-		</AnchorPane>
-	</content>
-</ScrollPane>
+<fx:root type = "BorderPane" maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
+	prefWidth="765.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<top>
+		<fx:include fx:id="menuBar" source="MenuBar.fxml" />
+	</top>
+</fx:root>

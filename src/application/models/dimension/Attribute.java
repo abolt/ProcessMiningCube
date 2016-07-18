@@ -1,15 +1,16 @@
 package application.models.dimension;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class Attribute {
 
-	public static final String IGNORE = "IGNORE", TEXT = "TEXT", DISCRETE = "INTEGER",
-			CONTINUOUS = "REAL", DATE_TIME = "DATETIME";
+	public static final String IGNORE = "IGNORE", TEXT = "TEXT", DISCRETE = "INTEGER", CONTINUOUS = "REAL",
+			DATE_TIME = "DATETIME";
 
 	private String attributeName;
 	private String type;
@@ -48,6 +49,15 @@ public class Attribute {
 		return valueSet;
 	}
 
+	public List<String> getSelectedValueSet() {
+		List<String> result = new ArrayList<String>();
+
+		for (String s : valueSet)
+			if (selections.get(s) == true)
+				result.add(s);
+		return result;
+	}
+
 	@Override
 	public String toString() {
 		return attributeName;
@@ -61,5 +71,4 @@ public class Attribute {
 	public boolean isSelected(String value) {
 		return selections.get(value);
 	}
-
 }

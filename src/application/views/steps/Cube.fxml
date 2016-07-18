@@ -12,90 +12,60 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<Tab closable="false" disable="true" xmlns="http://javafx.com/javafx/8"
-	xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.cube.CubeController">
-	<graphic>
-		<BorderPane>
-			<center>
-				<ImageView fx:id="image" pickOnBounds="true"
-					preserveRatio="true" BorderPane.alignment="CENTER">
-					<image>
-						<Image url="images/cube_black.png" />
-					</image>
-				</ImageView>
-			</center>
-			<bottom>
-				<Label text="Cube" BorderPane.alignment="CENTER" />
-			</bottom>
-		</BorderPane>
-	</graphic>
-	<content>
-		<ScrollPane>
-			<content>
-				<AnchorPane>
-					<children>
-						<ListView fx:id="availableDimensions" layoutX="14.0"
-							layoutY="40.0" prefHeight="151.0" prefWidth="300.0" />
-						<Label layoutX="94.0" layoutY="15.0" text="Available Dimensions" />
-						<Label layoutX="520.0" layoutY="14.0" text="Cube Dimensions" />
-						<ListView fx:id="cubeDimensions" layoutX="441.0" layoutY="40.0"
-							prefHeight="151.0" prefWidth="300.0" />
-						<Label layoutX="280.0" layoutY="210.0" text="Cube Operations" />
-						<Label layoutX="397.0" layoutY="212.0"
-							text="(for selected Cube Dimension)">
-							<font>
-								<Font size="12.0" />
-							</font>
-						</Label>
-						<Button layoutX="475.0" layoutY="593.0" mnemonicParsing="false"
-							onAction="#handleCreateCubeButton" text="Create (Update) Cube">
-							<font>
-								<Font name="System Bold" size="18.0" />
-							</font>
-						</Button>
-						<Label layoutX="14.0" layoutY="240.0" text="Selected Dimension:" />
-						<TextField fx:id="sliceName" editable="false" layoutX="164.0"
-							layoutY="235.0" prefHeight="31.0" prefWidth="220.0" />
-						<Label layoutX="14.0" layoutY="282.0" text="Selected Attribute:" />
-						<ComboBox fx:id="selectedAttribute" layoutX="164.0" layoutY="277.0"
-							prefHeight="31.0" prefWidth="292.0" />
-						<TreeView fx:id="valueSetItems" layoutX="16.0" layoutY="346.0"
-							prefHeight="200.0" prefWidth="363.0" />
-						<Label layoutX="15.0" layoutY="322.0" text="Selected Values:" />
-						<Button layoutX="397.0" layoutY="352.0" maxHeight="20.0"
-							mnemonicParsing="false" prefHeight="20.0" text="Tips &amp; Tricks" />
-						<TextArea layoutX="397.0" layoutY="391.0" prefHeight="79.0"
-							prefWidth="351.0" />
-						<Label layoutX="549.0" layoutY="357.0" text="Regular Expression" />
-						<Button layoutX="402.0" layoutY="477.0" mnemonicParsing="false"
-							text="Apply Regular Expression to Raw Value Selection" />
-						<Label layoutX="402.0" layoutY="240.0" text="Granularity Level:" />
-						<ComboBox fx:id="granularity" layoutX="524.0" layoutY="235.0"
-							prefHeight="31.0" prefWidth="225.0" />
-						<Button layoutX="474.0" layoutY="556.0" mnemonicParsing="false"
-							text="Reset Dimension to Defaults" />
-						<Separator layoutX="18.0" layoutY="198.0" prefHeight="12.0"
-							prefWidth="732.0" />
-						<Label layoutX="337.0" layoutY="100.0" text="&lt;-Drag&amp;Drop-&gt;">
-							<font>
-								<Font size="11.0" />
-							</font>
-						</Label>
-						<Label layoutX="643.0" layoutY="17.0" text="(Visible)">
-							<font>
-								<Font size="11.0" />
-							</font>
-						</Label>
-						<ComboBox fx:id="distributionSelection" layoutX="130.0"
-							layoutY="572.0" prefWidth="150.0" />
-						<Label layoutX="51.0" layoutY="577.0" text="Distribute" />
-						<Label layoutX="302.0" layoutY="577.0" text="to Cells" />
-						<Label layoutX="491.0" layoutY="282.0" text="Operation:" />
-						<ComboBox fx:id = "operation" layoutX="571.0" layoutY="277.0" prefHeight="31.0"
-							prefWidth="178.0" />
-					</children>
-				</AnchorPane>
-			</content>
-		</ScrollPane>
-	</content>
-</Tab>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="675.0" prefWidth="784.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ScrollPane prefHeight="663.0" prefWidth="775.0">
+         <content>
+            <AnchorPane>
+               <children>
+                  <ListView fx:id="availableDimensions" layoutX="14.0" layoutY="40.0" prefHeight="151.0" prefWidth="300.0" />
+                  <Label layoutX="94.0" layoutY="15.0" text="Available Dimensions" />
+                  <Label layoutX="520.0" layoutY="14.0" text="Cube Dimensions" />
+                  <ListView fx:id="cubeDimensions" layoutX="441.0" layoutY="40.0" prefHeight="151.0" prefWidth="300.0" />
+                  <Label layoutX="280.0" layoutY="210.0" text="Cube Operations" />
+                  <Label layoutX="397.0" layoutY="212.0" text="(for selected Cube Dimension)">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <Button layoutX="475.0" layoutY="593.0" mnemonicParsing="false" onAction="#handleCreateCubeButton" text="Create (Update) Cube">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Button>
+                  <Label layoutX="14.0" layoutY="240.0" text="Selected Dimension:" />
+                  <TextField fx:id="sliceName" editable="false" layoutX="164.0" layoutY="235.0" prefHeight="31.0" prefWidth="220.0" />
+                  <Label layoutX="14.0" layoutY="282.0" text="Selected Attribute:" />
+                  <ComboBox fx:id="selectedAttribute" layoutX="164.0" layoutY="277.0" prefHeight="31.0" prefWidth="292.0" />
+                  <TreeView fx:id="valueSetItems" layoutX="16.0" layoutY="346.0" prefHeight="200.0" prefWidth="363.0" />
+                  <Label layoutX="15.0" layoutY="322.0" text="Selected Values:" />
+                  <Button layoutX="397.0" layoutY="352.0" maxHeight="20.0" mnemonicParsing="false" prefHeight="20.0" text="Tips &amp; Tricks" />
+                  <TextArea layoutX="397.0" layoutY="391.0" prefHeight="79.0" prefWidth="351.0" />
+                  <Label layoutX="549.0" layoutY="357.0" text="Regular Expression" />
+                  <Button layoutX="402.0" layoutY="477.0" mnemonicParsing="false" text="Apply Regular Expression to Raw Value Selection" />
+                  <Label layoutX="402.0" layoutY="240.0" text="Granularity Level:" />
+                  <ComboBox fx:id="granularity" layoutX="524.0" layoutY="235.0" prefHeight="31.0" prefWidth="225.0" />
+                  <Button layoutX="474.0" layoutY="556.0" mnemonicParsing="false" text="Reset Dimension to Defaults" />
+                  <Separator layoutX="18.0" layoutY="198.0" prefHeight="12.0" prefWidth="732.0" />
+                  <Label layoutX="337.0" layoutY="100.0" text="&lt;-Drag&amp;Drop-&gt;">
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="643.0" layoutY="17.0" text="(Visible)">
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="distributionSelection" layoutX="130.0" layoutY="572.0" prefWidth="150.0" />
+                  <Label layoutX="51.0" layoutY="577.0" text="Distribute" />
+                  <Label layoutX="302.0" layoutY="577.0" text="to Cells" />
+                  <Label layoutX="491.0" layoutY="282.0" text="Operation:" />
+                  <ComboBox fx:id="operation" layoutX="571.0" layoutY="277.0" prefHeight="31.0" prefWidth="178.0" />
+               </children>
+            </AnchorPane>
+         </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>

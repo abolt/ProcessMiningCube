@@ -69,14 +69,9 @@ public class CubeRepositoryController extends BorderPane implements Initializabl
 		table.getSelectionModel().cellSelectionEnabledProperty().set(true);
 		table.setItems(cubeInfoList);
 	}
-	
-	@FXML
-	protected void exploreCube() {
-		
-	}
 
 	public void updateRepositoryList() {
-		//table.getItems().clear();
+		// table.getItems().clear();
 		cubeInfoList.clear();
 		for (String cubeName : repository.getCubeNames())
 			cubeInfoList.add(repository.getCube(cubeName).getCubeInfo());
@@ -93,5 +88,33 @@ public class CubeRepositoryController extends BorderPane implements Initializabl
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * Button handlers
+	 */
+	@FXML
+	protected void openCube() {
+		if (table.getSelectionModel().getSelectedItem() != null)
+			mainController.exploreCube(repository.getCube(table.getSelectionModel().getSelectedItem().getName()));
+	}
+
+	@FXML
+	protected void importCube() {
+
+	}
+
+	@FXML
+	protected void removeCube() {
+
+	}
+
+	@FXML
+	protected void exportCube() {
+
+	}
+	@FXML
+	protected void createCube() {
+		mainController.newCube();
 	}
 }

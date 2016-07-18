@@ -17,14 +17,16 @@
 			</columns>
 		</TableView>
 	</center>
-	<bottom>
+	<top>
 		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 			<items>
-				<Button mnemonicParsing="false"  text="a button" />
-				<Button mnemonicParsing="false"  text="another one" />
+				<Button mnemonicParsing="false"  text="New Cube" onAction="#createCube" />
+				<Button mnemonicParsing="false"  text="Import Cube" onAction="#importCube" />
+				<Button mnemonicParsing="false"  text="Remove Cube" onAction="#removeCube" />
+				<Button mnemonicParsing="false"  text="Export Cube" onAction="#exportCube" />
 				<Pane HBox.hgrow="ALWAYS" />
-				<Button mnemonicParsing="false" onAction="#exploreCube" text="Explore Selected Cube" />
+				<Button mnemonicParsing="false" text="Explore Cube" onAction="#openCube" />
 			</items>
 		</ToolBar>
-	</bottom>
+	</top>
 </fx:root>
