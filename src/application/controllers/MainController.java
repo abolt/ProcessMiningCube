@@ -12,10 +12,9 @@ import application.controllers.explorer.CubeExplorerController;
 import application.controllers.mainview.CubeRepositoryController;
 import application.controllers.menu.MenuBarController;
 import application.controllers.wizard.CubeWizardController;
+import application.models.attribute.abstr.Attribute;
 import application.models.cube.Cube;
-import application.models.cube.CubeStructure;
-import application.models.dimension.Attribute;
-import application.models.dimension.Dimension;
+import application.models.dimension.DimensionImpl;
 import application.models.wizard.MappingRow;
 import application.operations.io.Importer;
 import javafx.collections.ObservableList;
@@ -27,7 +26,6 @@ import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class MainController extends BorderPane implements Initializable {
@@ -64,8 +62,8 @@ public class MainController extends BorderPane implements Initializable {
 	private Importer importer;
 	private XLog log;
 	private ObservableList<MappingRow> mappingRows;
-	private ObservableList<Dimension> dimensions;
-	private Map<Attribute, ObservableList<CheckBoxTreeItem<XAttribute>>> selectedValues;
+	private ObservableList<DimensionImpl> dimensions;
+	private Map<Attribute<?>, ObservableList<CheckBoxTreeItem<XAttribute>>> selectedValues;
 	private String distributionModel;
 	private Cube cube;
 
@@ -189,8 +187,8 @@ public class MainController extends BorderPane implements Initializable {
 
 		cubeRepositoryController.updateRepositoryList();
 	}
-	
-	public void exploreCube(Cube cube){
+
+	public void exploreCube(Cube cube) {
 		final Stage wizard = new Stage();
 		// wizard.initModality(Modality.APPLICATION_MODAL);
 		wizard.initOwner(mainStage);

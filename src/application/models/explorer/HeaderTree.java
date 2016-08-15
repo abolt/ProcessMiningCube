@@ -5,22 +5,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import application.models.dimension.Attribute;
+import application.models.attribute.abstr.Attribute;
 import javafx.util.Pair;
 
 public class HeaderTree {
 	private Node root;
-	private Map<Integer, Attribute> layerToAttributeMap;
+	private Map<Integer, Attribute<?>> layerToAttributeMap;
 	private int layers;
 
 	public class Node implements Cloneable {
 		public ArrayList<Node> children;
 		public Node parent;
-		public List<Pair<Attribute, String>> values;
+		public List<Pair<Attribute<?>, String>> values;
 
 		public Node() {
 			children = new ArrayList<Node>();
-			values = new ArrayList<Pair<Attribute, String>>();
+			values = new ArrayList<Pair<Attribute<?>, String>>();
 		}
 
 		@Override
@@ -33,13 +33,13 @@ public class HeaderTree {
 		}
 	}
 
-	public HeaderTree(List<Attribute> attributes) {
-		layerToAttributeMap = new TreeMap<Integer, Attribute>();
+	public HeaderTree(List<Attribute<?>> attributes) {
+		layerToAttributeMap = new TreeMap<Integer, Attribute<?>>();
 		layers = 0;
-		for (Attribute a : attributes)
+		for (Attribute<?> a : attributes)
 			layerToAttributeMap.put(layers++, a);
 
-		List<Attribute> atts = new ArrayList<Attribute>();
+		List<Attribute<?>> atts = new ArrayList<Attribute<?>>();
 		atts.addAll(layerToAttributeMap.values());
 
 		root = new Node();
@@ -47,12 +47,12 @@ public class HeaderTree {
 		addNodesRecursive(atts);
 	}
 
-	public void addNodesRecursive(List<Attribute> remainingAttributes) {
+	public void addNodesRecursive(List<Attribute<?>> remainingAttributes) {
 		if (!remainingAttributes.isEmpty()) {
 			List<Node> leafs = getLeafs(layers - remainingAttributes.size());
 			for (Node leaf : leafs)
-				for (String s : remainingAttributes.get(0).getSelectedValueSet())
-					addElement(leaf, new Pair<Attribute, String>(remainingAttributes.get(0), s));
+				for (Object s : remainingAttributes.get(0).getValueSet())
+					addElement(leaf, new Pair<Attribute<?>, String>(remainingAttributes.get(0), s.toString()));
 
 			remainingAttributes.remove(0);
 			addNodesRecursive(remainingAttributes);
@@ -60,7 +60,7 @@ public class HeaderTree {
 
 	}
 
-	public Node addElement(Node currentNode, Pair<Attribute, String> child) {
+	public Node addElement(Node currentNode, Pair<Attribute<?>, String> child) {
 		Node newNode = new Node();
 		newNode.parent = currentNode;
 		newNode.values.add(child);
@@ -93,20 +93,20 @@ public class HeaderTree {
 
 	public List<Node> getAccumulatedLeafs(int layer) {
 		List<Node> list = new ArrayList<Node>();
-		for(Node node : getLeafs(layer))
+		for (Node node : getLeafs(layer))
 			list.add(node.clone());
-		for(Node node : list)
-			addParentsDataToLeaf(node,node.parent);
+		for (Node node : list)
+			addParentsDataToLeaf(node, node.parent);
 		return list;
 	}
 
 	private void addParentsDataToLeaf(Node node, Node parent) {
 		if (parent != null) {
-			List<Pair<Attribute,String>> values = new ArrayList<Pair<Attribute,String>>();
+			List<Pair<Attribute<?>, String>> values = new ArrayList<Pair<Attribute<?>, String>>();
 			values.addAll(node.values);
-			
+
 			node.values.clear();
-			
+
 			node.values.addAll(parent.values);
 			node.values.addAll(values);
 			addParentsDataToLeaf(node, parent.parent);

@@ -3,14 +3,13 @@ package application.models.eventbase;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +18,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import org.deckfour.xes.model.XAttribute;
+import org.apache.commons.collections15.MapIterator;
+import org.apache.commons.collections15.keyvalue.MultiKey;
+import org.apache.commons.collections15.map.MultiKeyMap;
 import org.deckfour.xes.model.XAttributeMap;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.impl.XAttributeContinuousImpl;
@@ -30,8 +31,8 @@ import org.deckfour.xes.model.impl.XAttributeTimestampImpl;
 import org.deckfour.xes.model.impl.XEventImpl;
 
 import application.controllers.wizard.steps.MappingController;
-import application.models.cube.CubeStructure;
-import application.models.dimension.Attribute;
+import application.models.attribute.abstr.Attribute;
+import application.models.cell.Metric;
 import application.operations.io.log.CSVImporter;
 import application.operations.io.log.XESImporter;
 import javafx.util.Pair;
@@ -44,7 +45,7 @@ public class AbstrEventBase {
 
 	private Map<Long, XEvent> eventMap; // to stores all the event objects
 
-	public AbstrEventBase(String filePath, String dbPath, List<Attribute> allAttributes) {
+	public AbstrEventBase(String filePath, String dbPath, List<Attribute<?>> allAttributes) {
 		this.dbPath = dbPath;
 		this.filePath = filePath;
 		this.numAttributes = 0;
@@ -58,7 +59,7 @@ public class AbstrEventBase {
 		populateDB(allAttributes);
 	}
 
-	private synchronized void populateDB(List<Attribute> attributes) {
+	private synchronized void populateDB(List<Attribute<?>> attributes) {
 
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -72,9 +73,9 @@ public class AbstrEventBase {
 
 			String sqlCreate = "CREATE TABLE EVENTS (ID INTEGER PRIMARY KEY NOT NULL";
 
-			for (Attribute att : attributes)
-				if (!att.getType().equals(Attribute.IGNORE)) {
-					sqlCreate = sqlCreate + ", \"" + att.getAttributeName() + "\" " + att.getType();
+			for (Attribute<?> att : attributes)
+				if (!att.getAttributeType().equals(Attribute.IGNORE)) {
+					sqlCreate = sqlCreate + ", \"" + att.getAttributeName() + "\" " + att.getAttributeType();
 					numAttributes++;
 				}
 
@@ -84,8 +85,8 @@ public class AbstrEventBase {
 
 			String sqlInsertHeader = "INSERT INTO EVENTS (ID";
 
-			for (Attribute att : attributes)
-				if (!att.getType().equals(Attribute.IGNORE))
+			for (Attribute<?> att : attributes)
+				if (!att.getAttributeType().equals(Attribute.IGNORE))
 					sqlInsertHeader = sqlInsertHeader + ", \"" + att.getAttributeName() + "\"";
 
 			sqlInsertHeader = sqlInsertHeader + ") VALUES ";
@@ -100,8 +101,8 @@ public class AbstrEventBase {
 				sqlInsertBatch = sqlInsertBatch + "('" + index;
 				XEvent event = eventMap.get(index);
 
-				for (Attribute att : attributes) {
-					if (!att.getType().equals(Attribute.IGNORE)
+				for (Attribute<?> att : attributes) {
+					if (!att.getAttributeType().equals(Attribute.IGNORE)
 							&& event.getAttributes().containsKey(att.getAttributeName()))
 						sqlInsertBatch = sqlInsertBatch + "', '"
 								+ event.getAttributes().get(att.getAttributeName()).toString();
@@ -110,17 +111,18 @@ public class AbstrEventBase {
 				}
 				sqlInsertBatch = sqlInsertBatch + "')";
 
-				if ((index % 100 == 0 || index == size - 1) && index > 0) { // run
-																			// the
-																			// batch
+				if ((index % batchSize == 0 || index == size - 1) && index > 0) { // run
+					// the
+					// batch
 					s.executeUpdate(sqlInsertHeader + sqlInsertBatch);
-					c.commit();
+
 					sqlInsertBatch = "";
 				} else if (index < size)
 					// all except the last that has a semicolon
 					sqlInsertBatch = sqlInsertBatch + ", ";
 
 			}
+			c.commit();
 			s.close();
 			c.close();
 		} catch (Exception e) {
@@ -135,21 +137,21 @@ public class AbstrEventBase {
 		return f.exists();
 	}
 
-	public Collection<XEvent> getEvents(ConditionSet conditions) {
+	public List<XEvent> getEvents(ConditionSet conditions) {
 
 		List<XEvent> result = new ArrayList<XEvent>();
-		List<Pair<Attribute, String>> conditionList = conditions.getConditions();
+		List<Pair<Attribute<?>, String>> conditionList = conditions.getConditions();
 
 		String sql = "SELECT ID FROM EVENTS WHERE ";
-		Iterator<Pair<Attribute, String>> iterator = conditionList.iterator();
+		Iterator<Pair<Attribute<?>, String>> iterator = conditionList.iterator();
 
 		while (iterator.hasNext()) {
-			Pair<Attribute, String> item = iterator.next();
+			Pair<Attribute<?>, String> item = iterator.next();
 			sql = sql + "\"" + item.getKey().getAttributeName() + "\" = '" + item.getValue() + "'";
 			if (iterator.hasNext())
 				sql = sql + " AND ";
 		}
-		
+
 		try {
 			Class.forName("org.sqlite.JDBC");
 			Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
@@ -173,6 +175,155 @@ public class AbstrEventBase {
 		return result;
 	}
 
+	/**
+	 * This method gets a map where the multikey has the matrix coordinates and
+	 * the value has the conditions that that cell has to satisfy.
+	 * 
+	 * @param conditionMatrix
+	 * @return a map with, for each coordinate (multikey) gives the value that
+	 *         should go to that cell
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public MultiKeyMap query(MultiKeyMap conditionMatrix, int numCells, int numConditionsPerCell, Metric metric) {
+
+		MultiKeyMap result = new MultiKeyMap();
+
+		int numConditions = numConditionsPerCell;
+		int batchSize = 19;
+
+		// initialize DB connection
+		try {
+			Class.forName("org.sqlite.JDBC");
+			Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+
+			/**
+			 * First we create a (multi-column) index on the table with the
+			 * attributes that we will use.
+			 */
+			Statement createIndex = c.createStatement();
+			createIndex.executeUpdate("DROP INDEX IF EXISTS \"index\"");
+			String createIndexQuery = "CREATE INDEX \"index\" ON EVENTS(";
+			for (int i = 0; i < numConditions; i++) {
+				createIndexQuery = createIndexQuery + "\""
+						+ ((ConditionSet) conditionMatrix.get(0, 0)).getConditions().get(i).getKey().getAttributeName()
+						+ "\"";
+				if (i < numConditions - 1)
+					createIndexQuery = createIndexQuery + ", ";
+			}
+			createIndexQuery = createIndexQuery + ")";
+			createIndex.executeUpdate(createIndexQuery);
+
+			// String dbName =
+			// dbPath.substring(dbPath.lastIndexOf(File.separator) + 1,
+			// dbPath.lastIndexOf(".db"));
+			String whereSQL = " FROM EVENTS WHERE ";
+			for (int i = 0; i < numConditions; i++) {
+				whereSQL = whereSQL + "\""
+						+ ((ConditionSet) conditionMatrix.get(0, 0)).getConditions().get(i).getKey().getAttributeName()
+						+ "\" = ?";
+				if (i < numConditions - 1)
+					whereSQL = whereSQL + " AND ";
+			}
+
+			// the string with the complete query
+
+			String coreSql = "SELECT ?, ?, ";
+			switch (metric.toString()) {
+			case Metric.eventCount:
+				coreSql = coreSql + "COUNT(ID)" + whereSQL;
+				break;
+			case Metric.caseCount:
+				coreSql = coreSql + "COUNT(DISTINCT \"" + metric.getCaseID() + "\")" + whereSQL;
+				break;
+			case Metric.avgCaseLength:
+				coreSql = coreSql + "AVG(counter) FROM (sElect COUNT(ID) AS counter FROM EVENTS WHERE \""
+						+ metric.getCaseID() + "\" IN (seLect DISTINCT \"" + metric.getCaseID() + "\"" + whereSQL
+						+ ") GROUP BY \"" + metric.getCaseID() + "\")";
+				break;
+			}
+			// System.out.println(coreSql);
+
+			PreparedStatement s = null;
+
+			MapIterator it = conditionMatrix.mapIterator();
+			int numQueries = 0;
+			while (it.hasNext()) {
+				it.next();
+				numQueries++;
+			}
+			it = conditionMatrix.mapIterator();
+			int counter = 0;
+			int index = 1;
+
+			if (numQueries < batchSize)
+				batchSize = numQueries;
+			s = c.prepareStatement(getFullSql(batchSize, coreSql));
+
+			while (it.hasNext()) {
+				it.next();
+				counter++;
+				MultiKey mk = (MultiKey) it.getKey();
+				int i = (int) mk.getKey(0);
+				int j = (int) mk.getKey(1);
+				ConditionSet conditions = (ConditionSet) it.getValue();
+
+				s.setInt(index++, i);
+				s.setInt(index++, j);
+
+				for (Pair<Attribute<?>, String> condition : conditions.getConditions())
+					s.setString(index++, condition.getValue());
+
+				if (counter % batchSize == 0) {// reached batch limit
+					ResultSet rs = s.executeQuery();
+					while (rs.next())
+						result.put(rs.getInt(1), rs.getInt(2), rs.getInt(3));
+					index = 1;// go back to the beginning
+					s.clearParameters();
+					counter = 0;
+					numQueries = numQueries - batchSize;
+					if (numQueries < batchSize && numQueries > 0) {
+						batchSize = numQueries;
+						s.close();
+						s = c.prepareStatement(getFullSql(batchSize, coreSql));
+					}
+
+				}
+				;
+			}
+			// if there is a remainder of the batches...
+			if (counter > 0) {
+				System.out.println("There were rows not processed!");
+			}
+			s.close();
+			c.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// returns the events (pointers) that are the result of this query
+
+		return result;
+	}
+
+	private String getFullSql(int batchSize, String coreSql) {
+		String sqlQuery = "";
+		boolean first = true;
+
+		for (int n = 0; n < batchSize; n++) {
+
+			if (!first)
+				sqlQuery = sqlQuery + " UNION ";
+			else
+				first = false;
+
+			sqlQuery = sqlQuery + coreSql;
+		}
+		return sqlQuery;
+	}
+
 	public Set<String> getValueSet(String attributeName) {
 		Set<String> valueSet = new TreeSet<String>();
 
@@ -180,7 +331,12 @@ public class AbstrEventBase {
 			Class.forName("org.sqlite.JDBC");
 			Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
 			Statement s = c.createStatement();
-			// drop existing table if existed
+			// if the attribute is a date, get the range (min and max)
+
+			// if the attribute is numerical, get the range (min and max)
+
+			// if the attribute is text, get the complete set of distinct
+			// elements
 			ResultSet rs = s.executeQuery("SELECT DISTINCT \"" + attributeName + "\" FROM EVENTS");
 			while (rs.next()) {
 				valueSet.add(rs.getString(1));
@@ -251,7 +407,7 @@ public class AbstrEventBase {
 		}
 	}
 
-	private void fillDbFromCSV(List<Attribute> attributes) {
+	private void fillDbFromCSV(List<Attribute<?>> attributes) {
 		CSVImporter importer = new CSVImporter(new File(filePath));
 		fillMap(importer.getEventList(-1, attributes));
 

@@ -26,7 +26,6 @@
 								<TableColumn fx:id="colAttribute" editable="false" maxWidth="1000.0" minWidth="200.0" prefWidth="-1.0" text="Attribute" />
 								<TableColumn fx:id="colExampleValues" maxWidth="1000.0" minWidth="200.0" prefWidth="-1.0" text="Example Values" />
 								<TableColumn fx:id="colAttributeType" maxWidth="1000.0" minWidth="200.0" prefWidth="-1.0" text="Attribute Type" />
-								<TableColumn fx:id="colCreateDimension" maxWidth="1000.0" minWidth="300.0" prefWidth="-1.0" text="Create a dimension with this attribute?" />
 							</columns>
 						</TableView>
 					</children>

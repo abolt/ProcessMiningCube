@@ -23,37 +23,37 @@
 				</Label>
             <HBox alignment="CENTER" spacing="20.0">
                <children>
-                  <VBox alignment="CENTER_LEFT" spacing="5.0">
-                     <children>
-                        <ToggleSwitch text="Hide empty rows" />
-                        <ToggleSwitch text="Hide empty columns" />
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER_LEFT" spacing="5.0">
-                     <children>
-                        <ToggleSwitch text="Row Merging" />
-                        <ToggleSwitch text="Column Merging" />
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER_RIGHT" spacing="5.0">
-                     <children>
-                        <ToggleSwitch text="Auto-update Table" />
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Update Table" />
-                     </children>
-                  </VBox>
                   <VBox alignment="CENTER_RIGHT" spacing="5.0">
                      <children>
                         <HBox alignment="CENTER">
                            <children>
                               <Label text="Show Metric: " />
-                              <ChoiceBox />
+                              <ChoiceBox fx:id="metricSelector" />
                            </children>
                         </HBox>
-                        <Button mnemonicParsing="false" text="Cell Filters">
+                        <Button mnemonicParsing="false" onAction="#clickOnMetricFilters" text="Metric Filters">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
                         </Button>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                        <ToggleSwitch fx:id="hideRows" text="Hide empty rows" />
+                        <ToggleSwitch fx:id="hideColumns" text="Hide empty columns" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                        <ToggleSwitch fx:id="mergeRows" text="Enable Row Merging" />
+                        <ToggleSwitch fx:id="mergeColumns" text="Enable Column Merging" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER_RIGHT" spacing="5.0">
+                     <children>
+                        <ToggleSwitch fx:id="autoUpdate" selected="true" text="Auto-update Table" />
+                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Update Table"  onAction="#clickOnUpdateTable" />
                      </children>
                   </VBox>
                </children>

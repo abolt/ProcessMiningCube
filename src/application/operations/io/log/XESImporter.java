@@ -27,7 +27,7 @@ import org.deckfour.xes.model.impl.XAttributeIDImpl;
 import org.deckfour.xes.model.impl.XAttributeLiteralImpl;
 import org.deckfour.xes.model.impl.XAttributeTimestampImpl;
 
-import application.models.dimension.Attribute;
+import application.models.attribute.abstr.Attribute;
 import application.models.wizard.MappingRow;
 import application.operations.io.Importer;
 import javafx.collections.FXCollections;
@@ -53,7 +53,7 @@ public class XESImporter extends Importer {
 	@Override
 	public ObservableList<MappingRow> getSampleList() {
 
-		List<XEvent> events = getEventList(-1,null); // get the full list
+		List<XEvent> events = getEventList(-1, null); // get the full list
 
 		Set<String> attributeNamesSet = new HashSet<String>();
 		Map<String, Set<String>> attributes = new HashMap<String, Set<String>>();
@@ -82,7 +82,7 @@ public class XESImporter extends Importer {
 
 		ObservableList<MappingRow> attributeObjects = FXCollections.observableArrayList();
 		for (String att : attributes.keySet()) {
-			attributeObjects.add(new MappingRow(att, attributes.get(att), Attribute.IGNORE, false));
+			attributeObjects.add(new MappingRow(att, attributes.get(att), Attribute.IGNORE));
 		}
 		return attributeObjects;
 	}
@@ -95,7 +95,7 @@ public class XESImporter extends Importer {
 	 * @return An ordered list of events as described in the input file.
 	 */
 	@Override
-	public List<XEvent> getEventList(long size, List<Attribute> a) {
+	public List<XEvent> getEventList(long size, List<Attribute<?>> a) {
 
 		List<XEvent> events = new ArrayList<XEvent>();
 

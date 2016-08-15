@@ -12,7 +12,7 @@ import java.util.Set;
 
 import application.controllers.wizard.CubeWizardController;
 import application.controllers.wizard.abstr.AbstractWizardStepController;
-import application.models.dimension.Attribute;
+import application.models.attribute.abstr.Attribute;
 import application.models.wizard.MappingRow;
 import application.operations.io.Importer;
 import application.operations.io.log.CSVImporter;
@@ -25,7 +25,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 
@@ -42,9 +41,6 @@ public class MappingController extends AbstractWizardStepController {
 
 	@FXML
 	private TableColumn<MappingRow, String> colAttribute, colExampleValues, colAttributeType;
-
-	@FXML
-	private TableColumn<MappingRow, Boolean> colCreateDimension;
 
 	public MappingController(CubeWizardController controller) {
 		super(controller, viewLocation);
@@ -154,10 +150,6 @@ public class MappingController extends AbstractWizardStepController {
 				}
 			}
 		});
-
-		colCreateDimension.setCellFactory(CheckBoxTableCell.forTableColumn(colCreateDimension));
-		colCreateDimension.setEditable(true);
-		colCreateDimension.setCellValueFactory(new PropertyValueFactory<MappingRow, Boolean>("createDimension"));
 
 		// set the table
 		table.setEditable(true);

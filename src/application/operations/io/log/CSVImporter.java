@@ -5,14 +5,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Spliterator;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -30,8 +28,7 @@ import org.processmining.log.csv.ICSVReader;
 import org.processmining.log.csv.config.CSVConfig;
 
 import application.controllers.wizard.steps.MappingController;
-import application.models.dimension.Attribute;
-import application.models.eventbase.AbstrEventBase;
+import application.models.attribute.abstr.Attribute;
 import application.models.wizard.MappingRow;
 import application.operations.io.Importer;
 import javafx.collections.FXCollections;
@@ -41,14 +38,8 @@ public class CSVImporter extends Importer {
 
 	private final int MAX_LINES = 5;
 
-	private SimpleDateFormat timestampFormat;
-
 	public CSVImporter(File in) {
 		super(in);
-	}
-
-	public void setTimestampFormat(SimpleDateFormat timestampFormat) {
-		this.timestampFormat = timestampFormat;
 	}
 
 	@Override
@@ -77,7 +68,7 @@ public class CSVImporter extends Importer {
 
 			ObservableList<MappingRow> attributeObjects = FXCollections.observableArrayList();
 			for (String att : attributes.keySet()) {
-				attributeObjects.add(new MappingRow(att, attributes.get(att), "", false));
+				attributeObjects.add(new MappingRow(att, attributes.get(att), Attribute.IGNORE));
 			}
 			return attributeObjects;
 
@@ -126,15 +117,15 @@ public class CSVImporter extends Importer {
 	// return null;
 
 	@Override
-	public List<XEvent> getEventList(long size, List<Attribute> attributes) {
+	public List<XEvent> getEventList(long size, List<Attribute<?>> attributes) {
 
 		List<XEvent> events = new ArrayList<XEvent>();
 		// stores the ordered attributes
 		List<String> attributeNames = new ArrayList<String>();
 		// maps the attributes to their type
 		Map<String, String> attributeNameAndType = new HashMap<String, String>();
-		for (Attribute a : attributes)
-			attributeNameAndType.put(a.getAttributeName(), a.getType());
+		for (Attribute<?> a : attributes)
+			attributeNameAndType.put(a.getAttributeName(), a.getAttributeType());
 
 		try {
 			CSVParser parser = CSVParser.parse(file, Charset.defaultCharset(), CSVFormat.DEFAULT);

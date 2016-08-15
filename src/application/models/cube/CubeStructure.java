@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import application.models.dimension.Attribute;
-import application.models.dimension.Dimension;
+import application.models.attribute.abstr.Attribute;
+import application.models.dimension.DimensionImpl;
 import application.models.eventbase.AbstrEventBase;
 import javafx.collections.ObservableList;
 
@@ -16,24 +16,33 @@ public class CubeStructure implements Serializable {
 	 * This class contains the structure of the cube: All the dimensions,and for
 	 * each attribute within a dimension, it has the complete valueset.
 	 */
-	private ObservableList<Dimension> dimensions;
+	private ObservableList<DimensionImpl> dimensions;
 	private static final long serialVersionUID = -1223520587771036396L;
 
-	public CubeStructure(ObservableList<Dimension> dimensions) {
+	public CubeStructure(ObservableList<DimensionImpl> dimensions) {
 		this.dimensions = dimensions;
 	}
 
 	public void populateValueSet(AbstrEventBase eb) {
-		for(Dimension d :  dimensions)
-			for(Attribute a : d.getAttributes()){
+		for (DimensionImpl d : dimensions)
+			// if dimension is time, do something else, getting the range with
+			// the root and filling out the other attributes.
+			for (Attribute<?> a : d.getAttributes()) {
 				Set<String> valueSet = eb.getValueSet(a.getAttributeName());
 				a.getValueSet().clear();
-				for(String s : valueSet)
+				for (String s : valueSet)
 					a.addValue(s);
 			}
 	}
-	public List<Dimension> getDimensions(){
-		List<Dimension> result = new ArrayList<Dimension>();
+
+	public void initializeComposedDimensions() {
+		for (DimensionImpl d : dimensions)
+			if (d.isTimeDimension())
+				d.initializeTimeDimension();
+	}
+
+	public List<DimensionImpl> getDimensions() {
+		List<DimensionImpl> result = new ArrayList<DimensionImpl>();
 		result.addAll(dimensions);
 		return result;
 	}

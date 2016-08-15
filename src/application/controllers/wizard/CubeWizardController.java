@@ -3,14 +3,15 @@ package application.controllers.wizard;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.controllers.wizard.abstr.AbstractWizardStepController;
 import application.controllers.wizard.steps.CubeOverViewController;
 import application.controllers.wizard.steps.DimensionsController;
+import application.controllers.wizard.steps.EasyDimensionsController;
 import application.controllers.wizard.steps.ImportDataController;
 import application.controllers.wizard.steps.MappingController;
 import application.models.cube.CubeStructure;
@@ -33,12 +34,13 @@ public class CubeWizardController extends BorderPane implements Initializable {
 
 	private CubeStructure cube;
 	private AbstrEventBase eventBase;
+	private boolean readMode;
 
 	@FXML
 	private ImageView imageStep0, imageStep1, imageStep2, imageStep3;
-	private List<ImageView> stepImageList;
 
-	private List<AbstractWizardStepController> steps;
+	private Map<Integer, AbstractWizardStepController> steps;
+	private Map<Integer, ImageView> images;
 
 	private int stepNum;
 
@@ -56,13 +58,15 @@ public class CubeWizardController extends BorderPane implements Initializable {
 	}
 
 	public void initializeContent() {
-		stepImageList = new ArrayList<ImageView>();
-		stepImageList.add(imageStep0);
-		stepImageList.add(imageStep1);
-		stepImageList.add(imageStep2);
-		stepImageList.add(imageStep3);
 
-		steps = new ArrayList<AbstractWizardStepController>();
+		images = new HashMap<Integer, ImageView>();
+		steps = new HashMap<Integer, AbstractWizardStepController>();
+
+		images.put(0, imageStep0);
+		images.put(1, imageStep1);
+		images.put(2, imageStep2); // easy dimensions (same image)
+		images.put(3, imageStep2); // dimensions config
+		images.put(4, imageStep3);
 
 		stepNum = 0;
 		updateContent();
@@ -76,7 +80,7 @@ public class CubeWizardController extends BorderPane implements Initializable {
 	}
 
 	public void nextStep() {
-		if (stepNum < 3)
+		if (stepNum < 4)
 			stepNum++;
 		updateContent();
 	}
@@ -88,15 +92,14 @@ public class CubeWizardController extends BorderPane implements Initializable {
 	}
 
 	private void updateContent() {
-		// assumes that the step has been created before
-		if (getNode(stepNum) == null)
+		if (!readMode)
 			createStep(stepNum);
 
 		this.setCenter((Node) getNode(stepNum));
 
-		for (int i = 0; i < stepImageList.size(); i++) {
+		for (int i = 0; i < images.size(); i++) {
 			if (i == stepNum) {
-				int depth = 40;
+				int depth = 50;
 				DropShadow borderGlow = new DropShadow();
 				borderGlow.setOffsetY(0.1f);
 				borderGlow.setOffsetX(0.1f);
@@ -104,25 +107,28 @@ public class CubeWizardController extends BorderPane implements Initializable {
 				borderGlow.setWidth(depth);
 				borderGlow.setHeight(depth);
 
-				stepImageList.get(i).setEffect(borderGlow);
+				images.get(i).setEffect(borderGlow);
 			} else
-				stepImageList.get(i).setEffect(null);
+				images.get(i).setEffect(null);
 		}
 	}
 
 	private void createStep(int number) {
 		switch (number) {
 		case 0: // import data
-			steps.add(new ImportDataController(this));
+			steps.put(number, new ImportDataController(this));
 			break;
 		case 1: // mappings
-			steps.add(new MappingController(this));
+			steps.put(number, new MappingController(this));
 			break;
 		case 2: // dimensions
-			steps.add(new DimensionsController(this));
+			steps.put(number, new EasyDimensionsController(this));
 			break;
-		case 3: // cube overview
-			steps.add(new CubeOverViewController(this));
+		case 3: // dimensions
+			steps.put(number, new DimensionsController(this));
+			break;
+		case 4: // cube overview
+			steps.put(number, new CubeOverViewController(this));
 			break;
 		}
 	}
@@ -158,22 +164,23 @@ public class CubeWizardController extends BorderPane implements Initializable {
 
 	private void createEventBase(String name) {
 		eventBase = new FileBasedEventBase(((ImportDataController) steps.get(0)).getFileName(), name,
-				((DimensionsController) steps.get(2)).getAllAttributes());
+				((DimensionsController) steps.get(3)).getAllAttributes());
 	}
 
 	public void createCubeStructure() {
 		// create the cube object, and make it available for the visualizer.
-		cube = new CubeStructure(((DimensionsController) steps.get(2)).getDimensions());
+		cube = new CubeStructure(((DimensionsController) steps.get(3)).getDimensions());
 		cube.populateValueSet(eventBase);
-		
+		cube.initializeComposedDimensions();
+
 		this.getScene().getWindow().hide();
 	}
 
 	public CubeStructure getCubeStructure() {
 		return cube;
 	}
-	
-	public AbstrEventBase getEventBase(){
+
+	public AbstrEventBase getEventBase() {
 		return eventBase;
 	}
 
@@ -181,6 +188,10 @@ public class CubeWizardController extends BorderPane implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void setReadMode(boolean readMode) {
+		this.readMode = readMode;
 	}
 
 }
