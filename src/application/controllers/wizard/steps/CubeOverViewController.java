@@ -31,8 +31,8 @@ public class CubeOverViewController extends AbstractWizardStepController {
 			summary = summary.concat("\nDimension: " + dim.getNameProperty().getValue() + "\n");
 			int attCounter = 1;
 			for (Attribute<?> att : dim.getAttributes()) {
-				summary = summary.concat("\tAttribute " + attCounter + ": " + att.getAttributeName() + "\t("
-						+ att.getAttributeType() + ")\n");
+				summary = summary
+						.concat("\tAttribute " + attCounter + ": " + att.getLabel() + "\t(" + att.getType() + ")\n");
 				attCounter++;
 			}
 		}

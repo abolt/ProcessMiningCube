@@ -2,6 +2,7 @@ package application.controllers.explorer;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -16,7 +17,7 @@ import org.controlsfx.control.spreadsheet.SpreadsheetView;
 import application.models.attribute.abstr.Attribute;
 import application.models.cell.Metric;
 import application.models.eventbase.AbstrEventBase;
-import application.models.eventbase.ConditionSet;
+import application.models.eventbase.conditions.Condition;
 import application.models.explorer.HeaderTree;
 import application.models.explorer.HeaderTree.Node;
 import javafx.beans.value.ChangeListener;
@@ -30,7 +31,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Pair;
 
 public class CubeTableViewController extends BorderPane implements Initializable {
 
@@ -156,7 +156,7 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		for (int i = 0; i < grid.getRowCount(); i++)
 			for (int j = 0; j < rows.size(); j++)
 				if (i >= columns.size())
-					grid.setCellValue(i, j, rowleafs.get(i - columns.size()).values.get(j).getKey().getAttributeName()
+					grid.setCellValue(i, j, rowleafs.get(i - columns.size()).values.get(j).getAttribute().getLabel()
 							+ " = " + rowleafs.get(i - columns.size()).values.get(j).getValue());
 
 		// fill column headers
@@ -164,7 +164,7 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		for (int j = 0; j < grid.getColumnCount(); j++)
 			for (int i = 0; i < columns.size(); i++) {
 				if (j >= rows.size())
-					grid.setCellValue(i, j, colleafs.get(j - rows.size()).values.get(i).getKey().getAttributeName()
+					grid.setCellValue(i, j, colleafs.get(j - rows.size()).values.get(i).getAttribute().getLabel()
 							+ " = " + colleafs.get(j - rows.size()).values.get(i).getValue());
 			}
 
@@ -242,16 +242,16 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		MultiKeyMap map = new MultiKeyMap();
 		for (int i = 0; i < rowCount; i++) {
 			for (int j = 0; j < colCount; j++) {
-				ConditionSet conditions = new ConditionSet();
+				List<Condition> conditions = new ArrayList<Condition>();
 				// row conditions
-				for (Pair<Attribute<?>, String> pair : rowleafs.get(i).values)
-					if (pair.getKey() != null && pair.getValue() != "")
-						conditions.addCondition(pair);
+				for (Condition pair : rowleafs.get(i).values)
+					if (pair.getAttribute() != null && pair.getValue() != "")
+						conditions.add(pair);
 				// column conditions
-				for (Pair<Attribute<?>, String> pair : colleafs.get(j).values)
-					if (pair.getKey() != null && pair.getValue() != "")
-						conditions.addCondition(pair);
-				if (!conditions.getConditions().isEmpty()) {
+				for (Condition pair : colleafs.get(j).values)
+					if (pair.getAttribute() != null && pair.getValue() != "")
+						conditions.add(pair);
+				if (!conditions.isEmpty()) {
 					MultiKey<Integer> key = new MultiKey<Integer>(i, j);
 					map.put(key, conditions);
 				}

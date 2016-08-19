@@ -125,7 +125,7 @@ public class CSVImporter extends Importer {
 		// maps the attributes to their type
 		Map<String, String> attributeNameAndType = new HashMap<String, String>();
 		for (Attribute<?> a : attributes)
-			attributeNameAndType.put(a.getAttributeName(), a.getAttributeType());
+			attributeNameAndType.put(a.getName(), a.getType());
 
 		try {
 			CSVParser parser = CSVParser.parse(file, Charset.defaultCharset(), CSVFormat.DEFAULT);

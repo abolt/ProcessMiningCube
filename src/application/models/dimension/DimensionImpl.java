@@ -40,14 +40,14 @@ public class DimensionImpl {
 		if (a instanceof DateTimeAttribute) {
 			if (attributes.isEmpty()) {
 				attributes.add(a);
-				attributeMap.put(a.getAttributeName(), a);
+				attributeMap.put(a.getLabel(), a);
 				isTime = true;
 				return true;
 			} else
 				return false;
 		} else if (!isTime) {
 			attributes.add(a);
-			attributeMap.put(a.getAttributeName(), a);
+			attributeMap.put(a.getLabel(), a);
 			return true;
 		}
 
@@ -57,7 +57,7 @@ public class DimensionImpl {
 	public void removeAttribute(Attribute<?> a) {
 		if (attributes.contains(a)) {
 			attributes.remove(a);
-			attributeMap.put(a.getAttributeName(), null);
+			attributeMap.put(a.getLabel(), null);
 		}
 		if (attributes.isEmpty())
 			isTime = false;
@@ -92,7 +92,7 @@ public class DimensionImpl {
 	}
 
 	public void initializeTimeDimension() {
-		
+
 		root = attributes.iterator().next();
 
 		if (root instanceof DateTimeAttribute) {
@@ -103,7 +103,7 @@ public class DimensionImpl {
 
 			for (Attribute<?> a : time.getChildren()) {
 				attributes.add(a);
-				attributeMap.put(a.getAttributeName(), a);
+				attributeMap.put(a.getLabel(), a);
 			}
 		}
 	}

@@ -33,9 +33,9 @@ import org.deckfour.xes.model.impl.XEventImpl;
 import application.controllers.wizard.steps.MappingController;
 import application.models.attribute.abstr.Attribute;
 import application.models.cell.Metric;
+import application.models.eventbase.conditions.Condition;
 import application.operations.io.log.CSVImporter;
 import application.operations.io.log.XESImporter;
-import javafx.util.Pair;
 
 public class AbstrEventBase {
 
@@ -74,8 +74,8 @@ public class AbstrEventBase {
 			String sqlCreate = "CREATE TABLE EVENTS (ID INTEGER PRIMARY KEY NOT NULL";
 
 			for (Attribute<?> att : attributes)
-				if (!att.getAttributeType().equals(Attribute.IGNORE)) {
-					sqlCreate = sqlCreate + ", \"" + att.getAttributeName() + "\" " + att.getAttributeType();
+				if (!att.getType().equals(Attribute.IGNORE)) {
+					sqlCreate = sqlCreate + ", \"" + att.getName() + "\" " + att.getType();
 					numAttributes++;
 				}
 
@@ -86,8 +86,8 @@ public class AbstrEventBase {
 			String sqlInsertHeader = "INSERT INTO EVENTS (ID";
 
 			for (Attribute<?> att : attributes)
-				if (!att.getAttributeType().equals(Attribute.IGNORE))
-					sqlInsertHeader = sqlInsertHeader + ", \"" + att.getAttributeName() + "\"";
+				if (!att.getType().equals(Attribute.IGNORE))
+					sqlInsertHeader = sqlInsertHeader + ", \"" + att.getName() + "\"";
 
 			sqlInsertHeader = sqlInsertHeader + ") VALUES ";
 
@@ -102,10 +102,8 @@ public class AbstrEventBase {
 				XEvent event = eventMap.get(index);
 
 				for (Attribute<?> att : attributes) {
-					if (!att.getAttributeType().equals(Attribute.IGNORE)
-							&& event.getAttributes().containsKey(att.getAttributeName()))
-						sqlInsertBatch = sqlInsertBatch + "', '"
-								+ event.getAttributes().get(att.getAttributeName()).toString();
+					if (!att.getType().equals(Attribute.IGNORE) && event.getAttributes().containsKey(att.getName()))
+						sqlInsertBatch = sqlInsertBatch + "', '" + event.getAttributes().get(att.getName()).toString();
 					else
 						sqlInsertBatch = sqlInsertBatch + "', 'NULL";
 				}
@@ -137,17 +135,16 @@ public class AbstrEventBase {
 		return f.exists();
 	}
 
-	public List<XEvent> getEvents(ConditionSet conditions) {
+	public List<XEvent> getEvents(List<Condition> conditions) {
 
 		List<XEvent> result = new ArrayList<XEvent>();
-		List<Pair<Attribute<?>, String>> conditionList = conditions.getConditions();
 
 		String sql = "SELECT ID FROM EVENTS WHERE ";
-		Iterator<Pair<Attribute<?>, String>> iterator = conditionList.iterator();
+		Iterator<Condition> iterator = conditions.iterator();
 
 		while (iterator.hasNext()) {
-			Pair<Attribute<?>, String> item = iterator.next();
-			sql = sql + "\"" + item.getKey().getAttributeName() + "\" = '" + item.getValue() + "'";
+			Condition item = iterator.next();
+			sql = sql + item.getConditionAsString();
 			if (iterator.hasNext())
 				sql = sql + " AND ";
 		}
@@ -199,28 +196,28 @@ public class AbstrEventBase {
 			/**
 			 * First we create a (multi-column) index on the table with the
 			 * attributes that we will use.
+			 * 
+			 * 
 			 */
 			Statement createIndex = c.createStatement();
 			createIndex.executeUpdate("DROP INDEX IF EXISTS \"index\"");
 			String createIndexQuery = "CREATE INDEX \"index\" ON EVENTS(";
 			for (int i = 0; i < numConditions; i++) {
-				createIndexQuery = createIndexQuery + "\""
-						+ ((ConditionSet) conditionMatrix.get(0, 0)).getConditions().get(i).getKey().getAttributeName()
-						+ "\"";
+				Attribute<?> attribute = ((List<Condition>) conditionMatrix.get(0, 0)).get(i).getAttribute();
+				if (attribute.getParent() != null)
+					createIndexQuery = createIndexQuery + attribute.getParent().getQueryString();
+				else
+					createIndexQuery = createIndexQuery + attribute.getQueryString();
 				if (i < numConditions - 1)
 					createIndexQuery = createIndexQuery + ", ";
 			}
 			createIndexQuery = createIndexQuery + ")";
 			createIndex.executeUpdate(createIndexQuery);
 
-			// String dbName =
-			// dbPath.substring(dbPath.lastIndexOf(File.separator) + 1,
-			// dbPath.lastIndexOf(".db"));
 			String whereSQL = " FROM EVENTS WHERE ";
 			for (int i = 0; i < numConditions; i++) {
-				whereSQL = whereSQL + "\""
-						+ ((ConditionSet) conditionMatrix.get(0, 0)).getConditions().get(i).getKey().getAttributeName()
-						+ "\" = ?";
+				whereSQL = whereSQL
+						+ ((List<Condition>) conditionMatrix.get(0, 0)).get(i).getAttribute().getQueryString() + " = ?";
 				if (i < numConditions - 1)
 					whereSQL = whereSQL + " AND ";
 			}
@@ -265,12 +262,12 @@ public class AbstrEventBase {
 				MultiKey mk = (MultiKey) it.getKey();
 				int i = (int) mk.getKey(0);
 				int j = (int) mk.getKey(1);
-				ConditionSet conditions = (ConditionSet) it.getValue();
+				List<Condition> conditions = (List<Condition>) it.getValue();
 
 				s.setInt(index++, i);
 				s.setInt(index++, j);
 
-				for (Pair<Attribute<?>, String> condition : conditions.getConditions())
+				for (Condition condition : conditions)
 					s.setString(index++, condition.getValue());
 
 				if (counter % batchSize == 0) {// reached batch limit

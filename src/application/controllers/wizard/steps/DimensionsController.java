@@ -11,7 +11,6 @@ import com.sun.javafx.scene.control.skin.LabeledText;
 import application.controllers.wizard.CubeWizardController;
 import application.controllers.wizard.abstr.AbstractWizardStepController;
 import application.models.attribute.DateTimeAttribute;
-import application.models.attribute.TextAttribute;
 import application.models.attribute.abstr.Attribute;
 import application.models.attribute.factory.AttributeFactory;
 import application.models.dimension.DimensionImpl;
@@ -67,7 +66,8 @@ public class DimensionsController extends AbstractWizardStepController {
 		dimensions = FXCollections.observableArrayList();
 		attributes = FXCollections.observableArrayList();
 		aux = FXCollections.observableArrayList();
-		aux.add(new TextAttribute("Select a dimension to visualize its attribute hierarchy.", Attribute.IGNORE, null));
+		aux.add(AttributeFactory.createAttribute("Select a dimension to visualize its attribute hierarchy.",
+				Attribute.IGNORE, null));
 		attributeList.setItems(aux);
 		attributeList.setDisable(true);
 
@@ -77,7 +77,7 @@ public class DimensionsController extends AbstractWizardStepController {
 		 */
 		for (MappingRow m : attributeObjects) {
 			if (!m.getUseAs().equals(Attribute.IGNORE)) {
-				Attribute<?> newAtt = AttributeFactory.createAtttribute(m.getAttributeName(), m.getUseAs());
+				Attribute<?> newAtt = AttributeFactory.createAttribute(m.getAttributeName(), m.getUseAs(), null);
 				attributes.add(newAtt);
 				if (isAutomatic) {
 					DimensionImpl newDimension;
@@ -118,7 +118,7 @@ public class DimensionsController extends AbstractWizardStepController {
 
 				Dragboard dragBoard = unusedAttributes.startDragAndDrop(TransferMode.MOVE);
 				ClipboardContent content = new ClipboardContent();
-				content.putString(unusedAttributes.getSelectionModel().getSelectedItem().getAttributeName());
+				content.putString(unusedAttributes.getSelectionModel().getSelectedItem().getLabel());
 				dragBoard.setContent(content);
 			}
 		});
@@ -131,7 +131,7 @@ public class DimensionsController extends AbstractWizardStepController {
 
 				Dragboard dragBoard = attributeList.startDragAndDrop(TransferMode.MOVE);
 				ClipboardContent content = new ClipboardContent();
-				content.putString(attributeList.getSelectionModel().getSelectedItem().getAttributeName());
+				content.putString(attributeList.getSelectionModel().getSelectedItem().getLabel());
 				dragBoard.setContent(content);
 			}
 		});
@@ -161,7 +161,7 @@ public class DimensionsController extends AbstractWizardStepController {
 						Iterator<Attribute<?>> iterator = attributeList.getItems().iterator();
 						for (int indexTarget = 0; iterator.hasNext(); indexTarget++) {
 							Attribute<?> targetElement = iterator.next();
-							if (targetElement.getAttributeName().equals(((Text) dragEvent.getTarget()).getText())) {
+							if (targetElement.getLabel().equals(((Text) dragEvent.getTarget()).getText())) {
 								// winner index
 								Attribute<?> sourceElement = attributeList.getSelectionModel().getSelectedItem();
 								int indexSource = attributeList.getItems().indexOf(sourceElement);
@@ -195,7 +195,7 @@ public class DimensionsController extends AbstractWizardStepController {
 			for (DimensionImpl dim : dimensions)
 				if (dim.getAttributes().size() > 0)
 					for (Attribute<?> att_dim : dim.getAttributes())
-						if (att.getAttributeName().equals(att_dim.getAttributeName()))
+						if (att.getLabel().equals(att_dim.getLabel()))
 							isUsed = true;
 			if (!isUsed)
 				unusedAttributesElements.add(att);

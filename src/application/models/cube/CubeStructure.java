@@ -28,7 +28,7 @@ public class CubeStructure implements Serializable {
 			// if dimension is time, do something else, getting the range with
 			// the root and filling out the other attributes.
 			for (Attribute<?> a : d.getAttributes()) {
-				Set<String> valueSet = eb.getValueSet(a.getAttributeName());
+				Set<String> valueSet = eb.getValueSet(a.getLabel());
 				a.getValueSet().clear();
 				for (String s : valueSet)
 					a.addValue(s);

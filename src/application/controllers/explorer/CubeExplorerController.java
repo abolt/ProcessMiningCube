@@ -100,8 +100,8 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 					return;
 				Dragboard dragBoard = dimensions.startDragAndDrop(TransferMode.MOVE);
 				ClipboardContent content = new ClipboardContent();
-				content.putString(((Attribute<?>) dimensions.getSelectionModel().getSelectedItem().getValue())
-						.getAttributeName());
+				content.putString(
+						((Attribute<?>) dimensions.getSelectionModel().getSelectedItem().getValue()).getLabel());
 				dragBoard.setContent(content);
 			}
 		});
@@ -144,7 +144,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 					return;
 				Dragboard dragBoard = rows.startDragAndDrop(TransferMode.MOVE);
 				ClipboardContent content = new ClipboardContent();
-				content.putString(rows.getSelectionModel().getSelectedItem().getAttributeName());
+				content.putString(rows.getSelectionModel().getSelectedItem().getLabel());
 				dragBoard.setContent(content);
 			}
 		});
@@ -173,7 +173,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 							Iterator<Attribute<?>> iterator = rows.getItems().iterator();
 							for (int indexTarget = 0; iterator.hasNext(); indexTarget++) {
 								Attribute<?> targetElement = iterator.next();
-								if (targetElement.getAttributeName().equals(((Text) dragEvent.getTarget()).getText())) {
+								if (targetElement.getLabel().equals(((Text) dragEvent.getTarget()).getText())) {
 									// winner index
 									Attribute<?> sourceElement = rows.getSelectionModel().getSelectedItem();
 									int indexSource = rows.getItems().indexOf(sourceElement);
@@ -218,7 +218,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 					return;
 				Dragboard dragBoard = columns.startDragAndDrop(TransferMode.MOVE);
 				ClipboardContent content = new ClipboardContent();
-				content.putString(columns.getSelectionModel().getSelectedItem().getAttributeName());
+				content.putString(columns.getSelectionModel().getSelectedItem().getLabel());
 				dragBoard.setContent(content);
 			}
 		});
@@ -251,7 +251,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 							Iterator<Attribute<?>> iterator = columns.getItems().iterator();
 							for (int indexTarget = 0; iterator.hasNext(); indexTarget++) {
 								Attribute<?> targetElement = iterator.next();
-								if (targetElement.getAttributeName().equals(((Text) dragEvent.getTarget()).getText())) {
+								if (targetElement.getLabel().equals(((Text) dragEvent.getTarget()).getText())) {
 									// winner index
 									Attribute<?> sourceElement = columns.getSelectionModel().getSelectedItem();
 									int indexSource = columns.getItems().indexOf(sourceElement);
@@ -291,7 +291,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 					return;
 				Dragboard dragBoard = filters.startDragAndDrop(TransferMode.MOVE);
 				ClipboardContent content = new ClipboardContent();
-				content.putString(filters.getSelectionModel().getSelectedItem().getAttributeName());
+				content.putString(filters.getSelectionModel().getSelectedItem().getLabel());
 				dragBoard.setContent(content);
 			}
 		});
@@ -328,7 +328,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 							Iterator<Attribute<?>> iterator = filters.getItems().iterator();
 							for (int indexTarget = 0; iterator.hasNext(); indexTarget++) {
 								Attribute<?> targetElement = iterator.next();
-								if (targetElement.getAttributeName().equals(((Text) dragEvent.getTarget()).getText())) {
+								if (targetElement.getLabel().equals(((Text) dragEvent.getTarget()).getText())) {
 									// winner index
 									Attribute<?> sourceElement = filters.getSelectionModel().getSelectedItem();
 									int indexSource = filters.getItems().indexOf(sourceElement);
@@ -414,7 +414,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 
 		for (DimensionImpl d : cube.getStructure().getDimensions())
 			for (Attribute<?> a : d.getAttributes())
-				if (!a.getAttributeType().equals(Attribute.IGNORE))
+				if (!a.getType().equals(Attribute.IGNORE))
 					attributes.add(a);
 		return attributes;
 
