@@ -32,8 +32,8 @@ import org.deckfour.xes.model.impl.XEventImpl;
 
 import application.controllers.wizard.steps.MappingController;
 import application.models.attribute.abstr.Attribute;
-import application.models.cell.Metric;
 import application.models.eventbase.conditions.Condition;
+import application.models.metric.Metric;
 import application.operations.io.log.CSVImporter;
 import application.operations.io.log.XESImporter;
 

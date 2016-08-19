@@ -1,4 +1,4 @@
-package application.models.cell;
+package application.models.metric;
 
 import application.models.attribute.abstr.Attribute;
 

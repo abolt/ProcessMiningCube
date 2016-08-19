@@ -15,11 +15,11 @@ import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 
 import application.models.attribute.abstr.Attribute;
-import application.models.cell.Metric;
 import application.models.eventbase.AbstrEventBase;
 import application.models.eventbase.conditions.Condition;
 import application.models.explorer.HeaderTree;
 import application.models.explorer.HeaderTree.Node;
+import application.models.metric.Metric;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
