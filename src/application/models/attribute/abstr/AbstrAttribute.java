@@ -109,6 +109,11 @@ public abstract class AbstrAttribute<T> implements Attribute<T> {
 
 	@Override
 	public Collection<T> getValueSet() {
+		return finalValueSet;
+	}
+	
+	@Override
+	public Collection<T> getSelectedValueSet() {
 		return activeValueSet;
 	}
 

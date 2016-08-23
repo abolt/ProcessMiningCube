@@ -9,25 +9,36 @@ import java.util.ResourceBundle;
 
 import com.sun.javafx.scene.control.skin.LabeledText;
 
+import application.controllers.explorer.filter.SimpleNumericFilterDialogController;
+import application.controllers.explorer.filter.TextFilterDialogController;
+import application.models.attribute.ContinuousAttribute;
+import application.models.attribute.DiscreteAttribute;
+import application.models.attribute.TextAttribute;
+import application.models.attribute.abstr.AbstrNumericalAttribute;
 import application.models.attribute.abstr.Attribute;
 import application.models.cube.Cube;
 import application.models.dimension.DimensionImpl;
 import application.models.eventbase.AbstrEventBase;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 public class CubeExplorerController extends BorderPane implements Initializable {
 
@@ -351,6 +362,54 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 					filters.getItems().add(newAtt);
 					filters.refresh();
 					contentController.requestTableUpdate();
+				}
+			}
+		});
+
+		filters.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+					if (mouseEvent.getClickCount() == 2) {
+						final Stage wizard = new Stage();
+						if (filters.getSelectionModel().getSelectedItem() instanceof TextAttribute) {
+							TextAttribute attribute = (TextAttribute) filters.getSelectionModel().getSelectedItem();
+							TextFilterDialogController controller = new TextFilterDialogController(attribute);
+							Scene dialogScene = new Scene(controller, 400, 400);
+							wizard.setScene(dialogScene);
+							wizard.getIcons().add(new Image(getClass().getResourceAsStream("/images/cube_black.png")));
+							wizard.setTitle("Filter Text Attribute");
+							wizard.showAndWait();
+
+							attribute.resetValueSet();
+
+							ObservableList<String> selected = controller.getSelectedValues();
+							for (String r : attribute.getValueSet()) {
+								if (!selected.contains(r))
+									attribute.removeValue(r);
+							}
+						} else if (filters.getSelectionModel().getSelectedItem() instanceof AbstrNumericalAttribute) {
+							AbstrNumericalAttribute<?> attribute = null;
+							
+							if (filters.getSelectionModel().getSelectedItem() instanceof ContinuousAttribute)
+								attribute = (ContinuousAttribute) filters.getSelectionModel().getSelectedItem();
+							else
+								attribute = (DiscreteAttribute) filters.getSelectionModel().getSelectedItem();
+							
+							SimpleNumericFilterDialogController controller = new SimpleNumericFilterDialogController(
+									attribute);
+							Scene dialogScene = new Scene(controller, 500, 300);
+							wizard.setScene(dialogScene);
+							wizard.getIcons().add(new Image(getClass().getResourceAsStream("/images/cube_black.png")));
+							wizard.setTitle("Filter Numerical Attribute");
+							wizard.showAndWait();
+
+							
+							attribute.setSelectedMin(controller.getSelectedMin());
+							attribute.setSelectedMax(controller.getSelectedMax());
+						}
+
+					}
 				}
 			}
 		});

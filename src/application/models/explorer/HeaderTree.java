@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import application.models.attribute.abstr.Attribute;
-import application.models.eventbase.conditions.Condition;
+import application.models.eventbase.conditions.ConditionImpl;
 
 public class HeaderTree {
 	private Node root;
@@ -16,11 +16,11 @@ public class HeaderTree {
 	public class Node implements Cloneable {
 		public ArrayList<Node> children;
 		public Node parent;
-		public List<Condition> values;
+		public List<ConditionImpl> values;
 
 		public Node() {
 			children = new ArrayList<Node>();
-			values = new ArrayList<Condition>();
+			values = new ArrayList<ConditionImpl>();
 		}
 
 		@Override
@@ -52,7 +52,7 @@ public class HeaderTree {
 			List<Node> leafs = getLeafs(layers - remainingAttributes.size());
 			for (Node leaf : leafs)
 				for (Object s : remainingAttributes.get(0).getValueSet())
-					addElement(leaf, new Condition(remainingAttributes.get(0), Condition.EQUALS, s.toString()));
+					addElement(leaf, new ConditionImpl(remainingAttributes.get(0), ConditionImpl.EQUALS, s.toString()));
 
 			remainingAttributes.remove(0);
 			addNodesRecursive(remainingAttributes);
@@ -60,7 +60,7 @@ public class HeaderTree {
 
 	}
 
-	public Node addElement(Node currentNode, Condition child) {
+	public Node addElement(Node currentNode, ConditionImpl child) {
 		Node newNode = new Node();
 		newNode.parent = currentNode;
 		newNode.values.add(child);
@@ -102,7 +102,7 @@ public class HeaderTree {
 
 	private void addParentsDataToLeaf(Node node, Node parent) {
 		if (parent != null) {
-			List<Condition> values = new ArrayList<Condition>();
+			List<ConditionImpl> values = new ArrayList<ConditionImpl>();
 			values.addAll(node.values);
 
 			node.values.clear();

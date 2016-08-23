@@ -34,6 +34,8 @@ public interface Attribute<T> extends Serializable {
 
 	public Collection<T> getValueSet();
 	
+	public Collection<T> getSelectedValueSet();
+	
 	public int getValueSetSize();
 
 	public void resetValueSet();

@@ -18,4 +18,13 @@ public class ContinuousAttribute extends AbstrNumericalAttribute<Double> {
 		else
 			return false;
 	}
+	
+	public void setSelectedMin(Number newSelectedMin) {
+		selectedMin = (Double) newSelectedMin;
+	}
+	
+	public void setSelectedMax(Number newSelectedMax) {
+		selectedMax = (Double) newSelectedMax;
+	}
+
 }

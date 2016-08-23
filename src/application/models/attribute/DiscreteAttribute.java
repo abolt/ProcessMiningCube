@@ -19,4 +19,17 @@ public class DiscreteAttribute extends AbstrNumericalAttribute<Integer> {
 			return false;
 	}
 
+	public void setSelectedMin(Number newSelectedMin) {
+		if (newSelectedMin instanceof Double)
+			selectedMin = ((Double) newSelectedMin).intValue();
+		else
+			selectedMin = (int) newSelectedMin;
+	}
+
+	public void setSelectedMax(Number newSelectedMax) {
+		if (newSelectedMax instanceof Double)
+			selectedMax = ((Double) newSelectedMax).intValue();
+		else
+			selectedMax = (int) newSelectedMax;
+	}
 }

@@ -32,7 +32,7 @@ import org.deckfour.xes.model.impl.XEventImpl;
 
 import application.controllers.wizard.steps.MappingController;
 import application.models.attribute.abstr.Attribute;
-import application.models.eventbase.conditions.Condition;
+import application.models.eventbase.conditions.ConditionImpl;
 import application.models.metric.Metric;
 import application.operations.io.log.CSVImporter;
 import application.operations.io.log.XESImporter;
@@ -135,16 +135,16 @@ public class AbstrEventBase {
 		return f.exists();
 	}
 
-	public List<XEvent> getEvents(List<Condition> conditions) {
+	public List<XEvent> getEvents(List<ConditionImpl> conditions) {
 
 		List<XEvent> result = new ArrayList<XEvent>();
 
 		String sql = "SELECT ID FROM EVENTS WHERE ";
-		Iterator<Condition> iterator = conditions.iterator();
+		Iterator<ConditionImpl> iterator = conditions.iterator();
 
 		while (iterator.hasNext()) {
-			Condition item = iterator.next();
-			sql = sql + item.getConditionAsString();
+			ConditionImpl item = iterator.next();
+			sql = sql + item.getAsQueryString();
 			if (iterator.hasNext())
 				sql = sql + " AND ";
 		}
@@ -203,7 +203,7 @@ public class AbstrEventBase {
 			createIndex.executeUpdate("DROP INDEX IF EXISTS \"index\"");
 			String createIndexQuery = "CREATE INDEX \"index\" ON EVENTS(";
 			for (int i = 0; i < numConditions; i++) {
-				Attribute<?> attribute = ((List<Condition>) conditionMatrix.get(0, 0)).get(i).getAttribute();
+				Attribute<?> attribute = ((List<ConditionImpl>) conditionMatrix.get(0, 0)).get(i).getAttribute();
 				if (attribute.getParent() != null)
 					createIndexQuery = createIndexQuery + attribute.getParent().getQueryString();
 				else
@@ -217,7 +217,7 @@ public class AbstrEventBase {
 			String whereSQL = " FROM EVENTS WHERE ";
 			for (int i = 0; i < numConditions; i++) {
 				whereSQL = whereSQL
-						+ ((List<Condition>) conditionMatrix.get(0, 0)).get(i).getAttribute().getQueryString() + " = ?";
+						+ ((List<ConditionImpl>) conditionMatrix.get(0, 0)).get(i).getAttribute().getQueryString() + " = ?";
 				if (i < numConditions - 1)
 					whereSQL = whereSQL + " AND ";
 			}
@@ -262,12 +262,12 @@ public class AbstrEventBase {
 				MultiKey mk = (MultiKey) it.getKey();
 				int i = (int) mk.getKey(0);
 				int j = (int) mk.getKey(1);
-				List<Condition> conditions = (List<Condition>) it.getValue();
+				List<ConditionImpl> conditions = (List<ConditionImpl>) it.getValue();
 
 				s.setInt(index++, i);
 				s.setInt(index++, j);
 
-				for (Condition condition : conditions)
+				for (ConditionImpl condition : conditions)
 					s.setString(index++, condition.getValue());
 
 				if (counter % batchSize == 0) {// reached batch limit

@@ -16,7 +16,7 @@ import org.controlsfx.control.spreadsheet.SpreadsheetView;
 
 import application.models.attribute.abstr.Attribute;
 import application.models.eventbase.AbstrEventBase;
-import application.models.eventbase.conditions.Condition;
+import application.models.eventbase.conditions.ConditionImpl;
 import application.models.explorer.HeaderTree;
 import application.models.explorer.HeaderTree.Node;
 import application.models.metric.Metric;
@@ -242,13 +242,13 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		MultiKeyMap map = new MultiKeyMap();
 		for (int i = 0; i < rowCount; i++) {
 			for (int j = 0; j < colCount; j++) {
-				List<Condition> conditions = new ArrayList<Condition>();
+				List<ConditionImpl> conditions = new ArrayList<ConditionImpl>();
 				// row conditions
-				for (Condition pair : rowleafs.get(i).values)
+				for (ConditionImpl pair : rowleafs.get(i).values)
 					if (pair.getAttribute() != null && pair.getValue() != "")
 						conditions.add(pair);
 				// column conditions
-				for (Condition pair : colleafs.get(j).values)
+				for (ConditionImpl pair : colleafs.get(j).values)
 					if (pair.getAttribute() != null && pair.getValue() != "")
 						conditions.add(pair);
 				if (!conditions.isEmpty()) {

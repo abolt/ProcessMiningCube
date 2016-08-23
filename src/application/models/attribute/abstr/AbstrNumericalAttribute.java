@@ -4,7 +4,7 @@ public abstract class AbstrNumericalAttribute<T extends Comparable<T>> extends A
 
 	private static final long serialVersionUID = -3317234921454229049L;
 
-	protected T min, max;
+	protected T selectedMin, selectedMax;
 
 	public AbstrNumericalAttribute(String name, String type, Attribute<?> parent) {
 		super(name, type, parent);
@@ -24,4 +24,20 @@ public abstract class AbstrNumericalAttribute<T extends Comparable<T>> extends A
 			return null;
 	}
 
+	public T getSelectedMin() {
+		if (selectedMin != null)
+			return selectedMin;
+		else
+			return getMin();
+	}
+
+	public T getSelectedMax() {
+		if (selectedMax != null)
+			return selectedMax;
+		else
+			return getMax();
+	}
+	
+	public abstract void setSelectedMin(Number newSelectedMin);
+	public abstract void setSelectedMax(Number newSelectedMax);
 }
