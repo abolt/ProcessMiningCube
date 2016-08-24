@@ -58,4 +58,16 @@ public class DateTimeAttribute extends AbstrNumericalAttribute<Long> {
 		}
 		return false;
 	}
+
+	@Override
+	public void setSelectedMin(Number newSelectedMin) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSelectedMax(Number newSelectedMax) {
+		// TODO Auto-generated method stub
+		
+	}
 }

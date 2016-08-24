@@ -6,37 +6,79 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
+<?import org.controlsfx.control.RangeSlider?>
 
 <fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <center>
-      <VBox alignment="CENTER" BorderPane.alignment="CENTER">
-         <children>
-            <HBox alignment="CENTER">
-               <children>
-                  <Label text="Attribute name: " />
-                  <TextField fx:id="textField" editable="false" />
-               </children>
-               <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </VBox.margin>
-            </HBox>
-            <Label text="Selected Values" />
-            <HBox fx:id = "box">
-               <children>
-                  <TextField promptText="From" fx:id = "from">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </HBox.margin>
-                  </TextField>
-                  <RangeSlider fx:id = "slider" />
-                  <TextField promptText="To" fx:id = "to">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </HBox.margin>
-                  </TextField>
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-   </center>
+	<top>
+		<VBox alignment="CENTER" BorderPane.alignment="CENTER">
+			<children>
+				<HBox alignment="CENTER">
+					<children>
+						<Label text="Attribute name: " />
+						<TextField fx:id="textField" editable="false" />
+					</children>
+					<VBox.margin>
+						<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+					</VBox.margin>
+				</HBox>
+				<Label text="Selected Value Range" underline="true">
+					<VBox.margin>
+						<Insets top="20.0" />
+					</VBox.margin>
+				</Label>
+				<VBox fx:id="box" alignment="CENTER">
+					<children>
+						<RangeSlider fx:id="slider" />
+						<HBox alignment="CENTER_RIGHT">
+							<children>
+								<Label text="From:">
+									<HBox.margin>
+										<Insets right="10.0" />
+									</HBox.margin>
+								</Label>
+								<TextField fx:id="from" alignment="CENTER_RIGHT">
+									<HBox.margin>
+										<Insets right="20.0" />
+									</HBox.margin>
+								</TextField>
+								<!-- <ToggleSwitch fx:id="from_inclusive" alignment="CENTER" contentDisplay="CENTER" selected="true" text="Inclusive" textAlignment="RIGHT">
+									<padding>
+										<Insets top="5.0" />
+									</padding>
+								</ToggleSwitch> -->
+							</children>
+							<VBox.margin>
+								<Insets bottom="10.0" />
+							</VBox.margin>
+						</HBox>
+						<HBox alignment="CENTER_RIGHT">
+							<children>
+								<Label text="To:">
+									<HBox.margin>
+										<Insets right="10.0" />
+									</HBox.margin>
+								</Label>
+								<TextField fx:id="to" alignment="CENTER_RIGHT">
+									<HBox.margin>
+										<Insets right="20.0" />
+									</HBox.margin>
+								</TextField>
+								<!--   <ToggleSwitch fx:id="to_inclusive" alignment="CENTER" selected="true" text="Inclusive" textAlignment="RIGHT">
+									<padding>
+										<Insets top="5.0" />
+									</padding>
+								</ToggleSwitch>-->
+							</children>
+							<VBox.margin>
+								<Insets />
+							</VBox.margin>
+						</HBox>
+					</children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+				</VBox>
+			</children>
+		</VBox>
+	</top>
 </fx:root>

@@ -408,7 +408,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 							attribute.setSelectedMin(controller.getSelectedMin());
 							attribute.setSelectedMax(controller.getSelectedMax());
 						}
-
+						contentController.requestTableUpdate();
 					}
 				}
 			}

@@ -118,6 +118,7 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		int rowCount, colCount;
 		List<Attribute<?>> rows = explorerController.getRows();
 		List<Attribute<?>> columns = explorerController.getColumns();
+		
 
 		AbstrEventBase eb = explorerController.getEventBase();
 

@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.controlsfx.control.RangeSlider;
+import org.controlsfx.control.ToggleSwitch;
 
 import application.models.attribute.ContinuousAttribute;
 import application.models.attribute.DiscreteAttribute;
@@ -16,7 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 
@@ -28,8 +29,11 @@ public class SimpleNumericFilterDialogController extends BorderPane implements I
 	@FXML
 	TextField textField, from, to;
 
+	//@FXML
+	//ToggleSwitch from_inclusive, to_inclusive;
+
 	@FXML
-	HBox box;
+	VBox box;
 
 	public SimpleNumericFilterDialogController(Attribute<?> attribute) {
 
@@ -49,10 +53,8 @@ public class SimpleNumericFilterDialogController extends BorderPane implements I
 
 	private void initializeList(AbstrNumericalAttribute<?> inputAttribute) {
 
-		box.getChildren().clear();
 		// initialize attributeName
-		textField.setText(inputAttribute.getLabel());
-		textField.setEditable(false);
+		textField.setText(inputAttribute.toString());
 
 		StringConverter<Number> converter = null;
 
@@ -77,14 +79,17 @@ public class SimpleNumericFilterDialogController extends BorderPane implements I
 		slider.setShowTickMarks(true);
 		slider.setShowTickLabels(true);
 
-		slider.setPrefWidth(300);
+		double range = slider.getMax() - slider.getMin();
+		if(range > 10)
+			slider.setMajorTickUnit((slider.getMax() - slider.getMin()) / 5);
+		else
+			slider.setMajorTickUnit(1);
 
 		from.setText(converter.toString(slider.getLowValue()));
 		to.setText(converter.toString(slider.getHighValue()));
-		// reset the box
-		box.getChildren().add(from);
-		box.getChildren().add(slider);
-		box.getChildren().add(to);
+
+		// reset the slider in the box
+		box.getChildren().set(0, slider);
 
 		this.layout();
 
