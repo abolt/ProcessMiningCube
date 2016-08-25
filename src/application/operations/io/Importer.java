@@ -18,6 +18,6 @@ public abstract class Importer {
 	}
 
 	public abstract ObservableList<MappingRow> getSampleList();
-	
-	public abstract List<XEvent> getEventList(long size, List<Attribute<?>> attributes);
+
+	public abstract List<XEvent> getEventList(long size, List<Attribute> attributes);
 }

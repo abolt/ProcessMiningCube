@@ -38,7 +38,17 @@ public abstract class AbstrNumericalAttribute<T extends Comparable<T>> extends A
 			return getMax();
 	}
 
-	public abstract void setSelectedMin(Number newSelectedMin);
+	public void setSelectedMin(T newSelectedMin) {
+		selectedMin = newSelectedMin;
+	}
 
-	public abstract void setSelectedMax(Number newSelectedMax);
+	public void setSelectedMax(T newSelectedMax) {
+		selectedMax = newSelectedMax;
+	}
+
+	public void resetSelections() {
+		selectedMin = getMin();
+		selectedMax = getMax();
+	}
+
 }

@@ -10,7 +10,7 @@ import application.models.condition.impl.ConditionImpl;
 
 public class HeaderTree {
 	private Node root;
-	private Map<Integer, Attribute<?>> layerToAttributeMap;
+	private Map<Integer, Attribute> layerToAttributeMap;
 	private int layers;
 
 	public class Node implements Cloneable {
@@ -33,13 +33,13 @@ public class HeaderTree {
 		}
 	}
 
-	public HeaderTree(List<Attribute<?>> attributes) {
-		layerToAttributeMap = new TreeMap<Integer, Attribute<?>>();
+	public HeaderTree(List<Attribute> attributes) {
+		layerToAttributeMap = new TreeMap<Integer, Attribute>();
 		layers = 0;
-		for (Attribute<?> a : attributes)
+		for (Attribute a : attributes)
 			layerToAttributeMap.put(layers++, a);
 
-		List<Attribute<?>> atts = new ArrayList<Attribute<?>>();
+		List<Attribute> atts = new ArrayList<Attribute>();
 		atts.addAll(layerToAttributeMap.values());
 
 		root = new Node();
@@ -47,7 +47,7 @@ public class HeaderTree {
 		addNodesRecursive(atts);
 	}
 
-	public void addNodesRecursive(List<Attribute<?>> remainingAttributes) {
+	public void addNodesRecursive(List<Attribute> remainingAttributes) {
 		if (!remainingAttributes.isEmpty()) {
 			List<Node> leafs = getLeafs(layers - remainingAttributes.size());
 			for (Node leaf : leafs)

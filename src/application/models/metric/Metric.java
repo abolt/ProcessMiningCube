@@ -8,25 +8,25 @@ public class Metric {
 			avgCaseLength = "Average Case Length (# Events)", avgCaseDuration = "Average Case Duration";
 
 	private String name;
-	private Attribute<?> caseID, timeStamp;
+	private Attribute caseID, timeStamp;
 
 	public Metric(String name) {
 		this.name = name;
 	}
 
-	public Attribute<?> getCaseID() {
+	public Attribute getCaseID() {
 		return caseID;
 	}
 
-	public void setCaseID(Attribute<?> caseID) {
+	public void setCaseID(Attribute caseID) {
 		this.caseID = caseID;
 	}
 
-	public Attribute<?> getTimeStamp() {
+	public Attribute getTimeStamp() {
 		return timeStamp;
 	}
 
-	public void setTimeStamp(Attribute<?> timeStamp) {
+	public void setTimeStamp(Attribute timeStamp) {
 		this.timeStamp = timeStamp;
 	}
 

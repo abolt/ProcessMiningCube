@@ -92,7 +92,7 @@ public class CubeTableViewController extends BorderPane implements Initializable
 				if (!oldValue.toString().equals(newValue.toString())) {
 					currentMetric = newValue;
 					if (!currentMetric.toString().equals(Metric.eventCount)) {
-						ChoiceDialog<Attribute<?>> attributeDialog = new ChoiceDialog<Attribute<?>>(
+						ChoiceDialog<Attribute> attributeDialog = new ChoiceDialog<Attribute>(
 								currentMetric.getCaseID() != null ? currentMetric.getCaseID()
 										: explorerController.getValidAttributeList().get(0),
 								explorerController.getValidAttributeList());
@@ -119,9 +119,9 @@ public class CubeTableViewController extends BorderPane implements Initializable
 	public void updateTable() {
 
 		int rowCount, colCount;
-		List<Attribute<?>> rows = explorerController.getRows();
-		List<Attribute<?>> columns = explorerController.getColumns();
-		List<Attribute<?>> filters = explorerController.getFilters();
+		List<Attribute> rows = explorerController.getRows();
+		List<Attribute> columns = explorerController.getColumns();
+		List<Attribute> filters = explorerController.getFilters();
 
 		AbstrEventBase eb = explorerController.getEventBase();
 
@@ -257,9 +257,9 @@ public class CubeTableViewController extends BorderPane implements Initializable
 						conditions.add(c);
 
 				// filter conditions
-				for (Attribute<?> att : filters)
-					for(ConditionImpl c : createConditionsFromFilterAttribute(att))
-						if(c.getAttribute() != null && c.getValue() != "")
+				for (Attribute att : filters)
+					for (ConditionImpl c : createConditionsFromFilterAttribute(att))
+						if (c.getAttribute() != null && c.getValue() != "")
 							conditions.add(c);
 				// TODO: add conditions from the filtered attributes
 
@@ -283,23 +283,15 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		this.layout();
 	}
 
-	private Collection<? extends ConditionImpl> createConditionsFromFilterAttribute(Attribute<?> attribute) {
-		
+	private Collection<? extends ConditionImpl> createConditionsFromFilterAttribute(Attribute attribute) {
+
 		// TODO Auto-generated method stub
-		
+
 		List<ConditionImpl> conditions = new ArrayList<ConditionImpl>();
-		if(attribute instanceof TextAttribute){
-			
-			
-			
-			
-		}
-		else if (attribute instanceof AbstrNumericalAttribute){
-			
-			
-			
-			
-			
+		if (attribute instanceof TextAttribute) {
+
+		} else if (attribute instanceof AbstrNumericalAttribute) {
+
 		}
 		return conditions;
 	}

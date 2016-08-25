@@ -117,14 +117,14 @@ public class CSVImporter extends Importer {
 	// return null;
 
 	@Override
-	public List<XEvent> getEventList(long size, List<Attribute<?>> attributes) {
+	public List<XEvent> getEventList(long size, List<Attribute> attributes) {
 
 		List<XEvent> events = new ArrayList<XEvent>();
 		// stores the ordered attributes
 		List<String> attributeNames = new ArrayList<String>();
 		// maps the attributes to their type
 		Map<String, String> attributeNameAndType = new HashMap<String, String>();
-		for (Attribute<?> a : attributes)
+		for (Attribute a : attributes)
 			attributeNameAndType.put(a.getName(), a.getType());
 
 		try {

@@ -30,7 +30,7 @@ public class CubeOverViewController extends AbstractWizardStepController {
 		for (DimensionImpl dim : dimensions) {
 			summary = summary.concat("\nDimension: " + dim.getNameProperty().getValue() + "\n");
 			int attCounter = 1;
-			for (Attribute<?> att : dim.getAttributes()) {
+			for (Attribute att : dim.getAttributes()) {
 				summary = summary
 						.concat("\tAttribute " + attCounter + ": " + att.getLabel() + "\t(" + att.getType() + ")\n");
 				attCounter++;
@@ -46,7 +46,7 @@ public class CubeOverViewController extends AbstractWizardStepController {
 	}
 
 	@FXML
-	protected void nextButton() {
+	protected void nextButton() throws Exception {
 		mainController.createCube();
 	}
 

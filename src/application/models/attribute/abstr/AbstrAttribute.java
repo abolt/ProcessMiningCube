@@ -92,13 +92,17 @@ public abstract class AbstrAttribute<T extends Comparable<T>> implements Attribu
 	}
 
 	@Override
-	public Set<?> getValueSet() {
+	public Set<T> getValueSet() {
 		return Collections.unmodifiableSet(valueSet);
 	}
 
 	@Override
 	public String toString() {
 		return label;
+	}
+
+	public void addValue(T value) {
+		valueSet.add(value);
 	}
 
 }

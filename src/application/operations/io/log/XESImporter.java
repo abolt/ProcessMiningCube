@@ -95,7 +95,7 @@ public class XESImporter extends Importer {
 	 * @return An ordered list of events as described in the input file.
 	 */
 	@Override
-	public List<XEvent> getEventList(long size, List<Attribute<?>> a) {
+	public List<XEvent> getEventList(long size, List<Attribute> a) {
 
 		List<XEvent> events = new ArrayList<XEvent>();
 

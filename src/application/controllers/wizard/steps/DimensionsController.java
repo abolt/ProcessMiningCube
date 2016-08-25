@@ -43,11 +43,11 @@ public class DimensionsController extends AbstractWizardStepController {
 	private ListView<DimensionImpl> dimensionsList;
 
 	@FXML
-	private ListView<Attribute<?>> attributeList, unusedAttributes;
+	private ListView<Attribute> attributeList, unusedAttributes;
 
 	private ObservableList<DimensionImpl> dimensions;
-	private ObservableList<Attribute<?>> attributes, aux;
-	private ObservableList<Attribute<?>> unusedAttributesElements;
+	private ObservableList<Attribute> attributes, aux;
+	private ObservableList<Attribute> unusedAttributesElements;
 
 	public DimensionsController(CubeWizardController controller) {
 		super(controller, viewLocation);
@@ -77,7 +77,7 @@ public class DimensionsController extends AbstractWizardStepController {
 		 */
 		for (MappingRow m : attributeObjects) {
 			if (!m.getUseAs().equals(Attribute.IGNORE)) {
-				Attribute<?> newAtt = AttributeFactory.createAttribute(m.getAttributeName(), m.getUseAs(), null);
+				Attribute newAtt = AttributeFactory.createAttribute(m.getAttributeName(), m.getUseAs(), null);
 				attributes.add(newAtt);
 				if (isAutomatic) {
 					DimensionImpl newDimension;
@@ -158,12 +158,12 @@ public class DimensionsController extends AbstractWizardStepController {
 
 				else if (source.getId().equals(attributeList.getId())) {
 					if (dragEvent.getTarget() instanceof LabeledText) {
-						Iterator<Attribute<?>> iterator = attributeList.getItems().iterator();
+						Iterator<Attribute> iterator = attributeList.getItems().iterator();
 						for (int indexTarget = 0; iterator.hasNext(); indexTarget++) {
-							Attribute<?> targetElement = iterator.next();
+							Attribute targetElement = iterator.next();
 							if (targetElement.getLabel().equals(((Text) dragEvent.getTarget()).getText())) {
 								// winner index
-								Attribute<?> sourceElement = attributeList.getSelectionModel().getSelectedItem();
+								Attribute sourceElement = attributeList.getSelectionModel().getSelectedItem();
 								int indexSource = attributeList.getItems().indexOf(sourceElement);
 								attributeList.getItems().set(indexSource, targetElement);
 								attributeList.getItems().set(indexTarget, sourceElement);
@@ -177,7 +177,7 @@ public class DimensionsController extends AbstractWizardStepController {
 						 * the list TO-DO: handle the case where the attribute
 						 * is dropped between two other ones
 						 */
-						Attribute<?> sourceElement = attributeList.getSelectionModel().getSelectedItem();
+						Attribute sourceElement = attributeList.getSelectionModel().getSelectedItem();
 						attributeList.getItems().remove(sourceElement);
 						attributeList.getItems().add(sourceElement);
 						updateLists();
@@ -190,11 +190,11 @@ public class DimensionsController extends AbstractWizardStepController {
 
 	protected void updateLists() {
 		unusedAttributesElements.clear();
-		for (Attribute<?> att : attributes) {
+		for (Attribute att : attributes) {
 			boolean isUsed = false;
 			for (DimensionImpl dim : dimensions)
 				if (dim.getAttributes().size() > 0)
-					for (Attribute<?> att_dim : dim.getAttributes())
+					for (Attribute att_dim : dim.getAttributes())
 						if (att.getLabel().equals(att_dim.getLabel()))
 							isUsed = true;
 			if (!isUsed)
@@ -229,7 +229,7 @@ public class DimensionsController extends AbstractWizardStepController {
 		if (selectedDim == null)
 			errorMessage("No Dimension Selected", "Please select a dimension to add an attribute to.");
 		else {
-			ChoiceDialog<Attribute<?>> dialog = new ChoiceDialog<Attribute<?>>(attributes.get(0), attributes);
+			ChoiceDialog<Attribute> dialog = new ChoiceDialog<Attribute>(attributes.get(0), attributes);
 			dialog.setTitle("Add Attribute to Dimension");
 			dialog.setHeaderText("Please select an attribute to be added to the Dimension\""
 					+ selectedDim.getNameProperty().getValue() + "\"");
@@ -249,7 +249,7 @@ public class DimensionsController extends AbstractWizardStepController {
 		if (selectedDim == null)
 			errorMessage("Remove Attribute from Dimension", "Please select a dimension to access its attribute list.");
 		else {
-			Attribute<?> selectedAtt = attributeList.getSelectionModel().getSelectedItem();
+			Attribute selectedAtt = attributeList.getSelectionModel().getSelectedItem();
 			if (selectedAtt == null)
 				errorMessage("Remove Attribute from Dimension",
 						"Please select the attribute to be removed from this dimension.");
@@ -298,9 +298,9 @@ public class DimensionsController extends AbstractWizardStepController {
 		return dimensions;
 	}
 
-	public List<Attribute<?>> getAllAttributes() {
-		List<Attribute<?>> att = new ArrayList<Attribute<?>>();
-		for (Attribute<?> a : attributes)
+	public List<Attribute> getAllAttributes() {
+		List<Attribute> att = new ArrayList<Attribute>();
+		for (Attribute a : attributes)
 			att.add(a);
 		return att;
 	}

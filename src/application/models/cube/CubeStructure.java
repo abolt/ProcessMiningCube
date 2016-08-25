@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import application.models.attribute.AttributeUtils;
 import application.models.attribute.abstr.Attribute;
 import application.models.dimension.DimensionImpl;
 import application.models.eventbase.AbstrEventBase;
@@ -23,15 +24,15 @@ public class CubeStructure implements Serializable {
 		this.dimensions = dimensions;
 	}
 
-	public void populateValueSet(AbstrEventBase eb) {
+	public void populateValueSet(AbstrEventBase eb) throws Exception {
 		for (DimensionImpl d : dimensions)
 			// if dimension is time, do something else, getting the range with
 			// the root and filling out the other attributes.
-			for (Attribute<?> a : d.getAttributes()) {
+			for (Attribute a : d.getAttributes()) {
 				Set<String> valueSet = eb.getValueSet(a.getLabel());
-				a.getValueSet().clear();
 				for (String s : valueSet)
-					a.addValue(s);
+					AttributeUtils.addValue(a,s);
+				AttributeUtils.resetFilter(a);
 			}
 	}
 

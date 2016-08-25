@@ -17,15 +17,15 @@ public class DimensionImpl {
 	// selected dimensions, and its filters do apply
 	private ObservableValue<String> dimensionName;
 
-	private ObservableList<Attribute<?>> attributes;
-	private Map<String, Attribute<?>> attributeMap;
+	private ObservableList<Attribute> attributes;
+	private Map<String, Attribute> attributeMap;
 	private boolean isTime;
-	private Attribute<?> root; // only used in composed dimensions
+	private Attribute root; // only used in composed dimensions
 
 	public DimensionImpl(String name, boolean isComposed) {
 		dimensionName = new SimpleStringProperty(name);
 		attributes = FXCollections.observableArrayList();
-		attributeMap = new HashMap<String, Attribute<?>>();
+		attributeMap = new HashMap<String, Attribute>();
 		this.isTime = isComposed;
 	}
 
@@ -36,7 +36,7 @@ public class DimensionImpl {
 	 * @return true or false depending on if the attribute could be added to the
 	 *         dimension
 	 */
-	public boolean addAttribute(Attribute<?> a) {
+	public boolean addAttribute(Attribute a) {
 		if (a instanceof DateTimeAttribute) {
 			if (attributes.isEmpty()) {
 				attributes.add(a);
@@ -54,7 +54,7 @@ public class DimensionImpl {
 		return false;
 	}
 
-	public void removeAttribute(Attribute<?> a) {
+	public void removeAttribute(Attribute a) {
 		if (attributes.contains(a)) {
 			attributes.remove(a);
 			attributeMap.put(a.getLabel(), null);
@@ -63,7 +63,7 @@ public class DimensionImpl {
 			isTime = false;
 	}
 
-	public ObservableList<Attribute<?>> getAttributes() {
+	public ObservableList<Attribute> getAttributes() {
 		return attributes;
 	}
 
@@ -83,7 +83,7 @@ public class DimensionImpl {
 			return false;
 	}
 
-	public Attribute<?> getAttribute(String name) {
+	public Attribute getAttribute(String name) {
 		return attributeMap.get(name);
 	}
 
@@ -101,7 +101,7 @@ public class DimensionImpl {
 			attributeMap.clear();
 			DateTimeAttribute time = (DateTimeAttribute) root;
 
-			for (Attribute<?> a : time.getChildren()) {
+			for (Attribute a : time.getChildren().values()) {
 				attributes.add(a);
 				attributeMap.put(a.getLabel(), a);
 			}

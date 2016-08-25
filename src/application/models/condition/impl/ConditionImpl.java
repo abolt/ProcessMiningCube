@@ -10,7 +10,7 @@ public class ConditionImpl implements Condition {
 
 	private final List<String> validComparators = new ArrayList<String>();
 
-	private Attribute<?> attribute;
+	private Attribute attribute;
 	private String comparator, value;
 
 	private void initializeList() {
@@ -24,7 +24,7 @@ public class ConditionImpl implements Condition {
 		validComparators.add(BETWEEN);
 	}
 
-	public ConditionImpl(Attribute<?> attribute, String comparator, String value) {
+	public ConditionImpl(Attribute attribute, String comparator, String value) {
 		initializeList();
 		this.attribute = attribute;
 		this.value = value;
@@ -32,7 +32,7 @@ public class ConditionImpl implements Condition {
 			this.comparator = comparator;
 	}
 
-	public Attribute<?> getAttribute() {
+	public Attribute getAttribute() {
 		return attribute;
 	}
 

@@ -24,7 +24,7 @@ public class TextFilterDialogController extends BorderPane implements Initializa
 	@FXML
 	TextField textField;
 
-	public TextFilterDialogController(Attribute<?> attribute) {
+	public TextFilterDialogController(Attribute attribute) {
 
 		FXMLLoader fxmlLoader = new FXMLLoader(
 				this.getClass().getResource("/application/views/filter/TextFilterDialog.fxml"));

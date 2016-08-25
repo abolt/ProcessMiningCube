@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.controlsfx.control.RangeSlider;
-import org.controlsfx.control.ToggleSwitch;
 
 import application.models.attribute.ContinuousAttribute;
 import application.models.attribute.DiscreteAttribute;
@@ -29,13 +28,13 @@ public class SimpleNumericFilterDialogController extends BorderPane implements I
 	@FXML
 	TextField textField, from, to;
 
-	//@FXML
-	//ToggleSwitch from_inclusive, to_inclusive;
+	// @FXML
+	// ToggleSwitch from_inclusive, to_inclusive;
 
 	@FXML
 	VBox box;
 
-	public SimpleNumericFilterDialogController(Attribute<?> attribute) {
+	public SimpleNumericFilterDialogController(Attribute attribute) {
 
 		FXMLLoader fxmlLoader = new FXMLLoader(
 				this.getClass().getResource("/application/views/filter/SimpleNumericFilterDialog.fxml"));
@@ -80,7 +79,7 @@ public class SimpleNumericFilterDialogController extends BorderPane implements I
 		slider.setShowTickLabels(true);
 
 		double range = slider.getMax() - slider.getMin();
-		if(range > 10)
+		if (range > 10)
 			slider.setMajorTickUnit((slider.getMax() - slider.getMin()) / 5);
 		else
 			slider.setMajorTickUnit(1);
@@ -96,11 +95,11 @@ public class SimpleNumericFilterDialogController extends BorderPane implements I
 	}
 
 	public double getSelectedMin() {
-		return slider.getLowValue();
+		return Double.parseDouble(from.getText().replace(",", ""));
 	}
 
 	public double getSelectedMax() {
-		return slider.getHighValue();
+		return Double.parseDouble(to.getText().replace(",", ""));
 	}
 
 	@Override

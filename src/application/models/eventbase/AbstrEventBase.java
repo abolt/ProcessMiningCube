@@ -45,7 +45,7 @@ public class AbstrEventBase {
 
 	private Map<Long, XEvent> eventMap; // to stores all the event objects
 
-	public AbstrEventBase(String filePath, String dbPath, List<Attribute<?>> allAttributes) {
+	public AbstrEventBase(String filePath, String dbPath, List<Attribute> allAttributes) {
 		this.dbPath = dbPath;
 		this.filePath = filePath;
 		this.numAttributes = 0;
@@ -59,7 +59,7 @@ public class AbstrEventBase {
 		populateDB(allAttributes);
 	}
 
-	private synchronized void populateDB(List<Attribute<?>> attributes) {
+	private synchronized void populateDB(List<Attribute> attributes) {
 
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -73,7 +73,7 @@ public class AbstrEventBase {
 
 			String sqlCreate = "CREATE TABLE EVENTS (ID INTEGER PRIMARY KEY NOT NULL";
 
-			for (Attribute<?> att : attributes)
+			for (Attribute att : attributes)
 				if (!att.getType().equals(Attribute.IGNORE)) {
 					sqlCreate = sqlCreate + ", \"" + att.getName() + "\" " + att.getType();
 					numAttributes++;
@@ -85,7 +85,7 @@ public class AbstrEventBase {
 
 			String sqlInsertHeader = "INSERT INTO EVENTS (ID";
 
-			for (Attribute<?> att : attributes)
+			for (Attribute att : attributes)
 				if (!att.getType().equals(Attribute.IGNORE))
 					sqlInsertHeader = sqlInsertHeader + ", \"" + att.getName() + "\"";
 
@@ -101,7 +101,7 @@ public class AbstrEventBase {
 				sqlInsertBatch = sqlInsertBatch + "('" + index;
 				XEvent event = eventMap.get(index);
 
-				for (Attribute<?> att : attributes) {
+				for (Attribute att : attributes) {
 					if (!att.getType().equals(Attribute.IGNORE) && event.getAttributes().containsKey(att.getName()))
 						sqlInsertBatch = sqlInsertBatch + "', '" + event.getAttributes().get(att.getName()).toString();
 					else
@@ -203,7 +203,7 @@ public class AbstrEventBase {
 			createIndex.executeUpdate("DROP INDEX IF EXISTS \"index\"");
 			String createIndexQuery = "CREATE INDEX \"index\" ON EVENTS(";
 			for (int i = 0; i < numConditions; i++) {
-				Attribute<?> attribute = ((List<ConditionImpl>) conditionMatrix.get(0, 0)).get(i).getAttribute();
+				Attribute attribute = ((List<ConditionImpl>) conditionMatrix.get(0, 0)).get(i).getAttribute();
 				if (attribute.getParent() != null)
 					createIndexQuery = createIndexQuery + attribute.getParent().getQueryString();
 				else
@@ -217,7 +217,8 @@ public class AbstrEventBase {
 			String whereSQL = " FROM EVENTS WHERE ";
 			for (int i = 0; i < numConditions; i++) {
 				whereSQL = whereSQL
-						+ ((List<ConditionImpl>) conditionMatrix.get(0, 0)).get(i).getAttribute().getQueryString() + " = ?";
+						+ ((List<ConditionImpl>) conditionMatrix.get(0, 0)).get(i).getAttribute().getQueryString()
+						+ " = ?";
 				if (i < numConditions - 1)
 					whereSQL = whereSQL + " AND ";
 			}
@@ -404,7 +405,7 @@ public class AbstrEventBase {
 		}
 	}
 
-	private void fillDbFromCSV(List<Attribute<?>> attributes) {
+	private void fillDbFromCSV(List<Attribute> attributes) {
 		CSVImporter importer = new CSVImporter(new File(filePath));
 		fillMap(importer.getEventList(-1, attributes));
 

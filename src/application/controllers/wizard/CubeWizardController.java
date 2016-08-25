@@ -133,7 +133,7 @@ public class CubeWizardController extends BorderPane implements Initializable {
 		}
 	}
 
-	public void createCube() {
+	public void createCube() throws Exception {
 
 		boolean dbOk = false;
 		String name = null;
@@ -167,7 +167,7 @@ public class CubeWizardController extends BorderPane implements Initializable {
 				((DimensionsController) steps.get(3)).getAllAttributes());
 	}
 
-	public void createCubeStructure() {
+	public void createCubeStructure() throws Exception {
 		// create the cube object, and make it available for the visualizer.
 		cube = new CubeStructure(((DimensionsController) steps.get(3)).getDimensions());
 		cube.populateValueSet(eventBase);

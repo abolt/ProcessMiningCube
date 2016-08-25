@@ -11,6 +11,7 @@ import com.sun.javafx.scene.control.skin.LabeledText;
 
 import application.controllers.explorer.filter.SimpleNumericFilterDialogController;
 import application.controllers.explorer.filter.TextFilterDialogController;
+import application.models.attribute.AttributeUtils;
 import application.models.attribute.ContinuousAttribute;
 import application.models.attribute.DiscreteAttribute;
 import application.models.attribute.TextAttribute;
@@ -48,7 +49,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 	private TreeView<Object> dimensions;
 
 	@FXML
-	private ListView<Attribute<?>> rows, columns, filters;
+	private ListView<Attribute> rows, columns, filters;
 
 	private CubeTableViewController contentController;
 
@@ -88,7 +89,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 		for (DimensionImpl d : cube.getStructure().getDimensions()) {
 			TreeItem<Object> dim = new TreeItem<Object>(d);
 			dim.setExpanded(true);
-			for (Attribute<?> a : d.getAttributes())
+			for (Attribute a : d.getAttributes())
 				dim.getChildren().add(new TreeItem<Object>(a));
 			root.getChildren().add(dim);
 		}
@@ -107,12 +108,11 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 			@Override
 			public void handle(MouseEvent event) {
 				if (dimensions.getSelectionModel().getSelectedItem() == null
-						|| !(dimensions.getSelectionModel().getSelectedItem().getValue() instanceof Attribute<?>))
+						|| !(dimensions.getSelectionModel().getSelectedItem().getValue() instanceof Attribute))
 					return;
 				Dragboard dragBoard = dimensions.startDragAndDrop(TransferMode.MOVE);
 				ClipboardContent content = new ClipboardContent();
-				content.putString(
-						((Attribute<?>) dimensions.getSelectionModel().getSelectedItem().getValue()).getLabel());
+				content.putString(((Attribute) dimensions.getSelectionModel().getSelectedItem().getValue()).getLabel());
 				dragBoard.setContent(content);
 			}
 		});
@@ -129,7 +129,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 			@Override
 			public void handle(DragEvent dragEvent) {
 				if (!(dragEvent.getGestureSource() instanceof TreeView)) {
-					ListView<Attribute<?>> source = (ListView<Attribute<?>>) dragEvent.getGestureSource();
+					ListView<Attribute> source = (ListView<Attribute>) dragEvent.getGestureSource();
 					if (source.getId().equals(rows.getId())) {
 						rows.getItems().remove(rows.getSelectionModel().getSelectedIndex());
 						rows.refresh();
@@ -172,21 +172,21 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 			@Override
 			public void handle(DragEvent dragEvent) {
 
-				Attribute<?> newAtt = null;
-				ListView<Attribute<?>> source = null;
+				Attribute newAtt = null;
+				ListView<Attribute> source = null;
 				if ((dragEvent.getGestureSource() instanceof TreeView)) {
-					newAtt = (Attribute<?>) dimensions.getSelectionModel().getSelectedItem().getValue();
+					newAtt = (Attribute) dimensions.getSelectionModel().getSelectedItem().getValue();
 				} else {
-					source = (ListView<Attribute<?>>) dragEvent.getGestureSource();
+					source = (ListView<Attribute>) dragEvent.getGestureSource();
 					if (source.getId().equals(rows.getId())) {
 						// source == target... resorting
 						if (dragEvent.getTarget() instanceof LabeledText) {
-							Iterator<Attribute<?>> iterator = rows.getItems().iterator();
+							Iterator<Attribute> iterator = rows.getItems().iterator();
 							for (int indexTarget = 0; iterator.hasNext(); indexTarget++) {
-								Attribute<?> targetElement = iterator.next();
+								Attribute targetElement = iterator.next();
 								if (targetElement.getLabel().equals(((Text) dragEvent.getTarget()).getText())) {
 									// winner index
-									Attribute<?> sourceElement = rows.getSelectionModel().getSelectedItem();
+									Attribute sourceElement = rows.getSelectionModel().getSelectedItem();
 									int indexSource = rows.getItems().indexOf(sourceElement);
 									rows.getItems().set(indexSource, targetElement);
 									rows.getItems().set(indexTarget, sourceElement);
@@ -195,7 +195,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 								}
 							}
 						} else {
-							Attribute<?> sourceElement = rows.getSelectionModel().getSelectedItem();
+							Attribute sourceElement = rows.getSelectionModel().getSelectedItem();
 							rows.getItems().remove(sourceElement);
 							rows.getItems().add(sourceElement);
 							rows.refresh();
@@ -246,12 +246,12 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 			@Override
 			public void handle(DragEvent dragEvent) {
 
-				Attribute<?> newAtt = null;
-				ListView<Attribute<?>> source = null;
+				Attribute newAtt = null;
+				ListView<Attribute> source = null;
 				if ((dragEvent.getGestureSource() instanceof TreeView)) {
-					newAtt = (Attribute<?>) dimensions.getSelectionModel().getSelectedItem().getValue();
+					newAtt = (Attribute) dimensions.getSelectionModel().getSelectedItem().getValue();
 				} else {
-					source = (ListView<Attribute<?>>) dragEvent.getGestureSource();
+					source = (ListView<Attribute>) dragEvent.getGestureSource();
 					if (source.getId().equals(rows.getId())) {
 						newAtt = rows.getSelectionModel().getSelectedItem();
 						rows.getItems().remove(rows.getSelectionModel().getSelectedIndex());
@@ -259,12 +259,12 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 					} else if (source.getId().equals(columns.getId())) {
 						// source == target... do nothing
 						if (dragEvent.getTarget() instanceof LabeledText) {
-							Iterator<Attribute<?>> iterator = columns.getItems().iterator();
+							Iterator<Attribute> iterator = columns.getItems().iterator();
 							for (int indexTarget = 0; iterator.hasNext(); indexTarget++) {
-								Attribute<?> targetElement = iterator.next();
+								Attribute targetElement = iterator.next();
 								if (targetElement.getLabel().equals(((Text) dragEvent.getTarget()).getText())) {
 									// winner index
-									Attribute<?> sourceElement = columns.getSelectionModel().getSelectedItem();
+									Attribute sourceElement = columns.getSelectionModel().getSelectedItem();
 									int indexSource = columns.getItems().indexOf(sourceElement);
 									columns.getItems().set(indexSource, targetElement);
 									columns.getItems().set(indexTarget, sourceElement);
@@ -273,7 +273,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 								}
 							}
 						} else {
-							Attribute<?> sourceElement = columns.getSelectionModel().getSelectedItem();
+							Attribute sourceElement = columns.getSelectionModel().getSelectedItem();
 							columns.getItems().remove(sourceElement);
 							columns.getItems().add(sourceElement);
 							columns.refresh();
@@ -319,12 +319,12 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 			@Override
 			public void handle(DragEvent dragEvent) {
 
-				Attribute<?> newAtt = null;
-				ListView<Attribute<?>> source = null;
+				Attribute newAtt = null;
+				ListView<Attribute> source = null;
 				if ((dragEvent.getGestureSource() instanceof TreeView)) {
-					newAtt = (Attribute<?>) dimensions.getSelectionModel().getSelectedItem().getValue();
+					newAtt = (Attribute) dimensions.getSelectionModel().getSelectedItem().getValue();
 				} else {
-					source = (ListView<Attribute<?>>) dragEvent.getGestureSource();
+					source = (ListView<Attribute>) dragEvent.getGestureSource();
 					if (source.getId().equals(rows.getId())) {
 						newAtt = rows.getSelectionModel().getSelectedItem();
 						rows.getItems().remove(rows.getSelectionModel().getSelectedIndex());
@@ -336,12 +336,12 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 					} else if (source.getId().equals(filters.getId())) {
 						// source == target... do nothing
 						if (dragEvent.getTarget() instanceof LabeledText) {
-							Iterator<Attribute<?>> iterator = filters.getItems().iterator();
+							Iterator<Attribute> iterator = filters.getItems().iterator();
 							for (int indexTarget = 0; iterator.hasNext(); indexTarget++) {
-								Attribute<?> targetElement = iterator.next();
+								Attribute targetElement = iterator.next();
 								if (targetElement.getLabel().equals(((Text) dragEvent.getTarget()).getText())) {
 									// winner index
-									Attribute<?> sourceElement = filters.getSelectionModel().getSelectedItem();
+									Attribute sourceElement = filters.getSelectionModel().getSelectedItem();
 									int indexSource = filters.getItems().indexOf(sourceElement);
 									filters.getItems().set(indexSource, targetElement);
 									filters.getItems().set(indexTarget, sourceElement);
@@ -350,7 +350,7 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 								}
 							}
 						} else {
-							Attribute<?> sourceElement = filters.getSelectionModel().getSelectedItem();
+							Attribute sourceElement = filters.getSelectionModel().getSelectedItem();
 							filters.getItems().remove(sourceElement);
 							filters.getItems().add(sourceElement);
 							filters.refresh();
@@ -381,21 +381,21 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 							wizard.setTitle("Filter Text Attribute");
 							wizard.showAndWait();
 
-							attribute.resetValueSet();
+							AttributeUtils.resetFilter(attribute);
 
 							ObservableList<String> selected = controller.getSelectedValues();
 							for (String r : attribute.getValueSet()) {
 								if (!selected.contains(r))
-									attribute.removeValue(r);
+									attribute.removeValueFromSelectedValueset(r);
 							}
 						} else if (filters.getSelectionModel().getSelectedItem() instanceof AbstrNumericalAttribute) {
 							AbstrNumericalAttribute<?> attribute = null;
-							
+
 							if (filters.getSelectionModel().getSelectedItem() instanceof ContinuousAttribute)
 								attribute = (ContinuousAttribute) filters.getSelectionModel().getSelectedItem();
 							else
 								attribute = (DiscreteAttribute) filters.getSelectionModel().getSelectedItem();
-							
+
 							SimpleNumericFilterDialogController controller = new SimpleNumericFilterDialogController(
 									attribute);
 							Scene dialogScene = new Scene(controller, 500, 300);
@@ -404,9 +404,8 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 							wizard.setTitle("Filter Numerical Attribute");
 							wizard.showAndWait();
 
-							
-							attribute.setSelectedMin(controller.getSelectedMin());
-							attribute.setSelectedMax(controller.getSelectedMax());
+							AttributeUtils.setMinMax(attribute, controller.getSelectedMin(),
+									controller.getSelectedMax());
 						}
 						contentController.requestTableUpdate();
 					}
@@ -446,20 +445,20 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 		contentController.clickOnTableSettings();
 	}
 
-	public List<Attribute<?>> getRows() {
-		List<Attribute<?>> result = new ArrayList<Attribute<?>>();
+	public List<Attribute> getRows() {
+		List<Attribute> result = new ArrayList<Attribute>();
 		result.addAll(rows.getItems());
 		return result;
 	}
 
-	public List<Attribute<?>> getColumns() {
-		List<Attribute<?>> result = new ArrayList<Attribute<?>>();
+	public List<Attribute> getColumns() {
+		List<Attribute> result = new ArrayList<Attribute>();
 		result.addAll(columns.getItems());
 		return result;
 	}
 
-	public List<Attribute<?>> getFilters() {
-		List<Attribute<?>> result = new ArrayList<Attribute<?>>();
+	public List<Attribute> getFilters() {
+		List<Attribute> result = new ArrayList<Attribute>();
 		result.addAll(filters.getItems());
 		return result;
 	}
@@ -468,11 +467,11 @@ public class CubeExplorerController extends BorderPane implements Initializable 
 		return cube.getEventBase();
 	}
 
-	public List<Attribute<?>> getValidAttributeList() {
-		List<Attribute<?>> attributes = new ArrayList<Attribute<?>>();
+	public List<Attribute> getValidAttributeList() {
+		List<Attribute> attributes = new ArrayList<Attribute>();
 
 		for (DimensionImpl d : cube.getStructure().getDimensions())
-			for (Attribute<?> a : d.getAttributes())
+			for (Attribute a : d.getAttributes())
 				if (!a.getType().equals(Attribute.IGNORE))
 					attributes.add(a);
 		return attributes;
