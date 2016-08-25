@@ -1,8 +1,10 @@
-package application.models.eventbase.conditions;
+package application.models.condition.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import application.models.condition.Condition;
 
 /**
  * This class is used for conditions with multiple possible values e.g., ranges.

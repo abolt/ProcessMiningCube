@@ -1,8 +1,9 @@
 package application.models.attribute.abstr;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -14,7 +15,7 @@ import java.util.TreeSet;
  * @param <T>
  *            (e.g., String, integer)
  */
-public abstract class AbstrAttribute<T> implements Attribute<T> {
+public abstract class AbstrAttribute<T extends Comparable<T>> implements Attribute {
 
 	private static final long serialVersionUID = -4511938041557436943L;
 
@@ -28,43 +29,31 @@ public abstract class AbstrAttribute<T> implements Attribute<T> {
 	protected String type;
 
 	// parent, if this attribute is derived
-	protected Attribute<?> parent;
+	protected Attribute parent;
 
 	// children attributes that depend on this one
-	protected Map<String, Attribute<?>> children;
+	protected Map<String, Attribute> children;
 
-	// active value set with the values used to query in the DB
-	protected TreeSet<T> activeValueSet;
 	// read-only copy of the original valueset, used when resetting the active
 	// valueset
-	protected final TreeSet<T> finalValueSet;
+	protected final TreeSet<T> valueSet;
 
-	public AbstrAttribute(String name, String type, Attribute<?> parent) {
+	protected AbstrAttribute(String name, String type, Attribute parent) {
 		this.name = name;
 		this.type = type;
 		this.parent = parent;
-		this.children = new HashMap<String, Attribute<?>>();
-		this.activeValueSet = new TreeSet<T>();
-		this.finalValueSet = new TreeSet<T>();
+		this.children = new HashMap<String, Attribute>();
+		this.valueSet = new TreeSet<T>();
 	}
 
 	@Override
-	public Attribute<?> getParent() {
+	public Attribute getParent() {
 		return parent;
 	}
 
 	@Override
-	public Collection<Attribute<?>> getChildren() {
-		return children.values();
-	}
-
-	public Attribute<?> getChildren(String name) {
-		return children.get(name);
-	}
-
-	@Override
-	public void addChild(Attribute<?> newAtt) {
-		children.put(newAtt.getName(), newAtt);
+	public Map<String, Attribute> getChildren() {
+		return children;
 	}
 
 	@Override
@@ -83,8 +72,8 @@ public abstract class AbstrAttribute<T> implements Attribute<T> {
 	}
 
 	@Override
-	public void setLabel(String newLabel) {
-		this.label = newLabel;
+	public String getType() {
+		return type;
 	}
 
 	@Override
@@ -93,50 +82,18 @@ public abstract class AbstrAttribute<T> implements Attribute<T> {
 	}
 
 	@Override
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	@Override
 	public void setQueryString(String queryString) {
 		this.queryString = queryString;
 	}
 
 	@Override
-	public String getType() {
-		return type;
-	}
-
-	@Override
-	public int getValueSetSize() {
-		return activeValueSet.size();
-	}
-
-	@Override
-	public Collection<T> getValueSet() {
-		return finalValueSet;
-	}
-	
-	@Override
-	public Collection<T> getSelectedValueSet() {
-		return activeValueSet;
-	}
-
-	@Override
-	public boolean addValue(T value) {
-		finalValueSet.add(value);
-		return activeValueSet.add(value);
-	}
-
-	@Override
-	public boolean removeValue(T value) {
-		return activeValueSet.remove(value);
-	}
-
-	@Override
-	public boolean hasValue(T value) {
-		return activeValueSet.contains(value);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void resetValueSet() {
-		activeValueSet = (TreeSet<T>) finalValueSet.clone();
+	public Set<?> getValueSet() {
+		return Collections.unmodifiableSet(valueSet);
 	}
 
 	@Override

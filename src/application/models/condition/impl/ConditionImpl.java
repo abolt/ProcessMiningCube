@@ -1,14 +1,12 @@
-package application.models.eventbase.conditions;
+package application.models.condition.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import application.models.attribute.abstr.Attribute;
+import application.models.condition.Condition;
 
-public class ConditionImpl implements Condition{
-
-	public final static String EQUALS = " = ", BIGGER_THAN = " > ", BIGGER_THAN_EQUALS = " >= ", SMALLER_THAN = " < ",
-			SMALLER_THAN_EQUALS = " <= ", LIKE = " like ";
+public class ConditionImpl implements Condition {
 
 	private final List<String> validComparators = new ArrayList<String>();
 
@@ -21,7 +19,9 @@ public class ConditionImpl implements Condition{
 		validComparators.add(BIGGER_THAN_EQUALS);
 		validComparators.add(SMALLER_THAN);
 		validComparators.add(SMALLER_THAN_EQUALS);
-		validComparators.add(LIKE);
+		validComparators.add(IN);
+		validComparators.add(NOT_IN);
+		validComparators.add(BETWEEN);
 	}
 
 	public ConditionImpl(Attribute<?> attribute, String comparator, String value) {

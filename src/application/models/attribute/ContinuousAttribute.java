@@ -11,13 +11,13 @@ public class ContinuousAttribute extends AbstrNumericalAttribute<Double> {
 		super(name, type, parent);
 	}
 
-	@Override
-	public boolean addValue(String value) {
-		if (value != null && !value.equalsIgnoreCase("null"))
-			return addValue(Double.parseDouble(value));
-		else
-			return false;
-	}
+//	@Override
+//	public boolean addValue(String value) {
+//		if (value != null && !value.equalsIgnoreCase("null"))
+//			return addValue(Double.parseDouble(value));
+//		else
+//			return false;
+//	}
 	
 	public void setSelectedMin(Number newSelectedMin) {
 		selectedMin = (Double) newSelectedMin;

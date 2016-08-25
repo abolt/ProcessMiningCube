@@ -1,16 +1,15 @@
-package application.models.attribute.factory;
+package application.models.attribute.abstr;
 
 import application.models.attribute.ContinuousAttribute;
 import application.models.attribute.DateTimeAttribute;
 import application.models.attribute.DiscreteAttribute;
 import application.models.attribute.TextAttribute;
-import application.models.attribute.abstr.Attribute;
 
 public class AttributeFactory {
 
-	public static Attribute<?> createAttribute(String name, String type, Attribute<?> parent) {
+	public static Attribute createAttribute(String name, String type, Attribute parent) {
 
-		Attribute<?> result = null;
+		Attribute result = null;
 
 		if (type.equals(Attribute.CONTINUOUS)) {
 			result = new ContinuousAttribute(name, type, parent);
@@ -30,6 +29,18 @@ public class AttributeFactory {
 		return result;
 	}
 
+	public static boolean addValue(Attribute attribute, Object value){
+		return false;
+	}
+
+	public boolean removeValue(Object value);
+
+	public boolean hasValue(Object value);
+	
+	public void addChild(Attribute newAtt);
+	
+	public void resetValueSet();
+	
 	private static void createDerivedAttributes(Attribute<?> parent) {
 
 		Attribute<?> year = new DiscreteAttribute(DateTimeAttribute.YEAR, Attribute.DERIVED, parent);

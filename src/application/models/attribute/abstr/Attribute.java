@@ -1,45 +1,30 @@
 package application.models.attribute.abstr;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
-public interface Attribute<T> extends Serializable {
+public interface Attribute extends Serializable {
 
 	public static final String IGNORE = "IGNORE", TEXT = "TEXT", DISCRETE = "INTEGER", CONTINUOUS = "REAL",
 			DATE_TIME = "DATETIME", DERIVED = "DERIVED";
 
-	public Attribute<?> getParent();
+	Attribute getParent();
 
-	public Collection<Attribute<?>> getChildren();
+	Map<String, Attribute> getChildren();
 
 	public String getName();
 
 	public String getLabel();
 
-	public void setLabel(String label);
-
 	public String getQueryString();
-	
-	public void setQueryString(String queryString);
 
 	public String getType();
 
-	public boolean addValue(T value);
+	void setLabel(String label);
 
-	public boolean addValue(String value);
+	void setQueryString(String queryString);
 
-	public boolean removeValue(T value);
-
-	public boolean hasValue(T value);
-
-	public Collection<T> getValueSet();
-	
-	public Collection<T> getSelectedValueSet();
-	
-	public int getValueSetSize();
-
-	public void resetValueSet();
-	
-	public void addChild(Attribute<?> newAtt);
+	public Set<?> getValueSet();
 
 }

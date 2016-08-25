@@ -12,7 +12,7 @@ import application.controllers.wizard.CubeWizardController;
 import application.controllers.wizard.abstr.AbstractWizardStepController;
 import application.models.attribute.DateTimeAttribute;
 import application.models.attribute.abstr.Attribute;
-import application.models.attribute.factory.AttributeFactory;
+import application.models.attribute.abstr.AttributeFactory;
 import application.models.dimension.DimensionImpl;
 import application.models.wizard.MappingRow;
 import javafx.beans.value.ChangeListener;

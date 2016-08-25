@@ -3,6 +3,7 @@ package application.controllers.explorer;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -14,9 +15,11 @@ import org.controlsfx.control.spreadsheet.SpreadsheetCell;
 import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 
+import application.models.attribute.TextAttribute;
+import application.models.attribute.abstr.AbstrNumericalAttribute;
 import application.models.attribute.abstr.Attribute;
+import application.models.condition.impl.ConditionImpl;
 import application.models.eventbase.AbstrEventBase;
-import application.models.eventbase.conditions.ConditionImpl;
 import application.models.explorer.HeaderTree;
 import application.models.explorer.HeaderTree.Node;
 import application.models.metric.Metric;
@@ -118,7 +121,7 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		int rowCount, colCount;
 		List<Attribute<?>> rows = explorerController.getRows();
 		List<Attribute<?>> columns = explorerController.getColumns();
-		
+		List<Attribute<?>> filters = explorerController.getFilters();
 
 		AbstrEventBase eb = explorerController.getEventBase();
 
@@ -245,13 +248,21 @@ public class CubeTableViewController extends BorderPane implements Initializable
 			for (int j = 0; j < colCount; j++) {
 				List<ConditionImpl> conditions = new ArrayList<ConditionImpl>();
 				// row conditions
-				for (ConditionImpl pair : rowleafs.get(i).values)
-					if (pair.getAttribute() != null && pair.getValue() != "")
-						conditions.add(pair);
+				for (ConditionImpl c : rowleafs.get(i).values)
+					if (c.getAttribute() != null && c.getValue() != "")
+						conditions.add(c);
 				// column conditions
-				for (ConditionImpl pair : colleafs.get(j).values)
-					if (pair.getAttribute() != null && pair.getValue() != "")
-						conditions.add(pair);
+				for (ConditionImpl c : colleafs.get(j).values)
+					if (c.getAttribute() != null && c.getValue() != "")
+						conditions.add(c);
+
+				// filter conditions
+				for (Attribute<?> att : filters)
+					for(ConditionImpl c : createConditionsFromFilterAttribute(att))
+						if(c.getAttribute() != null && c.getValue() != "")
+							conditions.add(c);
+				// TODO: add conditions from the filtered attributes
+
 				if (!conditions.isEmpty()) {
 					MultiKey<Integer> key = new MultiKey<Integer>(i, j);
 					map.put(key, conditions);
@@ -270,6 +281,27 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		table.setEditable(false);
 		this.setCenter(table);
 		this.layout();
+	}
+
+	private Collection<? extends ConditionImpl> createConditionsFromFilterAttribute(Attribute<?> attribute) {
+		
+		// TODO Auto-generated method stub
+		
+		List<ConditionImpl> conditions = new ArrayList<ConditionImpl>();
+		if(attribute instanceof TextAttribute){
+			
+			
+			
+			
+		}
+		else if (attribute instanceof AbstrNumericalAttribute){
+			
+			
+			
+			
+			
+		}
+		return conditions;
 	}
 
 	protected void clickOnTableSettings() {

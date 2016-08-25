@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import application.models.attribute.abstr.Attribute;
-import application.models.eventbase.conditions.ConditionImpl;
+import application.models.condition.impl.ConditionImpl;
 
 public class HeaderTree {
 	private Node root;

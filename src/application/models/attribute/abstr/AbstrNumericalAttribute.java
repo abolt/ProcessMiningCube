@@ -6,20 +6,20 @@ public abstract class AbstrNumericalAttribute<T extends Comparable<T>> extends A
 
 	protected T selectedMin, selectedMax;
 
-	public AbstrNumericalAttribute(String name, String type, Attribute<?> parent) {
+	public AbstrNumericalAttribute(String name, String type, Attribute parent) {
 		super(name, type, parent);
 	}
 
 	public T getMin() {
-		if (!activeValueSet.isEmpty())
-			return activeValueSet.first();
+		if (!valueSet.isEmpty())
+			return valueSet.first();
 		else
 			return null;
 	}
 
 	public T getMax() {
-		if (!activeValueSet.isEmpty())
-			return activeValueSet.last();
+		if (!valueSet.isEmpty())
+			return valueSet.last();
 		else
 			return null;
 	}
@@ -37,7 +37,8 @@ public abstract class AbstrNumericalAttribute<T extends Comparable<T>> extends A
 		else
 			return getMax();
 	}
-	
+
 	public abstract void setSelectedMin(Number newSelectedMin);
+
 	public abstract void setSelectedMax(Number newSelectedMax);
 }
