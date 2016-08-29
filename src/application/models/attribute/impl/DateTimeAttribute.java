@@ -1,4 +1,4 @@
-package application.models.attribute;
+package application.models.attribute.impl;
 
 import java.text.DateFormat;
 import java.text.ParseException;

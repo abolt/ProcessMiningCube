@@ -1,9 +1,10 @@
-package application.models.attribute.abstr;
+package application.models.attribute.factory;
 
-import application.models.attribute.ContinuousAttribute;
-import application.models.attribute.DateTimeAttribute;
-import application.models.attribute.DiscreteAttribute;
-import application.models.attribute.TextAttribute;
+import application.models.attribute.abstr.Attribute;
+import application.models.attribute.impl.ContinuousAttribute;
+import application.models.attribute.impl.DateTimeAttribute;
+import application.models.attribute.impl.DiscreteAttribute;
+import application.models.attribute.impl.TextAttribute;
 
 public class AttributeFactory {
 

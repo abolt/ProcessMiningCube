@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import application.models.attribute.abstr.Attribute;
-import application.models.condition.impl.ConditionImpl;
+import application.models.condition.ConditionUtils;
+import application.models.condition.abstr.Condition;
+import application.models.condition.factory.ConditionFactory;
 
 public class HeaderTree {
 	private Node root;
@@ -16,11 +18,11 @@ public class HeaderTree {
 	public class Node implements Cloneable {
 		public ArrayList<Node> children;
 		public Node parent;
-		public List<ConditionImpl> values;
+		public List<Condition> values;
 
 		public Node() {
 			children = new ArrayList<Node>();
-			values = new ArrayList<ConditionImpl>();
+			values = new ArrayList<Condition>();
 		}
 
 		@Override
@@ -51,16 +53,18 @@ public class HeaderTree {
 		if (!remainingAttributes.isEmpty()) {
 			List<Node> leafs = getLeafs(layers - remainingAttributes.size());
 			for (Node leaf : leafs)
-				for (Object s : remainingAttributes.get(0).getValueSet())
-					addElement(leaf, new ConditionImpl(remainingAttributes.get(0), ConditionImpl.EQUALS, s.toString()));
-
+				for (Object s : remainingAttributes.get(0).getValueSet()) {
+					Condition newCondition = ConditionFactory.createCondition(remainingAttributes.get(0));
+					ConditionUtils.addConditionToTail(newCondition, Condition.EQUALS, s.toString());
+					addElement(leaf, newCondition);
+				}
 			remainingAttributes.remove(0);
 			addNodesRecursive(remainingAttributes);
 		}
 
 	}
 
-	public Node addElement(Node currentNode, ConditionImpl child) {
+	public Node addElement(Node currentNode, Condition child) {
 		Node newNode = new Node();
 		newNode.parent = currentNode;
 		newNode.values.add(child);
@@ -102,7 +106,7 @@ public class HeaderTree {
 
 	private void addParentsDataToLeaf(Node node, Node parent) {
 		if (parent != null) {
-			List<ConditionImpl> values = new ArrayList<ConditionImpl>();
+			List<Condition> values = new ArrayList<Condition>();
 			values.addAll(node.values);
 
 			node.values.clear();

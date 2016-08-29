@@ -4,6 +4,10 @@ import java.util.Date;
 
 import application.models.attribute.abstr.AbstrNumericalAttribute;
 import application.models.attribute.abstr.Attribute;
+import application.models.attribute.impl.ContinuousAttribute;
+import application.models.attribute.impl.DateTimeAttribute;
+import application.models.attribute.impl.DiscreteAttribute;
+import application.models.attribute.impl.TextAttribute;
 
 public class AttributeUtils {
 

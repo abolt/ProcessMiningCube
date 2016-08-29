@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -15,10 +16,14 @@ import org.controlsfx.control.spreadsheet.SpreadsheetCell;
 import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 
-import application.models.attribute.TextAttribute;
 import application.models.attribute.abstr.AbstrNumericalAttribute;
 import application.models.attribute.abstr.Attribute;
-import application.models.condition.impl.ConditionImpl;
+import application.models.attribute.impl.ContinuousAttribute;
+import application.models.attribute.impl.DiscreteAttribute;
+import application.models.attribute.impl.TextAttribute;
+import application.models.condition.ConditionUtils;
+import application.models.condition.abstr.Condition;
+import application.models.condition.factory.ConditionFactory;
 import application.models.eventbase.AbstrEventBase;
 import application.models.explorer.HeaderTree;
 import application.models.explorer.HeaderTree.Node;
@@ -139,7 +144,6 @@ public class CubeTableViewController extends BorderPane implements Initializable
 			ObservableList<SpreadsheetCell> row = FXCollections.observableArrayList();
 			for (int j = 0; j < grid.getColumnCount(); j++) {
 				SpreadsheetCell cell = SpreadsheetCellType.STRING.createCell(i, j, 1, 1, "");
-				// cell.setStyle(cell.getStyle() + " -fx-alignment: center;");
 				row.add(cell);
 			}
 			cells.add(row);
@@ -160,16 +164,14 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		for (int i = 0; i < grid.getRowCount(); i++)
 			for (int j = 0; j < rows.size(); j++)
 				if (i >= columns.size())
-					grid.setCellValue(i, j, rowleafs.get(i - columns.size()).values.get(j).getAttribute().getLabel()
-							+ " = " + rowleafs.get(i - columns.size()).values.get(j).getValue());
+					grid.setCellValue(i, j, rowleafs.get(i - columns.size()).values.get(j).getAsString());
 
 		// fill column headers
 		List<Node> colleafs = colHeaders.getAccumulatedLeafs(-1);
 		for (int j = 0; j < grid.getColumnCount(); j++)
 			for (int i = 0; i < columns.size(); i++) {
 				if (j >= rows.size())
-					grid.setCellValue(i, j, colleafs.get(j - rows.size()).values.get(i).getAttribute().getLabel()
-							+ " = " + colleafs.get(j - rows.size()).values.get(i).getValue());
+					grid.setCellValue(i, j, colleafs.get(j - rows.size()).values.get(i).getAsString());
 			}
 
 		// span row headers
@@ -246,22 +248,15 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		MultiKeyMap map = new MultiKeyMap();
 		for (int i = 0; i < rowCount; i++) {
 			for (int j = 0; j < colCount; j++) {
-				List<ConditionImpl> conditions = new ArrayList<ConditionImpl>();
+				List<Condition> conditions = new ArrayList<Condition>();
 				// row conditions
-				for (ConditionImpl c : rowleafs.get(i).values)
-					if (c.getAttribute() != null && c.getValue() != "")
+				for (Condition c : rowleafs.get(i).values)
+					if (c.getAttribute() != null && !c.getTail().getTailConditions().isEmpty())
 						conditions.add(c);
 				// column conditions
-				for (ConditionImpl c : colleafs.get(j).values)
-					if (c.getAttribute() != null && c.getValue() != "")
+				for (Condition c : colleafs.get(j).values)
+					if (c.getAttribute() != null && !c.getTail().getTailConditions().isEmpty())
 						conditions.add(c);
-
-				// filter conditions
-				for (Attribute att : filters)
-					for (ConditionImpl c : createConditionsFromFilterAttribute(att))
-						if (c.getAttribute() != null && c.getValue() != "")
-							conditions.add(c);
-				// TODO: add conditions from the filtered attributes
 
 				if (!conditions.isEmpty()) {
 					MultiKey<Integer> key = new MultiKey<Integer>(i, j);
@@ -269,7 +264,16 @@ public class CubeTableViewController extends BorderPane implements Initializable
 				}
 			}
 		}
-		MultiKeyMap result = eb.query(map, rowCount * colCount, rows.size() + columns.size(), currentMetric);
+
+		// filter conditions
+		List<Condition> conditions = new ArrayList<Condition>();
+		for (Attribute att : filters)
+			for (Condition c : createConditionsFromFilterAttribute(att))
+				if (c.getAttribute() != null && !c.getTail().getTailConditions().isEmpty())
+					conditions.add(c);
+
+		MultiKeyMap result = eb.query(map, conditions, rowCount * colCount, rows.size() + columns.size(),
+				currentMetric);
 
 		for (int i = 0; i < rowCount; i++) {
 			for (int j = 0; j < colCount; j++) {
@@ -283,15 +287,52 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		this.layout();
 	}
 
-	private Collection<? extends ConditionImpl> createConditionsFromFilterAttribute(Attribute attribute) {
+	@SuppressWarnings("rawtypes")
+	private Collection<Condition> createConditionsFromFilterAttribute(Attribute attribute) {
 
-		// TODO Auto-generated method stub
-
-		List<ConditionImpl> conditions = new ArrayList<ConditionImpl>();
+		List<Condition> conditions = new ArrayList<Condition>();
 		if (attribute instanceof TextAttribute) {
-
-		} else if (attribute instanceof AbstrNumericalAttribute) {
-
+			if (((TextAttribute) attribute).getSelectedValueSet().size() != attribute.getValueSet().size()) {
+				Condition newCondition = ConditionFactory.createCondition((TextAttribute) attribute);
+				String value = "(";
+				Iterator<String> iterator = ((TextAttribute) attribute).getSelectedValueSet().iterator();
+				while (iterator.hasNext()) {
+					value = value + "'" + iterator.next() + "'";
+					if (iterator.hasNext())
+						value = value + ", ";
+				}
+				value = value + ")";
+				if (attribute.getValueSet().size() / ((TextAttribute) attribute).getSelectedValueSet().size() >= 2)
+					ConditionUtils.addConditionToTail(newCondition, Condition.IN, value);
+				else
+					ConditionUtils.addConditionToTail(newCondition, Condition.NOT_IN, value);
+				conditions.add(newCondition);
+			}
+		} else if (attribute instanceof DiscreteAttribute) {
+			if (((DiscreteAttribute) attribute).getSelectedMin() > ((DiscreteAttribute) attribute).getMin()
+					|| ((DiscreteAttribute) attribute).getSelectedMax() < ((DiscreteAttribute) attribute).getMax()) {
+				Condition newCondition = ConditionFactory.createCondition((DiscreteAttribute) attribute);
+				if (((DiscreteAttribute) attribute).getSelectedMin() > ((DiscreteAttribute) attribute).getMin())
+					ConditionUtils.addConditionToTail(newCondition, Condition.BIGGER_THAN_EQUALS,
+							((AbstrNumericalAttribute) attribute).getSelectedMin().toString());
+				if (((DiscreteAttribute) attribute).getSelectedMax() < ((DiscreteAttribute) attribute).getMax())
+					ConditionUtils.addConditionToTail(newCondition, Condition.SMALLER_THAN_EQUALS,
+							((DiscreteAttribute) attribute).getSelectedMax().toString());
+				conditions.add(newCondition);
+			}
+		} else if (attribute instanceof ContinuousAttribute) {
+			if (((ContinuousAttribute) attribute).getSelectedMin() > ((ContinuousAttribute) attribute).getMin()
+					|| ((ContinuousAttribute) attribute).getSelectedMax() < ((ContinuousAttribute) attribute)
+							.getMax()) {
+				Condition newCondition = ConditionFactory.createCondition((ContinuousAttribute) attribute);
+				if (((ContinuousAttribute) attribute).getSelectedMin() > ((ContinuousAttribute) attribute).getMin())
+					ConditionUtils.addConditionToTail(newCondition, Condition.BIGGER_THAN_EQUALS,
+							((ContinuousAttribute) attribute).getSelectedMin().toString());
+				if (((ContinuousAttribute) attribute).getSelectedMax() < ((ContinuousAttribute) attribute).getMax())
+					ConditionUtils.addConditionToTail(newCondition, Condition.SMALLER_THAN_EQUALS,
+							((ContinuousAttribute) attribute).getSelectedMax().toString());
+				conditions.add(newCondition);
+			}
 		}
 		return conditions;
 	}

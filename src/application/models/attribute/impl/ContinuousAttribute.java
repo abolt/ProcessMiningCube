@@ -1,4 +1,4 @@
-package application.models.attribute;
+package application.models.attribute.impl;
 
 import application.models.attribute.abstr.AbstrNumericalAttribute;
 import application.models.attribute.abstr.Attribute;

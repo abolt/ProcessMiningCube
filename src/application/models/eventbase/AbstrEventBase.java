@@ -21,6 +21,7 @@ import java.util.Vector;
 import org.apache.commons.collections15.MapIterator;
 import org.apache.commons.collections15.keyvalue.MultiKey;
 import org.apache.commons.collections15.map.MultiKeyMap;
+import org.apache.commons.lang3.tuple.Pair;
 import org.deckfour.xes.model.XAttributeMap;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.impl.XAttributeContinuousImpl;
@@ -32,7 +33,7 @@ import org.deckfour.xes.model.impl.XEventImpl;
 
 import application.controllers.wizard.steps.MappingController;
 import application.models.attribute.abstr.Attribute;
-import application.models.condition.impl.ConditionImpl;
+import application.models.condition.abstr.Condition;
 import application.models.metric.Metric;
 import application.operations.io.log.CSVImporter;
 import application.operations.io.log.XESImporter;
@@ -135,16 +136,16 @@ public class AbstrEventBase {
 		return f.exists();
 	}
 
-	public List<XEvent> getEvents(List<ConditionImpl> conditions) {
+	public List<XEvent> getEvents(List<Condition> conditions) {
 
 		List<XEvent> result = new ArrayList<XEvent>();
 
 		String sql = "SELECT ID FROM EVENTS WHERE ";
-		Iterator<ConditionImpl> iterator = conditions.iterator();
+		Iterator<Condition> iterator = conditions.iterator();
 
 		while (iterator.hasNext()) {
-			ConditionImpl item = iterator.next();
-			sql = sql + item.getAsQueryString();
+			Condition item = iterator.next();
+			sql = sql + item.getAsString();
 			if (iterator.hasNext())
 				sql = sql + " AND ";
 		}
@@ -181,7 +182,8 @@ public class AbstrEventBase {
 	 *         should go to that cell
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public MultiKeyMap query(MultiKeyMap conditionMatrix, int numCells, int numConditionsPerCell, Metric metric) {
+	public MultiKeyMap query(MultiKeyMap conditionMatrix, List<Condition> filters, int numCells,
+			int numConditionsPerCell, Metric metric) {
 
 		MultiKeyMap result = new MultiKeyMap();
 
@@ -194,16 +196,32 @@ public class AbstrEventBase {
 			Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
 
 			/**
+			 * First we create a view with the events that fulfil the filters.
+			 */
+			String origin = "";
+
+			if (!filters.isEmpty()) {
+				origin = "AUXVIEW";
+				Statement createView = c.createStatement();
+				createView.executeUpdate("DROP VIEW IF EXISTS AUXVIEW");
+				String createViewQuery = "CREATE VIEW \"AUXVIEW\" AS SELECT * FROM EVENTS WHERE";
+				for (Condition condition : filters) {
+					createViewQuery = createViewQuery + condition.getAsString();
+				}
+				createView.executeUpdate(createViewQuery);
+			} else
+				origin = "EVENTS";
+
+			/**
 			 * First we create a (multi-column) index on the table with the
 			 * attributes that we will use.
-			 * 
-			 * 
 			 */
+
 			Statement createIndex = c.createStatement();
 			createIndex.executeUpdate("DROP INDEX IF EXISTS \"index\"");
 			String createIndexQuery = "CREATE INDEX \"index\" ON EVENTS(";
 			for (int i = 0; i < numConditions; i++) {
-				Attribute attribute = ((List<ConditionImpl>) conditionMatrix.get(0, 0)).get(i).getAttribute();
+				Attribute attribute = ((List<Condition>) conditionMatrix.get(0, 0)).get(i).getAttribute();
 				if (attribute.getParent() != null)
 					createIndexQuery = createIndexQuery + attribute.getParent().getQueryString();
 				else
@@ -214,11 +232,10 @@ public class AbstrEventBase {
 			createIndexQuery = createIndexQuery + ")";
 			createIndex.executeUpdate(createIndexQuery);
 
-			String whereSQL = " FROM EVENTS WHERE ";
+			String whereSQL = " FROM " + origin + " WHERE ";
 			for (int i = 0; i < numConditions; i++) {
-				whereSQL = whereSQL
-						+ ((List<ConditionImpl>) conditionMatrix.get(0, 0)).get(i).getAttribute().getQueryString()
-						+ " = ?";
+				Condition condition = ((List<Condition>) conditionMatrix.get(0, 0)).get(i);
+				whereSQL = whereSQL + condition.getAsStringwithQuestionMarks();
 				if (i < numConditions - 1)
 					whereSQL = whereSQL + " AND ";
 			}
@@ -263,13 +280,14 @@ public class AbstrEventBase {
 				MultiKey mk = (MultiKey) it.getKey();
 				int i = (int) mk.getKey(0);
 				int j = (int) mk.getKey(1);
-				List<ConditionImpl> conditions = (List<ConditionImpl>) it.getValue();
+				List<Condition> conditions = (List<Condition>) it.getValue();
 
 				s.setInt(index++, i);
 				s.setInt(index++, j);
 
-				for (ConditionImpl condition : conditions)
-					s.setString(index++, condition.getValue());
+				for (Condition condition : conditions)
+					for (Pair<String, String> cond : condition.getTail().getTailConditions())
+						s.setString(index++, cond.getRight());
 
 				if (counter % batchSize == 0) {// reached batch limit
 					ResultSet rs = s.executeQuery();
@@ -284,9 +302,7 @@ public class AbstrEventBase {
 						s.close();
 						s = c.prepareStatement(getFullSql(batchSize, coreSql));
 					}
-
 				}
-				;
 			}
 			// if there is a remainder of the batches...
 			if (counter > 0) {

@@ -6,8 +6,8 @@ import java.util.ResourceBundle;
 
 import org.controlsfx.control.CheckListView;
 
-import application.models.attribute.TextAttribute;
 import application.models.attribute.abstr.Attribute;
+import application.models.attribute.impl.TextAttribute;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

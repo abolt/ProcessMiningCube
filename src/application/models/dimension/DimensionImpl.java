@@ -3,8 +3,8 @@ package application.models.dimension;
 import java.util.HashMap;
 import java.util.Map;
 
-import application.models.attribute.DateTimeAttribute;
 import application.models.attribute.abstr.Attribute;
+import application.models.attribute.impl.DateTimeAttribute;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;

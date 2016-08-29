@@ -6,10 +6,10 @@ import java.util.ResourceBundle;
 
 import org.controlsfx.control.RangeSlider;
 
-import application.models.attribute.ContinuousAttribute;
-import application.models.attribute.DiscreteAttribute;
 import application.models.attribute.abstr.AbstrNumericalAttribute;
 import application.models.attribute.abstr.Attribute;
+import application.models.attribute.impl.ContinuousAttribute;
+import application.models.attribute.impl.DiscreteAttribute;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
