@@ -314,10 +314,10 @@ public class CubeTableViewController extends BorderPane implements Initializable
 				Condition newCondition = ConditionFactory.createCondition((DiscreteAttribute) attribute);
 				if (((DiscreteAttribute) attribute).getSelectedMin() > ((DiscreteAttribute) attribute).getMin())
 					ConditionUtils.addConditionToTail(newCondition, Condition.BIGGER_THAN_EQUALS,
-							((AbstrNumericalAttribute) attribute).getSelectedMin().toString());
+							"'" + ((AbstrNumericalAttribute) attribute).getSelectedMin().toString() + "'");
 				if (((DiscreteAttribute) attribute).getSelectedMax() < ((DiscreteAttribute) attribute).getMax())
-					ConditionUtils.addConditionToTail(newCondition, Condition.SMALLER_THAN_EQUALS,
-							((DiscreteAttribute) attribute).getSelectedMax().toString());
+					ConditionUtils.addConditionToTail(newCondition, Condition.SMALLER_THAN_EQUALS, "'" +
+							((DiscreteAttribute) attribute).getSelectedMax().toString() + "'");
 				conditions.add(newCondition);
 			}
 		} else if (attribute instanceof ContinuousAttribute) {
@@ -326,11 +326,11 @@ public class CubeTableViewController extends BorderPane implements Initializable
 							.getMax()) {
 				Condition newCondition = ConditionFactory.createCondition((ContinuousAttribute) attribute);
 				if (((ContinuousAttribute) attribute).getSelectedMin() > ((ContinuousAttribute) attribute).getMin())
-					ConditionUtils.addConditionToTail(newCondition, Condition.BIGGER_THAN_EQUALS,
-							((ContinuousAttribute) attribute).getSelectedMin().toString());
+					ConditionUtils.addConditionToTail(newCondition, Condition.BIGGER_THAN_EQUALS, "'" +
+							((ContinuousAttribute) attribute).getSelectedMin().toString() + "'");
 				if (((ContinuousAttribute) attribute).getSelectedMax() < ((ContinuousAttribute) attribute).getMax())
-					ConditionUtils.addConditionToTail(newCondition, Condition.SMALLER_THAN_EQUALS,
-							((ContinuousAttribute) attribute).getSelectedMax().toString());
+					ConditionUtils.addConditionToTail(newCondition, Condition.SMALLER_THAN_EQUALS, "'" +
+							((ContinuousAttribute) attribute).getSelectedMax().toString() + "'");
 				conditions.add(newCondition);
 			}
 		}

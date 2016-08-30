@@ -204,11 +204,16 @@ public class AbstrEventBase {
 				origin = "AUXVIEW";
 				Statement createView = c.createStatement();
 				createView.executeUpdate("DROP VIEW IF EXISTS AUXVIEW");
-				String createViewQuery = "CREATE VIEW \"AUXVIEW\" AS SELECT * FROM EVENTS WHERE";
-				for (Condition condition : filters) {
-					createViewQuery = createViewQuery + condition.getAsString();
+				String createViewQuery = "CREATE VIEW \"AUXVIEW\" AS SELECT * FROM EVENTS WHERE ";
+				Iterator<Condition> iterator = filters.iterator();
+				while (iterator.hasNext()) {
+					createViewQuery = createViewQuery + iterator.next().getAsString();
+					if(iterator.hasNext())
+						createViewQuery = createViewQuery + " AND ";
 				}
+				//System.out.println(createViewQuery);
 				createView.executeUpdate(createViewQuery);
+				
 			} else
 				origin = "EVENTS";
 
@@ -230,7 +235,9 @@ public class AbstrEventBase {
 					createIndexQuery = createIndexQuery + ", ";
 			}
 			createIndexQuery = createIndexQuery + ")";
+			//System.out.println(createIndexQuery);
 			createIndex.executeUpdate(createIndexQuery);
+			
 
 			String whereSQL = " FROM " + origin + " WHERE ";
 			for (int i = 0; i < numConditions; i++) {
@@ -272,8 +279,11 @@ public class AbstrEventBase {
 
 			if (numQueries < batchSize)
 				batchSize = numQueries;
+			
 			s = c.prepareStatement(getFullSql(batchSize, coreSql));
-
+			//System.out.println(coreSql);
+			
+			
 			while (it.hasNext()) {
 				it.next();
 				counter++;
