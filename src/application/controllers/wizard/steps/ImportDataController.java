@@ -17,7 +17,7 @@ public class ImportDataController extends AbstractWizardStepController {
 	private static final String viewLocation = "/application/views/wizard/ImportData.fxml";
 	private File input;
 	
-	public static final String CSV = "CSV", XES = "XES";
+	public static final String CSV = "csv", XES = "xes";
 	public String extension;
 
 	@FXML

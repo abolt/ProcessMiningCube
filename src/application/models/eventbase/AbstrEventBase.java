@@ -22,6 +22,7 @@ import org.apache.commons.collections15.MapIterator;
 import org.apache.commons.collections15.keyvalue.MultiKey;
 import org.apache.commons.collections15.map.MultiKeyMap;
 import org.apache.commons.lang3.tuple.Pair;
+import org.deckfour.xes.factory.XFactory;
 import org.deckfour.xes.model.XAttributeMap;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.impl.XAttributeContinuousImpl;
@@ -30,6 +31,8 @@ import org.deckfour.xes.model.impl.XAttributeLiteralImpl;
 import org.deckfour.xes.model.impl.XAttributeMapImpl;
 import org.deckfour.xes.model.impl.XAttributeTimestampImpl;
 import org.deckfour.xes.model.impl.XEventImpl;
+
+import com.google.common.collect.Lists;
 
 import application.controllers.wizard.steps.MappingController;
 import application.models.attribute.abstr.Attribute;
@@ -188,7 +191,7 @@ public class AbstrEventBase {
 		MultiKeyMap result = new MultiKeyMap();
 
 		int numConditions = numConditionsPerCell;
-		int batchSize = 19;
+		int batchSize = 10;
 
 		// initialize DB connection
 		try {
@@ -208,12 +211,12 @@ public class AbstrEventBase {
 				Iterator<Condition> iterator = filters.iterator();
 				while (iterator.hasNext()) {
 					createViewQuery = createViewQuery + iterator.next().getAsString();
-					if(iterator.hasNext())
+					if (iterator.hasNext())
 						createViewQuery = createViewQuery + " AND ";
 				}
-				//System.out.println(createViewQuery);
+				// System.out.println(createViewQuery);
 				createView.executeUpdate(createViewQuery);
-				
+
 			} else
 				origin = "EVENTS";
 
@@ -235,9 +238,8 @@ public class AbstrEventBase {
 					createIndexQuery = createIndexQuery + ", ";
 			}
 			createIndexQuery = createIndexQuery + ")";
-			//System.out.println(createIndexQuery);
+			// System.out.println(createIndexQuery);
 			createIndex.executeUpdate(createIndexQuery);
-			
 
 			String whereSQL = " FROM " + origin + " WHERE ";
 			for (int i = 0; i < numConditions; i++) {
@@ -262,6 +264,9 @@ public class AbstrEventBase {
 						+ metric.getCaseID() + "\" IN (seLect DISTINCT \"" + metric.getCaseID() + "\"" + whereSQL
 						+ ") GROUP BY \"" + metric.getCaseID() + "\")";
 				break;
+			case Metric.list:
+				coreSql = coreSql + "ID" + whereSQL;
+				break;
 			}
 			// System.out.println(coreSql);
 
@@ -279,11 +284,10 @@ public class AbstrEventBase {
 
 			if (numQueries < batchSize)
 				batchSize = numQueries;
-			
+
 			s = c.prepareStatement(getFullSql(batchSize, coreSql));
-			//System.out.println(coreSql);
-			
-			
+			// System.out.println(coreSql);
+
 			while (it.hasNext()) {
 				it.next();
 				counter++;
@@ -301,8 +305,12 @@ public class AbstrEventBase {
 
 				if (counter % batchSize == 0) {// reached batch limit
 					ResultSet rs = s.executeQuery();
-					while (rs.next())
-						result.put(rs.getInt(1), rs.getInt(2), rs.getInt(3));
+					while (rs.next()) {
+						if (result.get(rs.getInt(1), rs.getInt(2)) == null)
+							result.put(rs.getInt(1), rs.getInt(2), new ArrayList<Integer>());
+						((List<Integer>) result.get(rs.getInt(1), rs.getInt(2))).add(rs.getInt(3));
+					}
+
 					index = 1;// go back to the beginning
 					s.clearParameters();
 					counter = 0;
@@ -376,6 +384,70 @@ public class AbstrEventBase {
 		}
 
 		return valueSet;
+	}
+
+	public List<XEvent> materializeEvents(List<Integer> ids, XFactory factory) {
+
+		String query = "SELECT * FROM EVENTS WHERE \"ID\" IN (";
+		Iterator<Integer> iterator = ids.iterator();
+		while (iterator.hasNext()) {
+			query = query + iterator.next();
+			if (iterator.hasNext())
+				query = query + ",";
+		}
+		query = query + ")";
+
+		try {
+			Class.forName("org.sqlite.JDBC");
+			Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+			Statement s = c.createStatement();
+			ResultSet rs = s.executeQuery(query);
+
+			Map<String, String> columns = new HashMap<String, String>();
+			List<String> orderedAttributes = new ArrayList<String>();
+			ResultSetMetaData rsmd = rs.getMetaData();
+
+			for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+				columns.put(rsmd.getColumnName(i), rsmd.getColumnTypeName(i));
+				orderedAttributes.add(rsmd.getColumnName(i));
+			}
+			Map<Integer, DateFormat> df = new HashMap<Integer, DateFormat>();
+			while (rs.next()) {
+				XAttributeMap attMap = factory.createAttributeMap();
+				for (int i = 1; i < orderedAttributes.size(); i++) {
+					if (rs.getString(i) == null || ("NULL").equals(rs.getString(i)))
+						continue;
+					// first column is always the index
+					switch (columns.get(orderedAttributes.get(i))) {
+					case Attribute.DISCRETE:
+						attMap.put(orderedAttributes.get(i),
+								factory.createAttributeDiscrete(orderedAttributes.get(i), rs.getInt(i), null));
+						break;
+					case Attribute.CONTINUOUS:
+						attMap.put(orderedAttributes.get(i),
+								factory.createAttributeContinuous(orderedAttributes.get(i), rs.getDouble(i), null));
+						break;
+					case Attribute.TEXT:
+						attMap.put(orderedAttributes.get(i),
+								factory.createAttributeLiteral(orderedAttributes.get(i), rs.getString(i), null));
+						break;
+					case Attribute.DATE_TIME:
+						if (df.get(i) == null)
+							df.put(i, MappingController.detectTimestampParser(rs.getString(i)));
+						attMap.put(orderedAttributes.get(i), factory.createAttributeTimestamp(orderedAttributes.get(i),
+								df.get(i).parse(rs.getString(i)).getTime(), null));
+						break;
+					}
+					eventMap.put(rs.getLong(1), factory.createEvent(attMap));
+				}
+			}
+			s.close();
+			c.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Lists.newArrayList(eventMap.values());
+
 	}
 
 	public void buildEvents() {

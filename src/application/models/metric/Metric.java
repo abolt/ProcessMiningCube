@@ -5,7 +5,8 @@ import application.models.attribute.abstr.Attribute;
 public class Metric {
 
 	public static final String eventCount = "# Events", caseCount = "# Cases",
-			avgCaseLength = "Average Case Length (# Events)", avgCaseDuration = "Average Case Duration";
+			avgCaseLength = "Average Case Length (# Events)", avgCaseDuration = "Average Case Duration", list = "list";
+
 
 	private String name;
 	private Attribute caseID, timeStamp;
