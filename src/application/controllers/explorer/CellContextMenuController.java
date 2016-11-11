@@ -1,19 +1,23 @@
 package application.controllers.explorer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+
+import javax.swing.JOptionPane;
 
 import org.controlsfx.control.spreadsheet.Grid;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
+import org.deckfour.xes.factory.XFactory;
 import org.deckfour.xes.factory.XFactoryNaiveImpl;
 import org.deckfour.xes.model.XEvent;
+import org.deckfour.xes.model.XLog;
+import org.deckfour.xes.model.XTrace;
+import org.deckfour.xes.model.impl.XLogImpl;
+import org.deckfour.xes.model.impl.XTraceImpl;
+import org.processmining.plugins.log.ui.logdialog.SlickerOpenLogSettings;
 
-import com.google.common.collect.Lists;
-
+import application.controllers.results.ResultDialogController;
 import application.models.attribute.abstr.Attribute;
 import application.models.eventbase.AbstrEventBase;
 import application.operations.Utils;
@@ -76,6 +80,16 @@ public class CellContextMenuController {
 					List<XEvent> events = eb.materializeEvents(Utils.parseEventIDs(eventLists),
 							new XFactoryNaiveImpl());
 					System.out.println("I got " + events.size() + " events back!");
+					SlickerOpenLogSettings s = new SlickerOpenLogSettings();
+					XFactory fac =  new XFactoryNaiveImpl();
+					XTrace trace = fac.createTrace();
+					trace.addAll(events);
+					XLog log = fac.createLog();
+					log.add(trace);
+					
+					ResultDialogController dia = new ResultDialogController(log, s.showLogVis(null, log));
+					
+					
 				}
 				// treat them individually
 				else {

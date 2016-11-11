@@ -26,6 +26,7 @@ import org.deckfour.xes.model.impl.XEventImpl;
 import org.processmining.log.csv.CSVFileReferenceUnivocityImpl;
 import org.processmining.log.csv.ICSVReader;
 import org.processmining.log.csv.config.CSVConfig;
+import org.processmining.log.csvimport.exception.CSVConversionException;
 
 import application.controllers.wizard.steps.MappingController;
 import application.models.attribute.abstr.Attribute;
@@ -72,7 +73,7 @@ public class CSVImporter extends Importer {
 			}
 			return attributeObjects;
 
-		} catch (IOException e) {
+		} catch (IOException | CSVConversionException e) {
 			e.printStackTrace();
 		}
 

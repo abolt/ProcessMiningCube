@@ -67,6 +67,8 @@ public class AbstrEventBase {
 
 		try {
 			Class.forName("org.sqlite.JDBC");
+			DriverManager.registerDriver(new org.sqlite.JDBC());
+			
 			Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
 
 			c.setAutoCommit(false);
