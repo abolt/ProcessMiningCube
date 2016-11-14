@@ -68,7 +68,7 @@ public class AbstrEventBase {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			DriverManager.registerDriver(new org.sqlite.JDBC());
-			
+
 			Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
 
 			c.setAutoCommit(false);
@@ -390,6 +390,8 @@ public class AbstrEventBase {
 
 	public List<XEvent> materializeEvents(List<Integer> ids, XFactory factory) {
 
+		Map<Long,XEvent> events = new HashMap<Long, XEvent>();
+		
 		String query = "SELECT * FROM EVENTS WHERE \"ID\" IN (";
 		Iterator<Integer> iterator = ids.iterator();
 		while (iterator.hasNext()) {
@@ -404,51 +406,44 @@ public class AbstrEventBase {
 			Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
 			Statement s = c.createStatement();
 			ResultSet rs = s.executeQuery(query);
-
-			Map<String, String> columns = new HashMap<String, String>();
-			List<String> orderedAttributes = new ArrayList<String>();
 			ResultSetMetaData rsmd = rs.getMetaData();
 
-			for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-				columns.put(rsmd.getColumnName(i), rsmd.getColumnTypeName(i));
-				orderedAttributes.add(rsmd.getColumnName(i));
-			}
 			Map<Integer, DateFormat> df = new HashMap<Integer, DateFormat>();
 			while (rs.next()) {
 				XAttributeMap attMap = factory.createAttributeMap();
-				for (int i = 1; i < orderedAttributes.size(); i++) {
+				for (int i = 1; i < rsmd.getColumnCount(); i++) {
 					if (rs.getString(i) == null || ("NULL").equals(rs.getString(i)))
 						continue;
 					// first column is always the index
-					switch (columns.get(orderedAttributes.get(i))) {
+					switch (rsmd.getColumnTypeName(i)) {
 					case Attribute.DISCRETE:
-						attMap.put(orderedAttributes.get(i),
-								factory.createAttributeDiscrete(orderedAttributes.get(i), rs.getInt(i), null));
+						attMap.put(rsmd.getColumnName(i),
+								factory.createAttributeDiscrete(rsmd.getColumnName(i), rs.getInt(i), null));
 						break;
 					case Attribute.CONTINUOUS:
-						attMap.put(orderedAttributes.get(i),
-								factory.createAttributeContinuous(orderedAttributes.get(i), rs.getDouble(i), null));
+						attMap.put(rsmd.getColumnName(i),
+								factory.createAttributeContinuous(rsmd.getColumnName(i), rs.getDouble(i), null));
 						break;
 					case Attribute.TEXT:
-						attMap.put(orderedAttributes.get(i),
-								factory.createAttributeLiteral(orderedAttributes.get(i), rs.getString(i), null));
+						attMap.put(rsmd.getColumnName(i),
+								factory.createAttributeLiteral(rsmd.getColumnName(i), rs.getString(i), null));
 						break;
 					case Attribute.DATE_TIME:
 						if (df.get(i) == null)
 							df.put(i, MappingController.detectTimestampParser(rs.getString(i)));
-						attMap.put(orderedAttributes.get(i), factory.createAttributeTimestamp(orderedAttributes.get(i),
+						attMap.put(rsmd.getColumnName(i), factory.createAttributeTimestamp(rsmd.getColumnName(i),
 								df.get(i).parse(rs.getString(i)).getTime(), null));
 						break;
 					}
-					eventMap.put(rs.getLong(1), factory.createEvent(attMap));
 				}
+				events.put(rs.getLong(1), factory.createEvent(attMap));
 			}
 			s.close();
 			c.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return Lists.newArrayList(eventMap.values());
+		return Lists.newArrayList(events.values());
 
 	}
 

@@ -1,4 +1,4 @@
-package org.rapidprom.util;
+package application.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

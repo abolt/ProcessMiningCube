@@ -1,4 +1,4 @@
-package org.rapidprom.util;
+package application.utils;
 
 public class ObjectUtils {
 

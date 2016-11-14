@@ -21,17 +21,11 @@
 package application.prom;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import org.processmining.framework.packages.PackageDescriptor;
 import org.processmining.framework.plugin.PluginManager;
-import org.rapidprom.external.connectors.prom.RapidProMGlobalContext;
-import org.rapidprom.external.connectors.prom.RapidProMPackageDescriptor;
-import org.rapidprom.external.connectors.prom.RapidProMPluginContext;
-import org.rapidprom.external.connectors.prom.RapidProMPluginManager;
-import org.rapidprom.util.RapidMinerUtils;
-
-import com.rapidminer.gui.MainFrame;
-import com.rapidminer.tools.plugin.Plugin;
 
 /**
  * This class provides hooks for initialization and its methods are called via
@@ -42,8 +36,21 @@ import com.rapidminer.tools.plugin.Plugin;
  */
 public final class PluginInitRapidProM {
 
-	private PluginInitRapidProM() {
+	static ClassLoader classLoader;
+	static URL url;
+
+	public PluginInitRapidProM() {
 		// Utility class constructor
+		classLoader = this.getClass().getClassLoader();
+		try {
+			url = this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toURL();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -51,43 +58,11 @@ public final class PluginInitRapidProM {
 	 * This is the first hook during start up. No initialization of the
 	 * operators or renderers has taken place when this is called.
 	 */
-	public static void initPlugin() {
+	public void initPlugin() {
 		PluginManager promPluginManager = new RapidProMPluginManager(RapidProMPluginContext.class);
 		PackageDescriptor packageDescriptor = new RapidProMPackageDescriptor();
-		Plugin rapidMinerPluginEntry = RapidMinerUtils.getRapidProMPlugin();
-		try {
-			promPluginManager.register(rapidMinerPluginEntry.getFile().toURI().toURL(), packageDescriptor,
-					rapidMinerPluginEntry.getClassLoader());
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
+		promPluginManager.register(url, packageDescriptor, classLoader);
 		RapidProMGlobalContext.initialize(promPluginManager);
 	}
 
-	/**
-	 * This method is called during start up as the second hook. It is called
-	 * before the gui of the mainframe is created. The Mainframe is given to
-	 * adapt the gui. The operators and renderers have been registered in the
-	 * meanwhile.
-	 *
-	 * @param mainframe
-	 *            the RapidMiner Studio {@link MainFrame}.
-	 */
-	public static void initGui(MainFrame mainframe) {
-	}
-
-	/**
-	 * The last hook before the splash screen is closed. Third in the row.
-	 */
-	public static void initFinalChecks() {
-	}
-
-	/**
-	 * Will be called as fourth method, directly before the UpdateManager is
-	 * used for checking updates. Location for exchanging the UpdateManager. The
-	 * name of this method unfortunately is a result of a historical typo, so
-	 * it's a little bit misleading.
-	 */
-	public static void initPluginManager() {
-	}
 }

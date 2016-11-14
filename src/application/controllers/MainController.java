@@ -9,6 +9,7 @@ import application.controllers.mainview.CubeRepositoryController;
 import application.controllers.menu.MenuBarController;
 import application.controllers.wizard.CubeWizardController;
 import application.models.cube.Cube;
+import application.prom.PluginInitRapidProM;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -46,9 +47,13 @@ public class MainController extends BorderPane implements Initializable {
 
 	@FXML
 	public void initialize() {
+		PluginInitRapidProM promInit = new PluginInitRapidProM();
+		promInit.initPlugin();
+		
 		menuBarController.init(this);
 		cubeRepositoryController = new CubeRepositoryController(this);
 		this.setCenter(cubeRepositoryController);
+		
 	}
 
 	public void newCube() {
