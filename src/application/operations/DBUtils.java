@@ -73,14 +73,14 @@ public class DBUtils {
 		for (int i = 0; i < grid.getRowCount(); i++)
 			for (int j = 0; j < rows.size(); j++)
 				if (i >= columns.size())
-					grid.setCellValue(i, j, rowleafs.get(i - columns.size()).values.get(j).getAsString());
+					grid.setCellValue(i, j, rowleafs.get(i - columns.size()).values.get(j).getAsLabel());
 
 		// fill column headers
 		List<Node> colleafs = colHeaders.getAccumulatedLeafs(-1);
 		for (int j = 0; j < grid.getColumnCount(); j++)
 			for (int i = 0; i < columns.size(); i++) {
 				if (j >= rows.size())
-					grid.setCellValue(i, j, colleafs.get(j - rows.size()).values.get(i).getAsString());
+					grid.setCellValue(i, j, colleafs.get(j - rows.size()).values.get(i).getAsLabel());
 			}
 
 		// span row headers

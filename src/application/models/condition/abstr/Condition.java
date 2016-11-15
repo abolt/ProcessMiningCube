@@ -20,5 +20,7 @@ public interface Condition {
 	public Attribute getAttribute();
 	
 	public ConditionTail getTail();
+	
+	public String getAsLabel();
 
 }

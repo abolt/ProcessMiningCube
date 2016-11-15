@@ -61,5 +61,19 @@ public abstract class AbstrCondition<T extends Attribute> implements Condition {
 		result = result + ")";
 		return result;
 	}
+	
+	@Override
+	public String getAsLabel(){
+		String result = "(";
+		Iterator<Pair<String, String>> iterator = tail.getTailConditions().iterator();
+		while (iterator.hasNext()) {
+			Pair<String, String> condition = iterator.next();
+			result = result + attribute.toString() + condition.getLeft() + condition.getRight();
+			if (iterator.hasNext())
+				result = result + " AND ";
+		}
+		result = result + ")";
+		return result;
+	}
 
 }

@@ -22,6 +22,8 @@ import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 
+import application.models.attribute.abstr.Attribute;
+
 public class XLogUtils {
 	
 	public enum AttributeTypes {BOOLEAN, DISCRETE, CONTINUOUS, STRING, DATE}
@@ -259,4 +261,6 @@ public class XLogUtils {
 		}
 		
 	}
+	
+	
 }

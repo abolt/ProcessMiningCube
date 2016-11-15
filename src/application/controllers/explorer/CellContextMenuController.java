@@ -9,7 +9,6 @@ import javax.swing.JComponent;
 import org.controlsfx.control.spreadsheet.Grid;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 import org.deckfour.xes.classification.XEventNameClassifier;
-import org.deckfour.xes.factory.XFactory;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.processmining.alphaminer.plugins.AlphaMinerPlugin;
@@ -17,10 +16,12 @@ import org.processmining.framework.plugin.PluginContext;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
 import org.processmining.plugins.log.ui.logdialog.SlickerOpenLogSettings;
 import org.processmining.plugins.petrinet.PetriNetVisualization;
+import org.processmining.processcomparator.plugins.ProcessComparatorPlugin;
+import org.processmining.processcomparator.view.ComparatorPanel;
 
 import application.controllers.results.ResultDialogController;
-import application.models.attribute.abstr.Attribute;
 import application.models.eventbase.AbstrEventBase;
+import application.models.xlog.XLogStructure;
 import application.operations.DialogUtils;
 import application.operations.LogUtils;
 import application.operations.Utils;
@@ -98,17 +99,13 @@ public class CellContextMenuController {
 		@Override
 		public void handle(ActionEvent arg0) {
 
+			XLogStructure structure = DialogUtils.askXLogStructure(explorerController.getValidAttributeList());
+			if (structure == null)
+				return;
 			/*
 			 * If we are not comparing, do the normal processing
 			 */
 			if (!arg0.getSource().equals(compare)) {
-
-				Attribute caseID = DialogUtils.askTraceId(explorerController.getValidAttributeList());
-				if (caseID == null)
-					return;
-				XFactory factory = DialogUtils.askXFactory();
-				if (factory == null)
-					return;
 
 				// get the list of event ids of one selected cell (focused?)
 				Optional<Boolean> forAll = Optional.of(false);
@@ -125,8 +122,9 @@ public class CellContextMenuController {
 					for (TablePosition cell : table.getSelectionModel().getSelectedCells())
 						eventLists.add((String) grid.getRows().get(cell.getRow()).get(cell.getColumn()).getItem());
 
-					List<XEvent> events = eb.materializeEvents(Utils.parseEventIDs(eventLists), factory);
-					XLog log = LogUtils.buildXLogFromEvents(events, caseID, factory, eventLists.toString());
+					List<XEvent> events = eb.materializeEvents(Utils.parseEventIDs(eventLists), structure.getFactory());
+					XLog log = LogUtils.buildXLogFromEvents(events, structure.getCaseID(), structure.getEventID(),
+							structure.getTimestamp(), structure.getFactory(), eventLists.toString());
 
 					if (arg0.getSource().equals(visualizeEventLog)) {
 						SlickerOpenLogSettings s = new SlickerOpenLogSettings();
@@ -150,10 +148,14 @@ public class CellContextMenuController {
 						List<String> eventLists = new ArrayList<String>();
 						eventLists.add((String) grid.getRows().get(cell.getRow()).get(cell.getColumn()).getItem());
 
-						List<XEvent> events = eb.materializeEvents(Utils.parseEventIDs(eventLists), factory);
-						XLog log = LogUtils.buildXLogFromEvents(events, caseID, factory, eventLists.toString());
+						List<XEvent> events = eb.materializeEvents(Utils.parseEventIDs(eventLists),
+								structure.getFactory());
+						XLog log = LogUtils.buildXLogFromEvents(events, structure.getCaseID(), structure.getEventID(),
+								structure.getTimestamp(), structure.getFactory(), eventLists.toString());
 
 						if (arg0.getSource().equals(visualizeEventLog)) {
+
+							System.out.println(getCellName(grid, cell.getRow(), cell.getColumn()));
 							SlickerOpenLogSettings s = new SlickerOpenLogSettings();
 							ResultDialogController dia = new ResultDialogController(log,
 									s.showLogVis(pluginContext, log));
@@ -163,7 +165,7 @@ public class CellContextMenuController {
 							JComponent result = visualizer.visualize(pluginContext, (Petrinet) AlphaMinerPlugin
 									.applyAlphaPlus(pluginContext, log, new XEventNameClassifier())[0]);
 							ResultDialogController dia = new ResultDialogController(log, result);
-						
+
 						} else if (arg0.getSource().equals(runRapidMinerWorkflow)) {
 
 						} else if (arg0.getSource().equals(exportEventLogs)) {
@@ -171,7 +173,51 @@ public class CellContextMenuController {
 						}
 					}
 				}
+			} else {
+
+				AbstrEventBase eb = explorerController.getEventBase();
+				List<XLog> logs = new ArrayList<XLog>();
+
+				for (TablePosition cell : table.getSelectionModel().getSelectedCells()) {
+					List<String> eventLists = new ArrayList<String>();
+					eventLists.add((String) grid.getRows().get(cell.getRow()).get(cell.getColumn()).getItem());
+
+					List<XEvent> events = eb.materializeEvents(Utils.parseEventIDs(eventLists), structure.getFactory());
+					logs.add(LogUtils.buildXLogFromEvents(events, structure.getCaseID(), structure.getEventID(),
+							structure.getTimestamp(), structure.getFactory(),
+							getCellName(grid, cell.getRow(), cell.getColumn())));
+				}
+				ProcessComparatorPlugin pc = new ProcessComparatorPlugin();
+				ComparatorPanel cp = pc.run(pluginContext, logs.toArray(new XLog[logs.size()]));
+				ResultDialogController dia = new ResultDialogController(null, cp);
+
 			}
 		}
+	}
+
+	private static String getCellName(Grid grid, int row, int col) {
+
+		String logName = "";
+		for (int i = 0; i <= row; i++)
+			if (isTextCell(grid.getRows().get(i).get(col).getText()))
+				logName = logName + grid.getRows().get(i).get(col).getText() + " AND ";
+
+		for (int i = 0; i <= col; i++)
+			if (isTextCell(grid.getRows().get(row).get(i).getText()))
+				logName = logName + grid.getRows().get(row).get(i).getText() + " AND ";
+
+		logName = logName.trim();
+		if (logName.endsWith("AND"))
+			logName = logName.substring(0, logName.length() - 3);
+
+		return logName;
+	}
+
+	private static boolean isTextCell(String content) {
+
+		if (content.contains("("))
+			return true;
+		else
+			return false;
 	}
 }
