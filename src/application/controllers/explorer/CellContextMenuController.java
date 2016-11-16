@@ -1,5 +1,7 @@
 package application.controllers.explorer;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +21,15 @@ import org.processmining.plugins.petrinet.PetriNetVisualization;
 import org.processmining.processcomparator.plugins.ProcessComparatorPlugin;
 import org.processmining.processcomparator.view.ComparatorPanel;
 
+import com.rapidminer.RapidMiner;
+import com.rapidminer.operator.IOContainer;
+import com.rapidminer.operator.IOObject;
+import com.rapidminer.operator.Operator;
+import com.rapidminer.operator.OperatorException;
+import com.rapidminer.operator.nio.ExcelExampleSource;
+import com.rapidminer.tools.XMLException;
+import com.rapidminer.Process;
+
 import application.controllers.results.ResultDialogController;
 import application.models.eventbase.AbstrEventBase;
 import application.models.xlog.XLogStructure;
@@ -34,6 +45,9 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TablePosition;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class CellContextMenuController {
 
@@ -167,6 +181,48 @@ public class CellContextMenuController {
 							ResultDialogController dia = new ResultDialogController(log, result);
 
 						} else if (arg0.getSource().equals(runRapidMinerWorkflow)) {
+
+							DirectoryChooser rapidMinerDirectory = new DirectoryChooser();
+							rapidMinerDirectory.setTitle("Select the RapidMiner source directory");
+							File directory = rapidMinerDirectory.showDialog(null);
+							
+							ProcessBuilder builder = new ProcessBuilder();
+							try {
+								builder.environment().put("rapidminer.home", directory.getCanonicalPath());
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							
+							RapidMiner.setExecutionMode(RapidMiner.ExecutionMode.COMMAND_LINE);
+							RapidMiner.init();
+							
+							FileChooser fileChooser = new FileChooser();
+							fileChooser.setTitle("Open Process File");
+							fileChooser.getExtensionFilters()
+									.add(new ExtensionFilter("RPM files supported", "*.rmp"));
+							File selectedFile = fileChooser.showOpenDialog(null);
+							
+							if (selectedFile == null) {
+								return;
+							}
+
+							Process process = null;
+							try {
+								process = new Process(selectedFile);
+								IOContainer container = process.run();
+//								IOObject[] results = container.getIOObjects();
+//								for(IOObject obj : results)
+//									if(obj instanceof XLogIOObject)
+//										System.out.println("hello");
+							} catch (IOException | XMLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (OperatorException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
 
 						} else if (arg0.getSource().equals(exportEventLogs)) {
 
