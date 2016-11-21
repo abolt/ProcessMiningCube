@@ -60,7 +60,7 @@ public class XLogStructureDialog extends Dialog<XLogStructure> {
 		
 
 		getDialogPane().setContent(mainBox);
-		ButtonType ok = new ButtonType("ok", ButtonData.OK_DONE);
+		ButtonType ok = new ButtonType("Ok", ButtonData.OK_DONE);
 		getDialogPane().getButtonTypes().addAll(ok, ButtonType.CANCEL);
 
 		setResultConverter(dialogButton -> {
