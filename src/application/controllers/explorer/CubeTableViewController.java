@@ -8,6 +8,8 @@ import org.controlsfx.control.ToggleSwitch;
 import org.controlsfx.control.spreadsheet.Grid;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 
+import application.controllers.workers.DBWorker;
+import application.controllers.workers.WorkerCatalog;
 import application.models.attribute.abstr.Attribute;
 import application.models.metric.Metric;
 import application.operations.DBUtils;
@@ -108,13 +110,28 @@ public class CubeTableViewController extends BorderPane implements Initializable
 		
 		System.out.println("table updated");
 
-		Grid grid = DBUtils.getGrid(explorerController.getRows(), explorerController.getColumns(),
+		Object[] inputs = new Object[5];
+		inputs[0] = explorerController.getRows();
+		inputs[1] = explorerController.getColumns();
+		inputs[2] = explorerController.getFilters();
+		inputs[3] = explorerController.getEventBase();
+		inputs[4] = currentMetric;
+		
+		DBWorker dbWorker = WorkerCatalog.getDBWorker();
+		Grid grid = dbWorker.run(null, inputs);
+				
+				/*
+				 * DBUtils.getGrid(explorerController.getRows(), explorerController.getColumns(),
 				explorerController.getFilters(), explorerController.getEventBase(), currentMetric);
+				 */
 		table = new SpreadsheetView(grid);
 
-		Metric newMetric = new Metric(Metric.list);
-		Grid eventGrid = DBUtils.getGrid(explorerController.getRows(), explorerController.getColumns(),
-				explorerController.getFilters(), explorerController.getEventBase(), newMetric);
+		inputs[4] = new Metric(Metric.list);
+		Grid eventGrid = dbWorker.run(null, inputs);
+				
+//				DBUtils.getGrid(explorerController.getRows(), explorerController.getColumns(),
+//				explorerController.getFilters(), explorerController.getEventBase(), newMetric);
+		
 		CellContextMenuController contextMenu = new CellContextMenuController(table, explorerController, eventGrid);
 		table.setContextMenu(contextMenu.getContextMenu());
 
