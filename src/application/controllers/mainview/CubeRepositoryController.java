@@ -8,6 +8,7 @@ import application.controllers.MainController;
 import application.models.cube.Cube;
 import application.models.cube.CubeInfo;
 import application.models.cube.CubeRepository;
+import application.operations.io.cube.CubeExporter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -111,7 +112,8 @@ public class CubeRepositoryController extends BorderPane implements Initializabl
 
 	@FXML
 	protected void exportCube() {
-
+		if (table.getSelectionModel().getSelectedItem() != null)
+			CubeExporter.exportCube(repository.getCube(table.getSelectionModel().getSelectedItem().getName()));
 	}
 	@FXML
 	protected void createCube() {

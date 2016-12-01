@@ -67,6 +67,11 @@ public class XLogExporter {
 
 	public static void exportLog(XLog log, Format format, String folder) {
 
+		if(folder == null)
+			folder = askDirectory().toString();
+		if(format == null)
+			format = askFormat();
+		
 		String path = log.getAttributes().get("concept:name").toString().trim();
 		switch (format) {
 		case XES:
@@ -99,6 +104,7 @@ public class XLogExporter {
 		}
 
 		try {
+			
 			switch (format) {
 			case XES:
 				ExportLogXes.export(log, file);

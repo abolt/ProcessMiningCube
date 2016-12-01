@@ -26,45 +26,4 @@ public class Cube {
 	public AbstrEventBase getEventBase() {
 		return eventBase;
 	}
-
-	// old stuff
-	// private ObservableList<Cell> cells;
-	// private Map<AttributeImpl, ObservableList<CheckBoxTreeItem<XAttribute>>>
-	// valueSelections;
-	// private ObservableList<DimensionImpl> dimensions;
-	//
-	// public Cube(ObservableList<DimensionImpl> dimensions,
-	// Map<AttributeImpl, ObservableList<CheckBoxTreeItem<XAttribute>>> map) {
-	//
-	// this.dimensions = dimensions;
-	// this.valueSelections = map;
-	// cells = FXCollections.observableArrayList();
-	//
-	// }
-	//
-	// public Map<AttributeImpl, ObservableList<CheckBoxTreeItem<XAttribute>>>
-	// getValueSelections() {
-	// return valueSelections;
-	// }
-	//
-	// public void setValueSelections(Map<AttributeImpl,
-	// ObservableList<CheckBoxTreeItem<XAttribute>>> valueSelections) {
-	// this.valueSelections = valueSelections;
-	// }
-	//
-	// public ObservableList<DimensionImpl> getDimensions() {
-	// return dimensions;
-	// }
-	//
-	// public void setDimensions(ObservableList<DimensionImpl> dimensions) {
-	// this.dimensions = dimensions;
-	// }
-	//
-	// public void setCells(ObservableList<Cell> cells) {
-	// this.cells = cells;
-	// }
-	//
-	// public ObservableList<Cell> getCells() {
-	// return cells;
-	// }
 }

@@ -107,4 +107,12 @@ public class DimensionImpl {
 			}
 		}
 	}
+
+	public Map<String, Attribute> getAttributeMap() {
+		return attributeMap;
+	}
+
+	public Attribute getRoot() {
+		return root;
+	}
 }

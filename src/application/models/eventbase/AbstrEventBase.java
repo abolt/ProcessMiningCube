@@ -1,6 +1,7 @@
 package application.models.eventbase;
 
 import java.io.File;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -41,8 +42,14 @@ import application.models.metric.Metric;
 import application.operations.io.log.CSVImporter;
 import application.operations.io.log.XESImporter;
 
-public class AbstrEventBase {
+public class AbstrEventBase implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3400351238150333387L;
+	
+	
 	private String dbPath;
 	private String filePath;
 	private int numAttributes;
