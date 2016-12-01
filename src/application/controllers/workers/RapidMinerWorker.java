@@ -78,19 +78,14 @@ public class RapidMinerWorker extends AbstrWorker {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void run(XLog log, Object... objects) {
 
-		Optional<File> selectedFile = (Optional<File>) objects[0];
-
-		if (!selectedFile.isPresent()) {
-			return;
-		}
+		File selectedFile = (File) objects[0];
 
 		Dialog<Void> progress = new Dialog<Void>();
 		progress.setTitle("Executing Workflow");
-		progress.setHeaderText("Please wait while I execute the workflow:\n" + selectedFile.get().getName());
+		progress.setHeaderText("Please wait while I execute the workflow:\n" + selectedFile.getName());
 		progress.getDialogPane().setContent(new ProgressBar(ProgressBar.INDETERMINATE_PROGRESS));
 
 		Task<Void> task = new Task<Void>() {
@@ -100,7 +95,7 @@ public class RapidMinerWorker extends AbstrWorker {
 
 				Process process = null;
 				try {
-					process = new Process(selectedFile.get());
+					process = new Process(selectedFile);
 					IOObject object = new XLogIOObject(log, pluginContext);
 					IOContainer container = new IOContainer(object);
 					process.run(container);
