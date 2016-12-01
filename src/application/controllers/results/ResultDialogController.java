@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 
 import org.deckfour.xes.model.XLog;
 
-import application.operations.io.log.XESExporter;
+import application.operations.io.log.XLogExporter;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingNode;
@@ -95,8 +95,8 @@ public class ResultDialogController extends BorderPane {
 
 	@FXML
 	protected void exportEventLog() {
-		XESExporter exporter = new XESExporter();
-		exporter.exportLog(log);
+		XLogExporter exporter = new XLogExporter();
+		exporter.exportLog(log, null, null);
 	}
 
 	@FXML
