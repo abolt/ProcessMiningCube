@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.deckfour.xes.factory.XFactory;
+
 import application.models.attribute.abstr.Attribute;
 import application.models.xlog.XLogStructure;
 import application.operations.dialogs.XLogStructureDialog;
@@ -14,8 +16,14 @@ import javafx.scene.control.ButtonType;
 
 public class DialogUtils {
 
+	private static Attribute caseID;
+	private static Attribute eventID;
+	private static Attribute timestamp;
+	private static XFactory factory;
+	
 	public static XLogStructure askXLogStructure(List<Attribute> availableAttributes) {
 
+		
 		assert availableAttributes != null && !availableAttributes.isEmpty();
 
 		List<Attribute> allAttributes = new ArrayList<Attribute>();
@@ -28,8 +36,13 @@ public class DialogUtils {
 		// add the child
 		allAttributes.addAll(availableAttributes);
 
-		XLogStructureDialog dialog = new XLogStructureDialog(allAttributes);
+		XLogStructureDialog dialog = new XLogStructureDialog(allAttributes, caseID, eventID, timestamp,factory);
 		Optional<XLogStructure> result = dialog.showAndWait();
+		
+		caseID = result.get().getCaseID();
+		eventID = result.get().getEventID();
+		timestamp = result.get().getTimestamp();
+		factory = result.get().getFactory();
 
 		return result.get();
 	}

@@ -20,16 +20,33 @@ import javafx.scene.layout.VBox;
 
 public class XLogStructureDialog extends Dialog<XLogStructure> {
 
-	public XLogStructureDialog(List<Attribute> attributes) {
+	public XLogStructureDialog(List<Attribute> attributes, Attribute caseID, Attribute eventID, Attribute timestamp,
+			XFactory factory) {
 
 		setTitle("XLog Structure Definition");
 		setHeaderText("The XLog(s) to be created need structure. Please select the following:");
 
 		ChoiceBox<Attribute> caseIDchoice = new ChoiceBox<Attribute>(FXCollections.observableArrayList(attributes));
+		if (caseID != null)
+			caseIDchoice.getSelectionModel().select(caseID);
+
 		ChoiceBox<Attribute> eventIDchoice = new ChoiceBox<Attribute>(FXCollections.observableArrayList(attributes));
-		ChoiceBox<Attribute> timestampChoice = new ChoiceBox<Attribute>(FXCollections.observableArrayList(attributes));
-		ChoiceBox<String> factoryChoice = new ChoiceBox<String>(FXCollections.observableArrayList("Naive (stored in memory)","MapDB (stored in disk)"));
+		if (eventID != null)
+			eventIDchoice.getSelectionModel().select(eventID);
 		
+		ChoiceBox<Attribute> timestampChoice = new ChoiceBox<Attribute>(FXCollections.observableArrayList(attributes));
+		if (timestamp != null)
+			timestampChoice.getSelectionModel().select(timestamp);
+		
+		ChoiceBox<String> factoryChoice = new ChoiceBox<String>(
+				FXCollections.observableArrayList("Naive (stored in memory)", "MapDB (stored in disk)"));
+		if(factory!= null){
+			if (factory instanceof XFactoryNaiveImpl)
+				factoryChoice.getSelectionModel().select(0);
+			else
+				factoryChoice.getSelectionModel().select(1);
+		}
+
 		VBox mainBox = new VBox();
 		mainBox.setPadding(new Insets(10));
 		mainBox.setSpacing(8);
@@ -51,13 +68,12 @@ public class XLogStructureDialog extends Dialog<XLogStructure> {
 		box3.getChildren().add(new Label("Event Timestamp:"));
 		box3.getChildren().add(timestampChoice);
 		mainBox.getChildren().add(box3);
-		
+
 		HBox box4 = new HBox();
 		box4.setSpacing(8);
 		box4.getChildren().add(new Label("XLog Factory:"));
 		box4.getChildren().add(factoryChoice);
 		mainBox.getChildren().add(box4);
-		
 
 		getDialogPane().setContent(mainBox);
 		ButtonType ok = new ButtonType("Ok", ButtonData.OK_DONE);
@@ -65,15 +81,15 @@ public class XLogStructureDialog extends Dialog<XLogStructure> {
 
 		setResultConverter(dialogButton -> {
 			if (dialogButton == ok) {
-				XFactory factory;
-				if(factoryChoice.getSelectionModel().getSelectedItem().contains("Naive")) //naive
-					factory = new XFactoryNaiveImpl();
+				XFactory selectedFactory;
+				if (factoryChoice.getSelectionModel().getSelectedItem().contains("Naive")) // naive
+					selectedFactory = new XFactoryNaiveImpl();
 				else
-					factory = new XFactoryBufferedImpl();
-				
+					selectedFactory = new XFactoryBufferedImpl();
+
 				return new XLogStructure(caseIDchoice.getSelectionModel().getSelectedItem(),
 						eventIDchoice.getSelectionModel().getSelectedItem(),
-						timestampChoice.getSelectionModel().getSelectedItem(),factory);
+						timestampChoice.getSelectionModel().getSelectedItem(), selectedFactory);
 			}
 			return null;
 		});
