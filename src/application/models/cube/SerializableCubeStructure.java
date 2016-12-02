@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import application.models.attribute.abstr.Attribute;
 import application.models.dimension.DimensionImpl;
 
@@ -31,48 +33,51 @@ public class SerializableCubeStructure implements Serializable {
 	public List<SerializableDimensionImpl> getDimensions() {
 		return dimensions;
 	}
+	
+	public class SerializableDimensionImpl implements Serializable {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7171667098615549041L;
+
+		private String dimensionName;
+
+		private List<Attribute> attributes;
+		private Map<String, Attribute> attributeMap;
+		private boolean isTime;
+		private Attribute root;
+
+		public SerializableDimensionImpl(DimensionImpl d) {
+			dimensionName = d.getNameProperty().getValue();
+			attributes = Lists.newArrayList(d.getAttributes());
+			attributeMap = d.getAttributeMap();
+			isTime = d.isTimeDimension();
+			root = d.getRoot();
+		}
+
+		public String getDimensionName() {
+			return dimensionName;
+		}
+
+		public List<Attribute> getAttributes() {
+			return attributes;
+		}
+
+		public Map<String, Attribute> getAttributeMap() {
+			return attributeMap;
+		}
+
+		public boolean isTime() {
+			return isTime;
+		}
+
+		public Attribute getRoot() {
+			return root;
+		}
+
+	}
 
 }
 
-class SerializableDimensionImpl implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7171667098615549041L;
-
-	private String dimensionName;
-
-	private List<Attribute> attributes;
-	private Map<String, Attribute> attributeMap;
-	private boolean isTime;
-	private Attribute root;
-
-	public SerializableDimensionImpl(DimensionImpl d) {
-		dimensionName = d.getNameProperty().getValue();
-		attributeMap = d.getAttributeMap();
-		isTime = d.isTimeDimension();
-		root = d.getRoot();
-	}
-
-	public String getDimensionName() {
-		return dimensionName;
-	}
-
-	public List<Attribute> getAttributes() {
-		return attributes;
-	}
-
-	public Map<String, Attribute> getAttributeMap() {
-		return attributeMap;
-	}
-
-	public boolean isTime() {
-		return isTime;
-	}
-
-	public Attribute getRoot() {
-		return root;
-	}
-
-}

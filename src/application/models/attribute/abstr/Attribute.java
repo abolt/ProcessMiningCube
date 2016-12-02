@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-public interface Attribute extends Serializable {
+public interface Attribute extends Serializable, Comparable<Attribute>{
 
 	public static final String IGNORE = "IGNORE", TEXT = "TEXT", DISCRETE = "INTEGER", CONTINUOUS = "REAL",
 			DATE_TIME = "DATETIME", DERIVED = "DERIVED";

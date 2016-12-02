@@ -104,5 +104,9 @@ public abstract class AbstrAttribute<T extends Comparable<T>> implements Attribu
 	public void addValue(T value) {
 		valueSet.add(value);
 	}
+	
+	public int compareTo(Attribute a){
+		return this.getLabel().compareTo(a.getLabel());
+	}
 
 }

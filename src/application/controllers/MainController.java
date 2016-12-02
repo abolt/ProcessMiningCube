@@ -69,7 +69,7 @@ public class MainController extends BorderPane implements Initializable {
 		wizard.showAndWait();
 		cubeRepositoryController.addCube(new Cube(cubeController.getCubeStructure(), cubeController.getEventBase()));
 
-		cubeRepositoryController.updateRepositoryList();
+		//cubeRepositoryController.updateRepositoryList();
 	}
 
 	public void exploreCube(Cube cube) {

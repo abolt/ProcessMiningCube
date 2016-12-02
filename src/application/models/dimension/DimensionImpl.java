@@ -93,7 +93,8 @@ public class DimensionImpl {
 
 	public void initializeTimeDimension() {
 
-		root = attributes.iterator().next();
+		if (root == null)
+			root = attributes.get(0);
 
 		if (root instanceof DateTimeAttribute) {
 			// add the attributes
@@ -114,5 +115,9 @@ public class DimensionImpl {
 
 	public Attribute getRoot() {
 		return root;
+	}
+
+	public void setRoot(Attribute root) {
+		this.root = root;
 	}
 }

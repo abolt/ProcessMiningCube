@@ -9,12 +9,14 @@ import application.models.cube.Cube;
 import application.models.cube.CubeInfo;
 import application.models.cube.CubeRepository;
 import application.operations.io.cube.CubeExporter;
+import application.operations.io.cube.CubeImporter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
@@ -69,6 +71,15 @@ public class CubeRepositoryController extends BorderPane implements Initializabl
 		table.setEditable(true);
 		table.getSelectionModel().cellSelectionEnabledProperty().set(true);
 		table.setItems(cubeInfoList);
+		table.setRowFactory( tv -> {
+		    TableRow<CubeInfo> row = new TableRow<CubeInfo>();
+		    row.setOnMouseClicked(event -> {
+		        if (event.getClickCount() == 2 && (! row.isEmpty()) ) {		        	
+		        	openCube();
+		        }
+		    });
+		    return row ;
+		});
 	}
 
 	public void updateRepositoryList() {
@@ -102,12 +113,15 @@ public class CubeRepositoryController extends BorderPane implements Initializabl
 
 	@FXML
 	protected void importCube() {
-
+		Cube newCube = CubeImporter.importCube();
+		addCube(newCube);
 	}
 
 	@FXML
 	protected void removeCube() {
-
+		if (table.getSelectionModel().getSelectedItem() != null)
+			repository.removeCube(repository.getCube(table.getSelectionModel().getSelectedItem().getName()));
+		updateRepositoryList();
 	}
 
 	@FXML

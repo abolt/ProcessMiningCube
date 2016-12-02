@@ -9,19 +9,22 @@ import java.util.Optional;
 
 import application.models.cube.Cube;
 import application.models.cube.SerializableCubeStructure;
+import application.operations.dialogs.DirectoryChooserDialog;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.stage.DirectoryChooser;
 
 public class CubeExporter {
 
 	public static void exportCube(Cube cube) {
 
 		try {
-			DirectoryChooser dir = new DirectoryChooser();
-			dir.setTitle("Select a Folder to export the cube");
-			File f = dir.showDialog(null);
+			DirectoryChooserDialog dir = new DirectoryChooserDialog("Exporting the cube",
+					"Select a Folder to export the cube", "");
+			Optional<File> directory = dir.showAndWait();
+			if (!directory.isPresent())
+				return;
+			File f = directory.get();
 			String aux = f.getAbsolutePath() + File.separator + cube.getCubeInfo().getName() + ".cub";
 			File file = new File(aux);
 
@@ -40,6 +43,7 @@ public class CubeExporter {
 			FileOutputStream fileOut = new FileOutputStream(file);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 
+			
 			out.writeObject(new SerializableCubeStructure(cube.getStructure()));
 			out.close();
 			fileOut.close();
