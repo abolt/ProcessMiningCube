@@ -1,5 +1,6 @@
 package application.operations.dialogs;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.deckfour.xes.factory.XFactory;
@@ -16,6 +17,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class XLogStructureDialog extends Dialog<XLogStructure> {
@@ -24,7 +27,9 @@ public class XLogStructureDialog extends Dialog<XLogStructure> {
 			XFactory factory) {
 
 		setTitle("XLog Structure Definition");
-		setHeaderText("The XLog(s) to be created need structure. Please select the following:");
+		setHeaderText("The XLog(s) to be created need a structure.\nPlease select the following:");
+
+		Collections.sort(attributes);
 
 		ChoiceBox<Attribute> caseIDchoice = new ChoiceBox<Attribute>(FXCollections.observableArrayList(attributes));
 		if (caseID != null)
@@ -33,14 +38,14 @@ public class XLogStructureDialog extends Dialog<XLogStructure> {
 		ChoiceBox<Attribute> eventIDchoice = new ChoiceBox<Attribute>(FXCollections.observableArrayList(attributes));
 		if (eventID != null)
 			eventIDchoice.getSelectionModel().select(eventID);
-		
+
 		ChoiceBox<Attribute> timestampChoice = new ChoiceBox<Attribute>(FXCollections.observableArrayList(attributes));
 		if (timestamp != null)
 			timestampChoice.getSelectionModel().select(timestamp);
-		
+
 		ChoiceBox<String> factoryChoice = new ChoiceBox<String>(
 				FXCollections.observableArrayList("Naive (stored in memory)", "MapDB (stored in disk)"));
-		if(factory!= null){
+		if (factory != null) {
 			if (factory instanceof XFactoryNaiveImpl)
 				factoryChoice.getSelectionModel().select(0);
 			else
@@ -54,24 +59,44 @@ public class XLogStructureDialog extends Dialog<XLogStructure> {
 		HBox box1 = new HBox();
 		box1.setSpacing(8);
 		box1.getChildren().add(new Label("Case ID:"));
+		{
+			Region spacer = new Region();
+			HBox.setHgrow(spacer, Priority.ALWAYS);
+			box1.getChildren().add(spacer);
+		}
 		box1.getChildren().add(caseIDchoice);
 		mainBox.getChildren().add(box1);
 
 		HBox box2 = new HBox();
 		box2.setSpacing(8);
 		box2.getChildren().add(new Label("Event ID:"));
+		{
+			Region spacer = new Region();
+			HBox.setHgrow(spacer, Priority.ALWAYS);
+			box2.getChildren().add(spacer);
+		}
 		box2.getChildren().add(eventIDchoice);
 		mainBox.getChildren().add(box2);
 
 		HBox box3 = new HBox();
 		box3.setSpacing(8);
 		box3.getChildren().add(new Label("Event Timestamp:"));
+		{
+			Region spacer = new Region();
+			HBox.setHgrow(spacer, Priority.ALWAYS);
+			box3.getChildren().add(spacer);
+		}
 		box3.getChildren().add(timestampChoice);
 		mainBox.getChildren().add(box3);
 
 		HBox box4 = new HBox();
 		box4.setSpacing(8);
 		box4.getChildren().add(new Label("XLog Factory:"));
+		{
+			Region spacer = new Region();
+			HBox.setHgrow(spacer, Priority.ALWAYS);
+			box4.getChildren().add(spacer);
+		}
 		box4.getChildren().add(factoryChoice);
 		mainBox.getChildren().add(box4);
 
