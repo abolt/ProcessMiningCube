@@ -14,9 +14,10 @@ import application.controllers.wizard.steps.DimensionsController;
 import application.controllers.wizard.steps.EasyDimensionsController;
 import application.controllers.wizard.steps.ImportDataController;
 import application.controllers.wizard.steps.MappingController;
+import application.controllers.workers.DBWorker;
+import application.controllers.workers.WorkerCatalog;
 import application.models.cube.CubeStructure;
 import application.models.eventbase.AbstrEventBase;
-import application.models.eventbase.FileBasedEventBase;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -143,6 +144,8 @@ public class CubeWizardController extends BorderPane implements Initializable {
 			dialog.setHeaderText("Please enter the name of your new Cube.");
 			dialog.showAndWait();
 			name = dialog.getResult();
+			if(name == null)
+				return;
 			if (!AbstrEventBase.dbExists(System.getProperty("user.home") + File.separator + name + ".db"))
 				dbOk = true;
 			else {
@@ -163,8 +166,12 @@ public class CubeWizardController extends BorderPane implements Initializable {
 	}
 
 	private void createEventBase(String name) {
-		eventBase = new FileBasedEventBase(((ImportDataController) steps.get(0)).getFileName(), name,
+		DBWorker dbWorker = WorkerCatalog.getDBWorker();
+		eventBase = dbWorker.createEventBase(((ImportDataController) steps.get(0)).getFileName(), name,
 				((DimensionsController) steps.get(3)).getAllAttributes());
+		// eventBase = new FileBasedEventBase(((ImportDataController)
+		// steps.get(0)).getFileName(), name,
+		// ((DimensionsController) steps.get(3)).getAllAttributes());
 	}
 
 	public void createCubeStructure() throws Exception {

@@ -126,7 +126,7 @@ public class AbstrEventBase implements Serializable{
 					// the
 					// batch
 					s.executeUpdate(sqlInsertHeader + sqlInsertBatch);
-
+					c.commit();
 					sqlInsertBatch = "";
 				} else if (index < size)
 					// all except the last that has a semicolon
@@ -418,7 +418,7 @@ public class AbstrEventBase implements Serializable{
 			Map<Integer, DateFormat> df = new HashMap<Integer, DateFormat>();
 			while (rs.next()) {
 				XAttributeMap attMap = factory.createAttributeMap();
-				for (int i = 1; i < rsmd.getColumnCount(); i++) {
+				for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 					if (rs.getString(i) == null || ("NULL").equals(rs.getString(i)))
 						continue;
 					// first column is always the index

@@ -10,6 +10,10 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 
+import application.controllers.wizard.steps.DimensionsController;
+import application.controllers.wizard.steps.ImportDataController;
+import application.controllers.workers.DBWorker;
+import application.controllers.workers.WorkerCatalog;
 import application.models.attribute.abstr.Attribute;
 import application.models.cube.Cube;
 import application.models.cube.CubeStructure;
@@ -81,7 +85,9 @@ public class CubeImporter {
 			return null;
 
 		// rebuild the AbstrEvent Base
-		AbstrEventBase eventBase = new FileBasedEventBase(dataFile.get().getAbsolutePath(),
+		
+		DBWorker dbWorker = WorkerCatalog.getDBWorker();		
+		AbstrEventBase eventBase = dbWorker.createEventBase(dataFile.get().getAbsolutePath(),
 				cubeFile.get().getName().replace(".cub", ""), Lists.newArrayList(allAttributes));
 		// rebuild the cube
 

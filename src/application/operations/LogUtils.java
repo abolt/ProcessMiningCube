@@ -56,7 +56,6 @@ public class LogUtils {
 			
 			XAttribute eventCase = e.getAttributes().get(caseID.getName());
 			if (eventCase == null) {
-
 				if (traceMap.get(unknown) == null)
 					traceMap.put(unknown, new ArrayList<XEvent>());
 				traceMap.get(unknown).add(eNew);

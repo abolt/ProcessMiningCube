@@ -106,7 +106,7 @@ public class MappingController extends AbstractWizardStepController {
 				try {
 					Double.parseDouble((String) value);
 					isParseable = true;
-				} catch (NumberFormatException e) {
+				} catch (Exception e) {
 					isParseable = false;
 					break;
 				}
@@ -208,7 +208,7 @@ public class MappingController extends AbstractWizardStepController {
 			aux = df.parse(input);
 			aux.getTime();
 			return df;
-		} catch (ParseException e) {
+		} catch (Exception e) {
 		}
 
 		try {
@@ -216,7 +216,7 @@ public class MappingController extends AbstractWizardStepController {
 			aux = df.parse(input);
 			aux.getTime();
 			return df;
-		} catch (ParseException e) {
+		} catch (Exception e) {
 		}
 
 		try {
@@ -224,7 +224,7 @@ public class MappingController extends AbstractWizardStepController {
 			aux = df.parse(input);
 			aux.getTime();
 			return df;
-		} catch (ParseException e) {
+		} catch (Exception e) {
 		}
 
 		try {
@@ -232,7 +232,7 @@ public class MappingController extends AbstractWizardStepController {
 			aux = df.parse(input);
 			aux.getTime();
 			return df;
-		} catch (ParseException e) {
+		} catch (Exception e) {
 		}
 
 		try {
@@ -240,7 +240,7 @@ public class MappingController extends AbstractWizardStepController {
 			aux = df.parse(input);
 			aux.getTime();
 			return df;
-		} catch (ParseException e) {
+		} catch (Exception e) {
 		}
 
 		try {
@@ -248,7 +248,7 @@ public class MappingController extends AbstractWizardStepController {
 			aux = df.parse(input);
 			aux.getTime();
 			return df;
-		} catch (ParseException e) {
+		} catch (Exception e) {
 		}
 
 		try {
@@ -256,7 +256,7 @@ public class MappingController extends AbstractWizardStepController {
 			aux = df.parse(input);
 			aux.getTime();
 			return df;
-		} catch (ParseException e) {
+		} catch (Exception e) {
 		}
 
 		try {
@@ -264,7 +264,7 @@ public class MappingController extends AbstractWizardStepController {
 			aux = df.parse(input);
 			aux.getTime();
 			return df;
-		} catch (ParseException e) {
+		} catch (Exception e) {
 		}
 		return null;
 	}

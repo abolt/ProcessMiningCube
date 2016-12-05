@@ -2,9 +2,6 @@ package application.operations.io.log;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,23 +9,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.deckfour.xes.model.XAttributeMap;
 import org.deckfour.xes.model.XEvent;
-import org.deckfour.xes.model.impl.XAttributeContinuousImpl;
-import org.deckfour.xes.model.impl.XAttributeDiscreteImpl;
-import org.deckfour.xes.model.impl.XAttributeLiteralImpl;
-import org.deckfour.xes.model.impl.XAttributeMapImpl;
-import org.deckfour.xes.model.impl.XAttributeTimestampImpl;
-import org.deckfour.xes.model.impl.XEventImpl;
+import org.deckfour.xes.model.XLog;
+import org.deckfour.xes.model.XTrace;
+import org.processmining.log.csv.CSVFile;
 import org.processmining.log.csv.CSVFileReferenceUnivocityImpl;
 import org.processmining.log.csv.ICSVReader;
 import org.processmining.log.csv.config.CSVConfig;
+import org.processmining.log.csvimport.CSVConversion;
+import org.processmining.log.csvimport.CSVConversion.ConversionResult;
+import org.processmining.log.csvimport.CSVConversion.NoOpProgressListenerImpl;
+import org.processmining.log.csvimport.CSVConversion.ProgressListener;
+import org.processmining.log.csvimport.config.CSVConversionConfig;
+import org.processmining.log.csvimport.config.CSVConversionConfig.CSVEmptyCellHandlingMode;
+import org.processmining.log.csvimport.config.CSVConversionConfig.CSVErrorHandlingMode;
+import org.processmining.log.csvimport.config.CSVConversionConfig.Datatype;
 import org.processmining.log.csvimport.exception.CSVConversionException;
 
-import application.controllers.wizard.steps.MappingController;
+import com.google.common.collect.Lists;
+
 import application.models.attribute.abstr.Attribute;
 import application.models.wizard.MappingRow;
 import application.operations.io.Importer;
@@ -37,7 +36,7 @@ import javafx.collections.ObservableList;
 
 public class CSVImporter extends Importer {
 
-	private final int MAX_LINES = 5;
+	private final int MAX_LINES = 10;
 
 	public CSVImporter(File in) {
 		super(in);
@@ -63,7 +62,8 @@ public class CSVImporter extends Importer {
 			for (int j = 0; j < MAX_LINES; j++) {
 				String[] line = reader.readNext();
 				for (int i = 0; i < names.length; i++) {
-					attributes.get(names[i]).add(line[i]);
+					if (line[i] != null && !line[i].equals("null"))
+						attributes.get(names[i]).add(line[i]);
 				}
 			}
 
@@ -80,98 +80,43 @@ public class CSVImporter extends Importer {
 		return null;
 	}
 
-	// CSVFileReferenceUnivocityImpl csvFile = new
-	// CSVFileReferenceUnivocityImpl(file.toPath());
-	// CSVConfig config;
-	// try {
-	// config = new CSVConfig(csvFile);
-	// CSVConversion conversion = new CSVConversion();
-	// CSVConversionConfig conversionConfig = new
-	// CSVConversionConfig(csvFile, config);
-	//
-	// // conversionConfig.autoDetect();
-	//
-	// conversionConfig.setCaseColumns(ImmutableList.of(case_id));
-	// conversionConfig.setEventNameColumns(ImmutableList.of(activity_id));
-	// conversionConfig.setCompletionTimeColumn(timestamp);
-	// conversionConfig.setStartTimeColumn("");
-	//
-	// conversionConfig.setEmptyCellHandlingMode(CSVEmptyCellHandlingMode.SPARSE);
-	//
-	// conversionConfig.setErrorHandlingMode(CSVErrorHandlingMode.ABORT_ON_ERROR);
-	// Map<String, CSVMapping> conversionMap =
-	// conversionConfig.getConversionMap();
-	// CSVMapping mapping = conversionMap.get(timestamp);
-	// mapping.setDataType(Datatype.TIME);
-	// mapping.setPattern(timestampFormat.toPattern());
-	//
-	// ConversionResult<XLog> result = conversion.doConvertCSVToXES(new
-	// NoOpProgressListenerImpl(), csvFile,
-	// config, conversionConfig);
-	//
-	// return result.getResult();
-	//
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	//
-	// return null;
-
 	@Override
 	public List<XEvent> getEventList(long size, List<Attribute> attributes) {
 
 		List<XEvent> events = new ArrayList<XEvent>();
-		// stores the ordered attributes
-		List<String> attributeNames = new ArrayList<String>();
-		// maps the attributes to their type
-		Map<String, String> attributeNameAndType = new HashMap<String, String>();
-		for (Attribute a : attributes)
-			attributeNameAndType.put(a.getName(), a.getType());
 
 		try {
-			CSVParser parser = CSVParser.parse(file, Charset.defaultCharset(), CSVFormat.DEFAULT);
-			DateFormat dateFormat = null;
-			boolean headerRead = false;
-			for (CSVRecord csvRecord : parser) {
-				XAttributeMap attributeMap = new XAttributeMapImpl();
-				if (!headerRead) {
-					for (int i = 0; i < csvRecord.size(); i++)
-						attributeNames.add(csvRecord.get(i));
-					headerRead = true;
-				} else {
-					for (int i = 0; i < csvRecord.size(); i++) {
-						switch (attributeNameAndType.get(attributeNames.get(i))) {
-						case Attribute.TEXT:
-							attributeMap.put(attributeNames.get(i),
-									new XAttributeLiteralImpl(attributeNames.get(i), csvRecord.get(i)));
-							break;
-						case Attribute.DISCRETE:
-							attributeMap.put(attributeNames.get(i), new XAttributeDiscreteImpl(attributeNames.get(i),
-									Integer.parseInt(csvRecord.get(i))));
-							break;
-						case Attribute.CONTINUOUS:
-							attributeMap.put(attributeNames.get(i), new XAttributeContinuousImpl(attributeNames.get(i),
-									Double.parseDouble(csvRecord.get(i))));
-							break;
-						case Attribute.DATE_TIME:
-							if (dateFormat == null)
-								dateFormat = MappingController.detectTimestampParser(csvRecord.get(i));
-							attributeMap.put(attributeNames.get(i), new XAttributeTimestampImpl(attributeNames.get(i),
-									dateFormat.parse(csvRecord.get(i)).getTime()));
-							break;
-						}
-						events.add(new XEventImpl(attributeMap));
-					}
-				}
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			CSVConversion conversion = new CSVConversion();
+			CSVFile csvFile = new CSVFileReferenceUnivocityImpl(file.toPath());
+			CSVConfig importConfig = new CSVConfig(csvFile);
+			CSVConversionConfig conversionConfig = new CSVConversionConfig(csvFile, importConfig);
+			conversionConfig.autoDetectDataTypes();
 
+			conversionConfig.setEmptyCellHandlingMode(CSVEmptyCellHandlingMode.SPARSE);
+			conversionConfig.setErrorHandlingMode(CSVErrorHandlingMode.OMIT_EVENT_ON_ERROR);
+			conversionConfig.setShouldAddStartEventAttributes(false);
+
+			ProgressListener cmdLineProgressListener = new NoOpProgressListenerImpl();
+			ConversionResult<XLog> result = conversion.doConvertCSVToXES(cmdLineProgressListener, csvFile, importConfig,
+					conversionConfig);
+			XLog log = result.getResult();
+			for (XTrace t : log)
+				for (XEvent e : t)
+					events.add(e);
+
+		} catch (Exception e) {
+			System.out.println("Error"); 
+			e.printStackTrace();
+			return null;
+		}
 		return events;
+
+	}
+
+	private boolean isNameInAttributeList(String name, List<Attribute> attributes) {
+		for (Attribute a : attributes)
+			if (name.equals(a.getName()))
+				return true;
+		return false;
 	}
 }

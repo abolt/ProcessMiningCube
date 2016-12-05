@@ -7,6 +7,7 @@ import org.deckfour.xes.model.XLog;
 
 import application.models.attribute.abstr.Attribute;
 import application.models.eventbase.AbstrEventBase;
+import application.models.eventbase.FileBasedEventBase;
 import application.models.metric.Metric;
 import application.operations.DBUtils;
 import javafx.application.Platform;
@@ -67,6 +68,55 @@ public class DBWorker {
 		progress.showAndWait();
 		
 		return grid[0];
+
+	}
+	
+	public AbstrEventBase createEventBase(String filePath, String dbName, List<Attribute> allAttributes) {
+
+		final AbstrEventBase[] result = new AbstrEventBase[1];
+		Dialog<Void> progress = new Dialog<Void>();
+		progress.setTitle("Building DataBase");
+		progress.setHeaderText("Please wait while I build and organize the database...");
+		progress.getDialogPane().setContent(new ProgressBar(ProgressBar.INDETERMINATE_PROGRESS));
+
+		Task<Void> task = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+
+				try {
+					result[0] = new FileBasedEventBase(filePath, dbName,allAttributes);
+					
+				} catch (Exception e) {
+
+					e.printStackTrace();
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setHeaderText("Something occurred:");
+					alert.setContentText(e.getMessage());
+					alert.showAndWait();
+				}
+				return null;
+			}
+
+			@Override
+			protected void done() {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						progress.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+						progress.close();
+					}
+				});
+			}
+		};
+
+		Thread thread = new Thread(task);
+		thread.setDaemon(true);
+		thread.start();
+
+		progress.showAndWait();
+		
+		return result[0];
 
 	}
 
