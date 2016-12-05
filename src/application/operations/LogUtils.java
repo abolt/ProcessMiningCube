@@ -1,6 +1,7 @@
 package application.operations;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +74,15 @@ public class LogUtils {
 
 			XTrace trace = factory.createTrace(traceAttributes);
 			trace.addAll(traceMap.get(s));
+			
+			trace.sort(new Comparator<XEvent>(){
+
+				@Override
+				public int compare(XEvent o1, XEvent o2) {
+					return o1.getAttributes().get("ID").compareTo(o2.getAttributes().get("ID"));
+				}
+				
+			});
 			log.add(trace);
 		}
 		return log;

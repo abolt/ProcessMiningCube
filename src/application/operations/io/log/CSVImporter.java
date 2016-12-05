@@ -23,10 +23,7 @@ import org.processmining.log.csvimport.CSVConversion.ProgressListener;
 import org.processmining.log.csvimport.config.CSVConversionConfig;
 import org.processmining.log.csvimport.config.CSVConversionConfig.CSVEmptyCellHandlingMode;
 import org.processmining.log.csvimport.config.CSVConversionConfig.CSVErrorHandlingMode;
-import org.processmining.log.csvimport.config.CSVConversionConfig.Datatype;
 import org.processmining.log.csvimport.exception.CSVConversionException;
-
-import com.google.common.collect.Lists;
 
 import application.models.attribute.abstr.Attribute;
 import application.models.wizard.MappingRow;
@@ -105,18 +102,11 @@ public class CSVImporter extends Importer {
 					events.add(e);
 
 		} catch (Exception e) {
-			System.out.println("Error"); 
+			System.out.println("Error");
 			e.printStackTrace();
 			return null;
 		}
 		return events;
 
-	}
-
-	private boolean isNameInAttributeList(String name, List<Attribute> attributes) {
-		for (Attribute a : attributes)
-			if (name.equals(a.getName()))
-				return true;
-		return false;
 	}
 }
