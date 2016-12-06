@@ -77,12 +77,17 @@ public class AbstrEventBase implements Serializable{
 			DriverManager.registerDriver(new org.sqlite.JDBC());
 
 			Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-
-			c.setAutoCommit(false);
+			c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+			
 			Statement s = c.createStatement();
+
+			s.execute("pragma journal_mode = OFF;");
+		
+			s.execute("pragma synchronous = OFF;");
+			
 			// drop existing table if existed
 			s.executeUpdate("DROP TABLE IF EXISTS EVENTS");
-			c.commit();
+			c.setAutoCommit(false);
 
 			String sqlCreate = "CREATE TABLE EVENTS (ID INTEGER PRIMARY KEY NOT NULL";
 
@@ -104,33 +109,41 @@ public class AbstrEventBase implements Serializable{
 
 			sqlInsertHeader = sqlInsertHeader + ") VALUES ";
 
-			String sqlInsertBatch = "";
+			//String sqlInsertBatch = "";
+			StringBuffer stringBuffer = new StringBuffer("");
 
 			int batchSize = 100;// rows for the same insert
 			long size = eventMap.keySet().size();
 
 			for (long index : eventMap.keySet()) {
 
-				sqlInsertBatch = sqlInsertBatch + "('" + index;
+				//sqlInsertBatch = sqlInsertBatch + "('" + index;
+				stringBuffer.append("('").append(index);
+				
 				XEvent event = eventMap.get(index);
 
 				for (Attribute att : attributes) {
 					if (!att.getType().equals(Attribute.IGNORE) && event.getAttributes().containsKey(att.getName()))
-						sqlInsertBatch = sqlInsertBatch + "', '" + event.getAttributes().get(att.getName()).toString();
+						stringBuffer.append("', '").append(event.getAttributes().get(att.getName()).toString());
+						//sqlInsertBatch = sqlInsertBatch + "', '" + event.getAttributes().get(att.getName()).toString();
 					else
-						sqlInsertBatch = sqlInsertBatch + "', 'NULL";
+						stringBuffer.append("', 'NULL");
+						//sqlInsertBatch = sqlInsertBatch + "', 'NULL";
 				}
-				sqlInsertBatch = sqlInsertBatch + "')";
+				stringBuffer.append("')");
+				//sqlInsertBatch = sqlInsertBatch + "')";
 
 				if ((index % batchSize == 0 || index == size - 1) && index > 0) { // run
 					// the
 					// batch
-					s.executeUpdate(sqlInsertHeader + sqlInsertBatch);
+					s.executeUpdate(sqlInsertHeader + stringBuffer.toString());
 					c.commit();
-					sqlInsertBatch = "";
+					//sqlInsertBatch = "";
+					stringBuffer = new StringBuffer("");
 				} else if (index < size)
 					// all except the last that has a semicolon
-					sqlInsertBatch = sqlInsertBatch + ", ";
+					//sqlInsertBatch = sqlInsertBatch + ", ";
+					stringBuffer.append(", ");
 
 			}
 			c.commit();
