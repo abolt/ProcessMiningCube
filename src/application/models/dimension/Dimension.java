@@ -1,5 +1,5 @@
 package application.models.dimension;
 
-public class Dimension {
+public interface Dimension {
 
 }
