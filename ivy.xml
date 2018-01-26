@@ -19,6 +19,8 @@
        <dependency org="prom" name="AlphaMiner" rev="latest" changing="true" transitive="true" />
        <dependency org="prom" name="ProcessComparator" rev="latest" changing="true" transitive="true" />
        <dependency org="prom" name="InductiveVisualMiner" rev="latest" changing="true" transitive="true" />
+       <dependency org="prom" name="PNetReplayer" rev="latest" changing="true" transitive="true" />
+       <dependency org="prom" name="PNetAlignmentAnalysis" rev="latest" changing="true" transitive="true" />
        <dependency org="org.controlsfx" name="controlsfx" rev="8.40.12"/>
        <dependency org="org.controlsfx" name="fxsampler" rev="1.0.9"/>
        <dependency org="org.apache.commons" name="commons-csv" rev="1.4"/>
