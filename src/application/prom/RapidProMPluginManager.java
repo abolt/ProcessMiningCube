@@ -235,8 +235,8 @@ public class RapidProMPluginManager implements PluginManager {
 			JarEntry je;
 			List<String> loadedClasses = new ArrayList<String>();
 
-			File lpsolveDir = new File(JAVA_TMP_DIR + File.separator + "rprom_lpsolve_"
-					+ System.getProperty("os.name") + "_" + System.getProperty("sun.arch.data.model"));
+			File lpsolveDir = new File(JAVA_TMP_DIR + File.separator + "rprom_lpsolve_" + System.getProperty("os.name")
+					+ "_" + System.getProperty("sun.arch.data.model"));
 			boolean unjarLpSolve = !lpsolveDir.exists();
 			String lpsolveLibraryEntry = LpSolveUtils.getOSBasedLpSolvePath(System.getProperty("os.name"),
 					System.getProperty("sun.arch.data.model"));
@@ -646,10 +646,11 @@ public class RapidProMPluginManager implements PluginManager {
 		}
 	}
 
-	public Set<Pair<Integer, PluginParameterBinding>> find(Class<? extends Annotation> annotation, Class<?> resultType,
-			Class<? extends PluginContext> contextType, boolean totalMatch, boolean orderedParameters,
-			boolean mustBeUserVisible, Class<?>... parameters) {
+	public Set<Pair<Integer, PluginParameterBinding>> find(Class<? extends Annotation> annotation,
+			Class<?>[] resultTypes, Class<? extends PluginContext> contextType, boolean totalMatch,
+			boolean orderedParameters, boolean mustBeUserVisible, Class<?>... parameters) {
 
+		Class<?> resultType = resultTypes[0];
 		Set<Pair<Integer, PluginParameterBinding>> result = new TreeSet<Pair<Integer, PluginParameterBinding>>();
 		Set<PluginDescriptor> pls = annotation2plugins.get(annotation);
 		if (pls == null) {
@@ -728,7 +729,8 @@ public class RapidProMPluginManager implements PluginManager {
 	public Set<PluginParameterBinding> getPluginsAcceptingAtLeast(Class<? extends PluginContext> contextType,
 			boolean mustBeUserVisible, Class<?>... parameters) {
 		Set<PluginParameterBinding> result = new TreeSet<PluginParameterBinding>();
-		for (Pair<Integer, PluginParameterBinding> pair : find(Plugin.class, null, contextType, false, false,
+		Class<?> resultType = null;
+		for (Pair<Integer, PluginParameterBinding> pair : find(Plugin.class, resultType, contextType, false, false,
 				mustBeUserVisible, parameters)) {
 			result.add(pair.getSecond());
 		}
@@ -738,7 +740,8 @@ public class RapidProMPluginManager implements PluginManager {
 	public Set<PluginParameterBinding> getPluginsAcceptingInAnyOrder(Class<? extends PluginContext> contextType,
 			boolean mustBeUserVisible, Class<?>... parameters) {
 		Set<PluginParameterBinding> result = new TreeSet<PluginParameterBinding>();
-		for (Pair<Integer, PluginParameterBinding> pair : find(Plugin.class, null, contextType, true, false,
+		Class<?> resultType = null;
+		for (Pair<Integer, PluginParameterBinding> pair : find(Plugin.class, resultType, contextType, true, false,
 				mustBeUserVisible, parameters)) {
 			result.add(pair.getSecond());
 		}
@@ -748,14 +751,15 @@ public class RapidProMPluginManager implements PluginManager {
 	public Set<PluginParameterBinding> getPluginsAcceptingOrdered(Class<? extends PluginContext> contextType,
 			boolean mustBeUserVisible, Class<?>... parameters) {
 		Set<PluginParameterBinding> result = new TreeSet<PluginParameterBinding>();
-		for (Pair<Integer, PluginParameterBinding> pair : find(Plugin.class, null, contextType, true, true,
+		Class<?> resultType = null;
+		for (Pair<Integer, PluginParameterBinding> pair : find(Plugin.class, resultType, contextType, true, true,
 				mustBeUserVisible, parameters)) {
 			result.add(pair.getSecond());
 		}
 		return result;
 	}
 
-	public Set<Pair<Integer, PluginDescriptor>> getPluginsResultingIn(Class<?> resultType,
+	public Set<Pair<Integer, PluginDescriptor>> getPluginsResultingIn(Class<? extends Object> resultType,
 			Class<? extends PluginContext> contextType, boolean mustBeUserVisible) {
 		Set<Pair<Integer, PluginDescriptor>> result = new TreeSet<Pair<Integer, PluginDescriptor>>();
 		for (Pair<Integer, PluginParameterBinding> pair : find(Plugin.class, resultType, contextType, false, false,
@@ -810,6 +814,53 @@ public class RapidProMPluginManager implements PluginManager {
 
 	public Set<Class<?>> getKnownObjectTypes() {
 		return Collections.unmodifiableSet(knownObjectTypes);
+	}
+
+	@Override
+	public Set<Pair<Integer, PluginParameterBinding>> find(Class<? extends Annotation> annotation, Class<?> resultType,
+			Class<? extends PluginContext> contextType, boolean totalMatch, boolean orderedParameters,
+			boolean mustBeUserVisible, Class<?>... args) {
+
+		Set<Pair<Integer, PluginParameterBinding>> result = new TreeSet<Pair<Integer, PluginParameterBinding>>();
+		Set<PluginDescriptor> pls = annotation2plugins.get(annotation);
+		if (pls == null) {
+			return result;
+		}
+		for (PluginDescriptor plugin : pls) {
+			if (mustBeUserVisible && (!plugin.meetsQualityThreshold() || !plugin.meetsLevelThreshold())) {
+				/*
+				 * Plug-in does not meet some required threshold to do so.
+				 * Ignore it.
+				 */
+				continue;
+			}
+			if (!mustBeUserVisible || plugin.isUserAccessible()) {
+				int i = (resultType == null ? 0 : plugin.getReturnTypes().indexOf(resultType));
+				if (i < 0) {
+					// Check for returned subtypes of the requested type
+					i = checkIfRequestedReturnTypeIsPresent(plugin, resultType);
+				}
+				if (i >= 0) {
+					for (int j = 0; j < plugin.getParameterTypes().size(); j++) {
+						if (!plugin.getContextType(j).isAssignableFrom(contextType)) {
+							// Check context types
+							continue;
+						}
+
+						List<PluginParameterBinding> list = PluginParameterBinding.Factory.tryToBind(this, plugin, j,
+								totalMatch, orderedParameters, args);
+						for (PluginParameterBinding binding : list) {
+
+							result.add(new ComparablePair<Integer, PluginParameterBinding>(i, binding));
+							// // Quit the loop since only one binding is to be
+							// // found.
+							// j = plugin.getParameterTypes().size();
+						}
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 }

@@ -17,13 +17,11 @@ import org.controlsfx.control.spreadsheet.SpreadsheetView;
 import org.deckfour.xes.classification.XEventClass;
 import org.deckfour.xes.classification.XEventClassifier;
 import org.deckfour.xes.classification.XEventNameClassifier;
-import org.deckfour.xes.factory.XFactoryNaiveImpl;
 import org.deckfour.xes.info.XLogInfo;
 import org.deckfour.xes.info.XLogInfoFactory;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
-import org.processmining.alphaminer.plugins.AlphaMinerPlugin;
 import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
@@ -34,20 +32,15 @@ import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.plugins.InductiveMiner.mining.MiningParametersIMf;
 import org.processmining.plugins.InductiveMiner.plugins.IMPetriNet;
 import org.processmining.plugins.astar.petrinet.AbstractPetrinetReplayer;
-import org.processmining.plugins.astar.petrinet.PetrinetReplayerWithILP;
 import org.processmining.plugins.astar.petrinet.PetrinetReplayerWithoutILP;
 import org.processmining.plugins.connectionfactories.logpetrinet.TransEvClassMapping;
-import org.processmining.plugins.inductiveminer2.mining.InductiveMiner;
 import org.processmining.plugins.log.ui.logdialog.SlickerOpenLogSettings;
-import org.processmining.plugins.petrinet.PetriNetVisualization;
 import org.processmining.plugins.petrinet.replayer.algorithms.IPNReplayParameter;
 import org.processmining.plugins.petrinet.replayer.algorithms.costbasedcomplete.CostBasedCompleteParam;
 import org.processmining.plugins.petrinet.replayresult.PNRepResult;
 import org.processmining.plugins.pnalignanalysis.visualization.projection.PNLogReplayProjectedVisPanel;
 import org.processmining.processcomparator.plugins.ProcessComparatorPlugin;
 import org.processmining.processcomparator.view.ComparatorPanel;
-
-import com.rapidminer.parameter.UndefinedParameterError;
 
 import application.controllers.results.ResultDialogController;
 import application.controllers.workers.RapidMinerWorker;
@@ -60,8 +53,8 @@ import application.operations.Utils;
 import application.operations.dialogs.FileChooserDialog;
 import application.operations.io.log.XLogExporter;
 import application.operations.io.log.XLogExporter.Format;
+import application.prom.ProMPluginUtils;
 import application.prom.RapidProMGlobalContext;
-import application.utils.XLogUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -76,7 +69,9 @@ public class CellContextMenuController {
 
 	ContextMenu newMenu;
 	MenuItem visualizeEventLog;
+	MenuItem visualizeEventLogDC;
 	MenuItem visualizeProcessModel;
+	MenuItem visualizeProcessModelFuzzy;
 	MenuItem compare;
 	MenuItem runRapidMinerWorkflow;
 	MenuItem exportEventLogs;
@@ -87,11 +82,17 @@ public class CellContextMenuController {
 	public CellContextMenuController(SpreadsheetView table, CubeExplorerController explorerController, Grid grid) {
 		this.grid = grid;
 
-		visualizeEventLog = new MenuItem("Event Log");
+		visualizeEventLog = new MenuItem("Log Inspector");
 		visualizeEventLog.setOnAction(new EventLogListener(table, explorerController, grid));
 
-		visualizeProcessModel = new MenuItem("Process Model");
+		visualizeEventLogDC = new MenuItem("Dotted chart");
+		visualizeEventLogDC.setOnAction(new EventLogListener(table, explorerController, grid));
+
+		visualizeProcessModel = new MenuItem("Petri Net (Inductive Miner)");
 		visualizeProcessModel.setOnAction(new EventLogListener(table, explorerController, grid));
+
+		visualizeProcessModelFuzzy = new MenuItem("Fuzzy Model");
+		visualizeProcessModelFuzzy.setOnAction(new EventLogListener(table, explorerController, grid));
 
 		compare = new MenuItem("Compare Event Logs");
 		compare.setOnAction(new EventLogListener(table, explorerController, grid));
@@ -108,10 +109,17 @@ public class CellContextMenuController {
 		 * List Build
 		 */
 		ObservableList<MenuItem> newList = FXCollections.observableArrayList();
-		Menu visualize = new Menu("Visualize as:");
-		visualize.getItems().add(visualizeEventLog);
-		visualize.getItems().add(visualizeProcessModel);
-		newList.add(visualize);
+
+		Menu visualizeLog = new Menu("Visualize as Event Log:");
+		visualizeLog.getItems().add(visualizeEventLog);
+		visualizeLog.getItems().add(visualizeEventLogDC);
+		newList.add(visualizeLog);
+
+		Menu visualizeModel = new Menu("Visualize as Process Model:");
+		visualizeModel.getItems().add(visualizeProcessModel);
+		visualizeModel.getItems().add(visualizeProcessModelFuzzy);
+		newList.add(visualizeModel);
+
 		newList.add(compare);
 		newList.add(runRapidMinerWorkflow);
 		newList.add(exportEventLogs);
@@ -164,6 +172,14 @@ public class CellContextMenuController {
 				processFile = openProcess.showAndWait().get();
 				if (processFile == null)
 					return;
+				
+				
+				
+				
+				
+				
+				
+				
 			} else if (arg0.getSource().equals(exportEventLogs)) {
 				exportDirectory = XLogExporter.askDirectory();
 				format = XLogExporter.askFormat();
@@ -172,7 +188,9 @@ public class CellContextMenuController {
 			/*
 			 * If we are not comparing, do the normal processing
 			 */
-			if (arg0.getSource().equals(visualizeEventLog) || arg0.getSource().equals(visualizeProcessModel)) {
+			if (arg0.getSource().equals(visualizeEventLog) || arg0.getSource().equals(visualizeEventLogDC)
+					|| arg0.getSource().equals(visualizeProcessModel)
+					|| arg0.getSource().equals(visualizeProcessModelFuzzy)) {
 
 				// get the list of event ids of one selected cell (focused?)
 				Optional<Boolean> forAll = Optional.of(false);
@@ -197,11 +215,17 @@ public class CellContextMenuController {
 						SlickerOpenLogSettings s = new SlickerOpenLogSettings();
 						ResultDialogController dia = new ResultDialogController(log, s.showLogVis(pluginContext, log));
 
+					} else if (arg0.getSource().equals(visualizeEventLogDC)) {
+						JComponent panel = ProMPluginUtils.createDottedChart(pluginContext, log);
+						ResultDialogController dia = new ResultDialogController(log, panel);
+
 					} else if (arg0.getSource().equals(visualizeProcessModel)) {
-						PetriNetVisualization visualizer = new PetriNetVisualization();
-						JComponent result = visualizer.visualize(pluginContext, (Petrinet) AlphaMinerPlugin
-								.applyAlphaPlus(pluginContext, log, new XEventNameClassifier())[0]);
-						ResultDialogController dia = new ResultDialogController(log, result);
+						JComponent panel = ProMPluginUtils.createPetriNet(pluginContext, log);
+						ResultDialogController dia = new ResultDialogController(log, panel);
+
+					} else if (arg0.getSource().equals(visualizeProcessModelFuzzy)) {
+						JComponent panel = ProMPluginUtils.createFuzzyModel(pluginContext, log);
+						ResultDialogController dia = new ResultDialogController(log, panel);
 
 					} else if (arg0.getSource().equals(runRapidMinerWorkflow)) {
 						rmWorker.run(log, processFile);
@@ -223,17 +247,21 @@ public class CellContextMenuController {
 								getCellName(grid, cell.getRow(), cell.getColumn()));
 
 						if (arg0.getSource().equals(visualizeEventLog)) {
-
-							System.out.println(getCellName(grid, cell.getRow(), cell.getColumn()));
 							SlickerOpenLogSettings s = new SlickerOpenLogSettings();
 							ResultDialogController dia = new ResultDialogController(log,
 									s.showLogVis(pluginContext, log));
-						} else if (arg0.getSource().equals(visualizeProcessModel)) {
 
-							PetriNetVisualization visualizer = new PetriNetVisualization();
-							JComponent result = visualizer.visualize(pluginContext, (Petrinet) AlphaMinerPlugin
-									.applyAlphaPlus(pluginContext, log, new XEventNameClassifier())[0]);
-							ResultDialogController dia = new ResultDialogController(log, result);
+						} else if (arg0.getSource().equals(visualizeEventLogDC)) {
+							JComponent panel = ProMPluginUtils.createDottedChart(pluginContext, log);
+							ResultDialogController dia = new ResultDialogController(log, panel);
+
+						} else if (arg0.getSource().equals(visualizeProcessModel)) {
+							JComponent panel = ProMPluginUtils.createPetriNet(pluginContext, log);
+							ResultDialogController dia = new ResultDialogController(log, panel);
+
+						} else if (arg0.getSource().equals(visualizeProcessModelFuzzy)) {
+							JComponent panel = ProMPluginUtils.createFuzzyModel(pluginContext, log);
+							ResultDialogController dia = new ResultDialogController(log, panel);
 
 						} else if (arg0.getSource().equals(runRapidMinerWorkflow)) {
 							rmWorker.run(log, processFile);
@@ -261,7 +289,7 @@ public class CellContextMenuController {
 				ResultDialogController dia = new ResultDialogController(null, cp);
 
 			} else if (arg0.getSource().equals(conformanceChecking)) {
-				// we are comparing
+				// we are checking conformance
 				AbstrEventBase eb = explorerController.getEventBase();
 				List<XLog> logs = new ArrayList<XLog>();
 
@@ -276,8 +304,7 @@ public class CellContextMenuController {
 				}
 
 				Object[] model = IMPetriNet.minePetriNet(pluginContext, logs.get(0), new MiningParametersIMf());
-				
-				
+
 				;
 				Petrinet pn = (Petrinet) model[0];
 				Marking initial = (Marking) model[1];
@@ -295,7 +322,7 @@ public class CellContextMenuController {
 					alignments = getAlignment(pluginContext, pn, logs.get(1), initial, finalM, mapping);
 					panel = new PNLogReplayProjectedVisPanel(pluginContext, pn, initial, logs.get(1), mapping,
 							alignments);
-				} catch (UndefinedParameterError | ConnectionCannotBeObtained e) {
+				} catch (ConnectionCannotBeObtained e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -331,10 +358,10 @@ public class CellContextMenuController {
 	}
 
 	public PNRepResult getAlignment(PluginContext pluginContext, PetrinetGraph net, XLog log, Marking initialMarking,
-			Marking finalMarking, TransEvClassMapping mapping) throws UndefinedParameterError {
+			Marking finalMarking, TransEvClassMapping mapping) {
 
 		Map<Transition, Integer> costMOS = constructMOSCostFunction(net);
-		
+
 		Map<XEventClass, Integer> costMOT = constructMOTCostFunction(net, log, mapping.getEventClassifier());
 
 		AbstractPetrinetReplayer<?, ?> replayEngine = new PetrinetReplayerWithoutILP();
