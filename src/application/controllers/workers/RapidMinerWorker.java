@@ -99,6 +99,7 @@ public class RapidMinerWorker extends AbstrWorker {
 					IOObject object = new XLogIOObject(log, pluginContext);
 					IOContainer container = new IOContainer(object);
 					process.run(container);
+					System.out.println("success with the workflow!");
 				} catch (IOException | XMLException e) {
 					e.printStackTrace();
 					Alert alert = new Alert(AlertType.ERROR);
@@ -117,7 +118,7 @@ public class RapidMinerWorker extends AbstrWorker {
 							"Your workflow did not run properly. Please make sure that it runs correctly in RapidMiner.");
 					alert.showAndWait();
 				}
-
+				System.out.println("workflow called!");
 				return null;
 
 			}

@@ -172,14 +172,6 @@ public class CellContextMenuController {
 				processFile = openProcess.showAndWait().get();
 				if (processFile == null)
 					return;
-				
-				
-				
-				
-				
-				
-				
-				
 			} else if (arg0.getSource().equals(exportEventLogs)) {
 				exportDirectory = XLogExporter.askDirectory();
 				format = XLogExporter.askFormat();
@@ -190,7 +182,8 @@ public class CellContextMenuController {
 			 */
 			if (arg0.getSource().equals(visualizeEventLog) || arg0.getSource().equals(visualizeEventLogDC)
 					|| arg0.getSource().equals(visualizeProcessModel)
-					|| arg0.getSource().equals(visualizeProcessModelFuzzy)) {
+					|| arg0.getSource().equals(visualizeProcessModelFuzzy)
+					|| arg0.getSource().equals(runRapidMinerWorkflow)) {
 
 				// get the list of event ids of one selected cell (focused?)
 				Optional<Boolean> forAll = Optional.of(false);

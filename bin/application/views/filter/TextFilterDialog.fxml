@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import org.controlsfx.control.CheckListView?>
+<?import org.controlsfx.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <VBox alignment="CENTER" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER">
+               <children>
+                  <Label text="Attribute name: " />
+                  <TextField fx:id = "textField" editable="false" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <Label text="Selected Values" />
+            <CheckListView fx:id="listView" />
+            <Button mnemonicParsing="false" text="Select All" onAction="#clickSelectAll">
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" text="Invert Selection" onAction="#clickInvertSelection">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </center>
+</fx:root>

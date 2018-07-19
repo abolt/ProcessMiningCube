@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <left>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" text="Dimensions" VBox.vgrow="NEVER">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Label>
+            <ListView fx:id="dimensionsList" editable="true" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </ListView>
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#addDimensionButton" text="Add Dimension" textAlignment="CENTER" VBox.vgrow="NEVER">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#removeDimensionButton" text="Remove Dimension" textAlignment="CENTER" VBox.vgrow="NEVER">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Attribute Hierarchy (of selected Dimension) Drapg and Drop to re-order">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Label>
+            <ListView fx:id="attributeList" editable="true" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </ListView>
+            <Button mnemonicParsing="false" onAction="#addAttributeButton" text="Add Attribute">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#removeAttributeButton" text="Remove Attribute">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </center>
+   <right>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Unused Attributes">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Label>
+            <ListView fx:id="unusedAttributes" editable="true" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </ListView>
+         </children>
+      </VBox>
+   </right>
+   <bottom>
+		<ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+			<items>
+				<Button mnemonicParsing="false" onAction="#backButton" text="&lt;-- Back" />
+				<Pane HBox.hgrow="ALWAYS" />
+				<Button mnemonicParsing="false" onAction="#nextButton" text="Next --&gt;" />
+			</items>
+		</ToolBar>
+	</bottom>
+</fx:root>
