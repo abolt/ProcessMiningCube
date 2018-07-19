@@ -1,4 +1,6 @@
-# ProcessMiningCube
+# Process Mining Cube
 
-This project uses JavaFX, and it will work with Java 8 or a newer jre.
-To run it, just execute the PMCLauncher class (main method is provided there)
+Welcome to the home of the Process Mining Cube tool!
+You can download the latest version [here](https://github.com/abolt/ProcessMiningCube/releases/latest).
+
+To use, just double click on the executable file!
